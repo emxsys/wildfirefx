@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.emxsys.wildfirefx.charts.*?>
+<?import java.lang.*?>
+<?import javafx.scene.chart.*?>
+
+<LogScatterChart xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <xAxis>
+        <CategoryAxis side="BOTTOM" />
+    </xAxis>
+    <yAxis>
+        <NumberAxis side="LEFT" />
+    </yAxis>
+</LogScatterChart>
