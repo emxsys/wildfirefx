@@ -9,9 +9,9 @@
 
     <name>WildfireFX</name>
     <description>A wildland fire behavior demonstration application based on JavaFX. 
-        The WildfireFX application lets you explore the effects of wind, slope 
-        and solar preheating on wildfire behavior (these are primary forces 
-        described in the Campbell Prediction System).
+The WildfireFX application lets you explore the effects of wind, slope 
+and solar preheating on wildfire behavior (these are primary forces 
+described in the Campbell Prediction System).
     </description>
 
     <properties>
@@ -109,4 +109,27 @@
             </plugin>
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>2.21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>2.21</version>
+        </dependency>
+    </dependencies>
 </project>

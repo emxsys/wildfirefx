@@ -27,31 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.emxsys.wildfirefx;
 
 import com.emxsys.wildfirefx.presentation.main.MainView;
+import com.emxsys.wildfirefx.service.WmtRestService;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 
 public class WildfireFxApp extends Application {
-    
-    
+
     @Override
     public void start(Stage stage) throws Exception {
         System.out.println("Starting application...");
-                
+
         Scene scene = new Scene((Parent) new MainView().getView());
         scene.getStylesheets().add("/styles/Styles.css");
-        
+
         stage.setTitle("WildfireFX");
         stage.setScene(scene);
         stage.show();
-        
+
     }
 
     /**
