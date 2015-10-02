@@ -29,7 +29,7 @@
  */
 package com.emxsys.wildfirefx.presentation.haulchart;
 
-import com.emxsys.wildfirefx.charts.LogScatterChart;
+import com.emxsys.wildfirefx.chart.LogScatterChart;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
