@@ -1,17 +1,21 @@
 package com.emxsys.wildfirefx.particles;
 
+import javafx.animation.Interpolator;
+import static javafx.animation.Interpolator.LINEAR;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-
 
 /**
  * A particle in our particle system.
  *
- * Based on "JavaFX Game Development: Particle System" by Almas Baimagambetov on YouTube.
+ * Based on "JavaFX Game Development: Particle System" by Almas Baimagambetov on
+ * YouTube.
  *
- * @see <a href="https://youtu.be/vLcJRm6Y72U">JavaFX Game Development: Particle System</a>
+ * @see <a href="https://youtu.be/vLcJRm6Y72U">JavaFX Game Development: Particle
+ * System</a>
  *
  * @author Bruce Schubert
  */
@@ -22,31 +26,34 @@ public class Particle {
     private Point2D velocity;
     private double radius;
     private double life = 1.0;
-    private double decay;
-    private Paint color;
+    private double expireTime;
+    private Color startColor;
+    private Color endColor;
     private BlendMode blendMode;
 
     /**
+     * Constructor.
      *
      * @param x Position.
      * @param y Position.
-     * @param velocity A vector describing the speed and direction of the particle.
+     * @param velocity A vector describing the speed and direction of the
+     * particle.
      * @param radius The particle size.
      * @param expireTime The the lifetime of the particle in seconds.
      * @param color The particle color.
      * @param blendMode
      */
     public Particle(double x, double y, Point2D velocity, double radius, double expireTime,
-                    Paint color,
-                    BlendMode blendMode) {
+            Color startColor, Color endColor, BlendMode blendMode) {
+
         this.x = x;
         this.y = y;
         this.velocity = velocity;
         this.radius = radius;
-        this.color = color;
+        this.expireTime = expireTime;
+        this.startColor = startColor;
+        this.endColor = endColor;
         this.blendMode = blendMode;
-
-        this.decay = 0.016 / expireTime; // 60 htz = 1/60 = 0.016
     }
 
     /**
@@ -57,12 +64,16 @@ public class Particle {
     }
 
     /**
-     * Updates the particle's position and life (age). The age of the particle determines the color.
+     * Updates the particle's position and life (age). The age of the particle
+     * determines the color.
      */
-    public void update() {
-        x += velocity.getX();
-        y += velocity.getY();
-
+    public void update(double frameRate) {
+//        double decay = 1.0 / 120.0;    // decay in secs per frame
+//        double scale = 1;                  // 1x == 60 hz
+        double decay = 1 / (expireTime * frameRate);    // decay in secs per frame
+        double scale = 60 / frameRate;                  // 1x == 60 hz
+        x += velocity.getX() * scale;
+        y += velocity.getY() * scale;
         life -= decay;
     }
 
@@ -74,7 +85,13 @@ public class Particle {
     public void render(GraphicsContext g) {
         g.setGlobalAlpha(life);
         g.setGlobalBlendMode(blendMode);
-        g.setFill(color);
-        g.fillOval(x, y, radius, radius);
+        if (endColor == null || startColor.equals(endColor)) {
+            g.setFill(startColor);
+        } else {
+            Color color = (Color) Interpolator.EASE_IN.interpolate(endColor, startColor, life);
+            g.setFill(color);
+        }
+        double r = radius;// * Math.sin(Math.toRadians(life * 90));
+        g.fillOval(x, y, r, r);
     }
 }

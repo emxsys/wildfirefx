@@ -33,17 +33,18 @@ import com.emxsys.wildfirefx.particles.Emitter;
 import com.emxsys.wildfirefx.particles.Particle;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
-
 
 /**
  * An emitter of fire particles in our particle system.
  *
  * Based on "JavaFX Game Development: Particle System" by Almas Baimagambetov.
  *
- * @see <a href="https://youtu.be/vLcJRm6Y72U">JavaFX Game Development: Particle System</a>
+ * @see <a href="https://youtu.be/vLcJRm6Y72U">JavaFX Game Development: Particle
+ * System</a>
  *
  * @author Bruce Schubert
  */
@@ -53,15 +54,30 @@ public class FireEmitter implements Emitter {
     public List<Particle> emit(double x, double y) {
         List<Particle> particles = new ArrayList<>();
 
-        int numParticles = 7;
+//        Interpolator spline = Interpolator.SPLINE(1.0000, 0.0000, 0.0000, 0.0000);
+        Interpolator spline = Interpolator.SPLINE(0.0000, 0.3000, 1.0000, 0.5000);
+
+        int numParticles = 100;
+
         for (int i = 0; i < numParticles; i++) {
+
+            double x1 = x + (Math.random() - 0.5) * 20; // vary x left/right
+            double y1 = y + Math.random() * 20;         // vary y upwards
+            
+            double x2 = Math.random() - 0.5;
+            double y2 = Math.random();
+            // Constrain x to y for flame shape (vs rectangle)
+            double vx = x2 * spline.interpolate(1.0, 0.0, y2) * 2.0;
+            double vy = y2 * -4.0;
+
             Particle p = new Particle(
-                x, y,
-                new Point2D((Math.random() - 0.5) * 2, Math.random() * -2), // velocity
-                10, // radius
-                2, // expire time
-                Color.rgb(230, 40, 45),
-                BlendMode.ADD);
+                    x1, y1,
+                    new Point2D(vx, vy),
+                    10, // radius
+                    2,  // expire time in secs
+                    Color.YELLOW,
+                    Color.RED,
+                    BlendMode.SRC_OVER);
             particles.add(p);
         }
         return particles;

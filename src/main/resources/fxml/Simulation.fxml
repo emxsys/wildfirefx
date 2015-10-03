@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.canvas.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane fx:id="pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.emxsys.wildfirefx.presentation.simulation.SimPresenter">
+   <children>
+      <Canvas fx:id="canvas" height="600.0" width="600.0" />
+      <Label fx:id="fpsLabel" layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="155.0" text="FPS" textFill="#f8f800" textOverrun="LEADING_ELLIPSIS">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="countLabel" layoutX="14.0" layoutY="31.0" prefHeight="17.0" prefWidth="155.0" text="COUNT" textFill="#f8f800" textOverrun="LEADING_ELLIPSIS">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

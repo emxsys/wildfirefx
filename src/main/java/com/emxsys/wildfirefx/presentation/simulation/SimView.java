@@ -27,30 +27,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wildfirefx.presentation.fire;
+package com.emxsys.wildfirefx.presentation.simulation;
 
 import com.emxsys.wildfirefx.presentation.BasicView;
-import com.emxsys.wildfirefx.presentation.fire.FirePresenter;
+import com.emxsys.wildfirefx.presentation.simulation.SimPresenter;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
-
 
 /**
  *
  * @author Bruce Schubert
- * @version $Id$
  */
-public class FireView extends BasicView<FirePresenter> {
+public class SimView extends BasicView<SimPresenter> {
 
+    public SimView() {
+        super("/fxml/Simulation.fxml");
 
-    public FireView() {
-        super("/fxml/FireAnimation.fxml");
+        // The view's root is an AnchorPane containing a canvas;
+        // autofit the canvas to the parent.
+        AnchorPane anchorPane = (AnchorPane) getView();
+        for (Node child : anchorPane.getChildren()) {
+            if ("canvas".equals(child.getId())) {
+                Canvas canvas = (Canvas) child;
+                canvas.widthProperty().bind(anchorPane.widthProperty());
+                canvas.heightProperty().bind(anchorPane.heightProperty());
+                break;
+            }
+        }
     }
 
-    public void bindSize(AnchorPane anchorPane) {
-        Canvas canvas = (Canvas) getView();
-        canvas.widthProperty().bind(anchorPane.widthProperty());
-        canvas.heightProperty().bind(anchorPane.heightProperty());
-    }
-    
 }

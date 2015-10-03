@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wildfirefx.presentation.fire;
+package com.emxsys.wildfirefx.presentation.simulation;
 
 import com.emxsys.wildfirefx.particles.FireEmitter;
 import com.emxsys.wildfirefx.model.FireBehavior;
@@ -44,40 +44,46 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 
-
 /**
- * FirePresenter is an off-canvas particle system for rendering flames based on "JavaFX Game
- * Development: Particle System" by Almas Baimagambetov.
+ * SimPresenter is an off-canvas particle system for rendering flames based on
+ * "JavaFX Game Development: Particle System" by Almas Baimagambetov.
  *
- * @see <a href="https://youtu.be/vLcJRm6Y72U">JavaFX Game Development: Particle System</a>
+ * @see <a href="https://youtu.be/vLcJRm6Y72U">JavaFX Game Development: Particle
+ * System</a>
  *
  * @author Bruce Schubert
  */
-public class FirePresenter extends BasicPresenter<FireBehavior, FireView> implements
-    Initializable {
+public class SimPresenter extends BasicPresenter<FireBehavior, SimView> implements
+        Initializable {
 
-    /** Particle emitter/generator */
+    /** The particle emitter/generator */
     private Emitter emitter = new FireEmitter();
-
-    /** Particles to be rendered */
+    /** The particles to be rendered */
     private List<Particle> particles = new ArrayList<>();
-
+    /** A timer that updates the particle simulation */
     private AnimationTimer timer;
 
+    private final long[] frameTimes = new long[100];
+    private int frameTimeIndex = 0;
+    private int numFrameTimes = 0;
+    private boolean arrayFilled = false;
+
+    @FXML
+    private Label fpsLabel;
+    @FXML
+    private Label countLabel;
     @FXML
     private Canvas canvas;
 
     private GraphicsContext g;
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("Initializing AnimationPresenter");
-
-        setModel(new FireBehavior());
+        System.out.println("Initializing Simulation");
 
         this.g = canvas.getGraphicsContext2D();
 
@@ -86,19 +92,32 @@ public class FirePresenter extends BasicPresenter<FireBehavior, FireView> implem
 
             @Override
             public void handle(long now) {
-                onUpdate();
+                updateSimulation(updateFrameRate(now));
             }
         };
+        // Start the simulation
         timer.start();
+    }
+
+    private double updateFrameRate(long now) {
+        long oldFrameTime = frameTimes[frameTimeIndex];
+        frameTimes[frameTimeIndex] = now;
+        frameTimeIndex = (frameTimeIndex + 1) % frameTimes.length;
+        if (numFrameTimes < frameTimes.length) {
+            numFrameTimes++;
+        }
+        long elapsedNanos = now - oldFrameTime;
+        long elapsedNanosPerFrame = elapsedNanos / numFrameTimes;
+        double frameRate = 1_000_000_000.0 / elapsedNanosPerFrame;
+        return frameRate;
     }
 
     /**
      * Updates the particle system on each timer frame.
      */
-    private void onUpdate() {
+    private void updateSimulation(double frameRate) {
 
-        g = canvas.getGraphicsContext2D();
-
+        //g = canvas.getGraphicsContext2D();
         double w = canvas.getWidth();
         double h = canvas.getHeight();
         double x = w / 2;
@@ -110,23 +129,27 @@ public class FirePresenter extends BasicPresenter<FireBehavior, FireView> implem
         g.setFill(Color.BLACK);
         g.fillRect(0, 0, w, h);
 
-        // Generate particles
+        // Generate new particles and them the collection to be drawn.
         particles.addAll(emitter.emit(x, y));
 
+        // (Re)draw the particles.
         for (Iterator<Particle> it = particles.iterator(); it.hasNext();) {
             Particle p = it.next();
-            
-            // Update the particle's position and color
-            p.update();
 
-            // Remove particles that have decayed.
+            // Update the particle's position, color and age.
+            p.update(frameRate);
+
+            // Remove expired particles.
             if (!p.isAlive()) {
                 it.remove();
                 continue;
             }
-
+            // Draw
             p.render(g);
         }
+        fpsLabel.setText(String.format("Current frame rate: %.3f", frameRate));
+        countLabel.setText(String.format("Particle count: %d", particles.size()));
+        
     }
 
 }
