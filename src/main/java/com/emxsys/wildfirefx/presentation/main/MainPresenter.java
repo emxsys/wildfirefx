@@ -29,7 +29,7 @@
  */
 package com.emxsys.wildfirefx.presentation.main;
 
-import com.emxsys.wildfirefx.presentation.fire.FireView;
+import com.emxsys.wildfirefx.presentation.simulation.SimView;
 import com.emxsys.wildfirefx.presentation.haulchart.HaulChartView;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -64,10 +64,8 @@ public class MainPresenter implements Initializable {
         assert haulChartPane != null : "fx:id=\"haulChartPane\" was not injected: check your FXML file 'Scene.fxml'.";
         assert centerPane != null : "fx:id=\"centerPane\" was not injected: check your FXML file 'Scene.fxml'.";
 
-        FireView fireView = new FireView();
-        centerPane.getChildren().add(fireView.getView());
-        fireView.bindSize(centerPane);
-     
+        // Populate panes with model views.
+        centerPane.getChildren().add(fitToParent(new SimView().getView()));     
         haulChartPane.getChildren().add(fitToParent(new HaulChartView().getView()));
         
     }
