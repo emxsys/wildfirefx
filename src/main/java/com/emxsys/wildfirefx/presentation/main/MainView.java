@@ -38,7 +38,7 @@ import com.emxsys.wildfirefx.presentation.BasicView;
  */
 public class MainView extends BasicView<MainPresenter> {
 
-    private static String FXML = "/fxml/Scene.fxml";
+    private static String FXML = "/fxml/Main.fxml";
     
     public MainView() {
         super(MainView.class.getResource(FXML));
