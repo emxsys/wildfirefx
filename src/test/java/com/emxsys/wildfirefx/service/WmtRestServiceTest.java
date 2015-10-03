@@ -46,6 +46,7 @@ import org.junit.rules.ExpectedException;
  *
  * @author Bruce Schubert
  */
+@Ignore
 public class WmtRestServiceTest {
 
     @Rule
