@@ -29,10 +29,10 @@
  */
 package com.emxsys.wildfirefx.presentation;
 
-import com.emxsys.wildfirefx.presentation.Presenter;
+import com.emxsys.wildfirefx.presentation.Controller;
 import javafx.beans.property.SimpleObjectProperty;
 
-public class BasicPresenter<M, V> implements Presenter<M, V> {
+public class BasicController<M, V> implements Controller<M, V> {
 
     private SimpleObjectProperty<M> model = new SimpleObjectProperty<> ();
     private V view;
@@ -53,6 +53,10 @@ public class BasicPresenter<M, V> implements Presenter<M, V> {
         return this.view;
     }
 
+    /**
+     * 
+     * @param view 
+     */
     public final void setView(V view) {
         if (view == null) {
             throw new NullPointerException("view cannot be null.");
@@ -61,5 +65,13 @@ public class BasicPresenter<M, V> implements Presenter<M, V> {
             throw new IllegalStateException("View has already be set.");
         }
         this.view = view;
+        postInitialize();
+    }
+    
+    /**
+     * Called after the view has been set.
+     */
+    protected void postInitialize() {
+        
     }
 }

@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.*?>
 
 
-<AnchorPane fx:id="pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.emxsys.wildfirefx.presentation.simulation.SimPresenter">
+<AnchorPane fx:id="pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.emxsys.wildfirefx.presentation.simulation.SimController">
    <children>
       <Canvas fx:id="canvas" height="600.0" width="600.0" />
       <Label fx:id="fpsLabel" layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="155.0" text="FPS" textFill="#f8f800" textOverrun="LEADING_ELLIPSIS">

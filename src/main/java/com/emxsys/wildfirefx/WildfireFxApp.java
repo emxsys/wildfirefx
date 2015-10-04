@@ -42,19 +42,31 @@ import javax.json.JsonValue;
 
 public class WildfireFxApp extends Application {
 
+    private static Stage primaryStage = null;
+    
     @Override
     public void start(Stage stage) throws Exception {
         System.out.println("Starting application...");
-
-        Scene scene = new Scene((Parent) new MainView().getView());
+        primaryStage = stage;
+        
+        Scene scene = new Scene((Parent) new MainView().getRoot());
         scene.getStylesheets().add("/styles/Styles.css");
 
         stage.setTitle("WildfireFX");
         stage.setScene(scene);
         stage.show();
-
     }
 
+    @Override
+    public void stop() throws Exception {
+        System.out.println("TODO: Save preferences");
+        super.stop(); 
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+    
     /**
      * The main() method is ignored in correctly deployed JavaFX application.
      * main() serves only as fallback in case the application can not be

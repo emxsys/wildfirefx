@@ -30,7 +30,7 @@
 package com.emxsys.wildfirefx.presentation.simulation;
 
 import com.emxsys.wildfirefx.presentation.BasicView;
-import com.emxsys.wildfirefx.presentation.simulation.SimPresenter;
+import com.emxsys.wildfirefx.presentation.simulation.SimController;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
@@ -39,14 +39,14 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author Bruce Schubert
  */
-public class SimView extends BasicView<SimPresenter> {
+public class SimView extends BasicView<SimController> {
 
     public SimView() {
         super("/fxml/Simulation.fxml");
 
         // The view's root is an AnchorPane containing a canvas;
         // autofit the canvas to the parent.
-        AnchorPane anchorPane = (AnchorPane) getView();
+        AnchorPane anchorPane = (AnchorPane) getRoot();
         for (Node child : anchorPane.getChildren()) {
             if ("canvas".equals(child.getId())) {
                 Canvas canvas = (Canvas) child;

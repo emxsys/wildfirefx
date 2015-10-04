@@ -30,18 +30,17 @@
 package com.emxsys.wildfirefx.presentation.main;
 
 import com.emxsys.wildfirefx.presentation.BasicView;
-import com.emxsys.wildfirefx.presentation.BasicView;
 
 /**
  *
  * @author Bruce Schubert
  */
-public class MainView extends BasicView<MainPresenter> {
+public class MainView extends BasicView<MainController> {
 
     private static String FXML = "/fxml/Main.fxml";
     
     public MainView() {
         super(MainView.class.getResource(FXML));
     }
-
+    
 }

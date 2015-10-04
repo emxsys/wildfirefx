@@ -35,9 +35,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
 
-public class BasicView<P> {
+public class BasicView<Ctlr extends BasicController> {
 
-    private final P presenter;
+    private final Ctlr controller;
     private final Node root;
 
     
@@ -60,15 +60,16 @@ public class BasicView<P> {
             throw new IllegalStateException(getClass().getSimpleName() + ": Cannot load " + fxmlUrl);
         }
 
-        this.presenter = loader.getController();
         this.root = loader.getRoot();
+        this.controller = loader.getController();
+        this.controller.setView(this);
     }
 
-    protected P getPresenter() {
-        return this.presenter;
+    public Ctlr getController() {
+        return this.controller;
     }
 
-    public Node getView() {
+    public Node getRoot() {
         return this.root;
     }
 }

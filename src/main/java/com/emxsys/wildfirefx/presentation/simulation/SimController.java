@@ -31,9 +31,8 @@ package com.emxsys.wildfirefx.presentation.simulation;
 
 import com.emxsys.wildfirefx.particles.FireEmitter;
 import com.emxsys.wildfirefx.model.FireBehavior;
-import com.emxsys.wildfirefx.particles.Emitter;
 import com.emxsys.wildfirefx.particles.Particle;
-import com.emxsys.wildfirefx.presentation.BasicPresenter;
+import com.emxsys.wildfirefx.presentation.BasicController;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,19 +48,19 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 
 /**
- * SimPresenter is an off-canvas particle system for rendering flames based on
- * "JavaFX Game Development: Particle System" by Almas Baimagambetov.
+ * SimController is an off-canvas particle system for rendering flames based on
+ "JavaFX Game Development: Particle System" by Almas Baimagambetov.
  *
  * @see <a href="https://youtu.be/vLcJRm6Y72U">JavaFX Game Development: Particle
  * System</a>
  *
  * @author Bruce Schubert
  */
-public class SimPresenter extends BasicPresenter<FireBehavior, SimView> implements
+public class SimController extends BasicController<FireBehavior, SimView> implements
         Initializable {
 
     /** The particle emitter/generator */
-    private Emitter emitter = new FireEmitter();
+    private FireEmitter emitter = new FireEmitter();
     /** The particles to be rendered */
     private List<Particle> particles = new ArrayList<>();
     /** A timer that updates the particle simulation */
@@ -70,7 +69,6 @@ public class SimPresenter extends BasicPresenter<FireBehavior, SimView> implemen
     private final long[] frameTimes = new long[100];
     private int frameTimeIndex = 0;
     private int numFrameTimes = 0;
-    private boolean arrayFilled = false;
 
     @FXML
     private Label fpsLabel;
@@ -99,6 +97,11 @@ public class SimPresenter extends BasicPresenter<FireBehavior, SimView> implemen
         timer.start();
     }
 
+    /**
+     * Computes and returns the current frame rate.
+     * @param now Parameter from AnimationTimer handle
+     * @return Computed frames per second.
+     */
     private double updateFrameRate(long now) {
         long oldFrameTime = frameTimes[frameTimeIndex];
         frameTimes[frameTimeIndex] = now;
@@ -114,6 +117,7 @@ public class SimPresenter extends BasicPresenter<FireBehavior, SimView> implemen
 
     /**
      * Updates the particle system on each timer frame.
+     * @param frameRate The current frames per second.
      */
     private void updateSimulation(double frameRate) {
 
@@ -150,6 +154,10 @@ public class SimPresenter extends BasicPresenter<FireBehavior, SimView> implemen
         fpsLabel.setText(String.format("Current frame rate: %.3f", frameRate));
         countLabel.setText(String.format("Particle count: %d", particles.size()));
         
+    }
+
+    public FireEmitter getEmitter() {
+        return emitter;
     }
 
 }

@@ -34,6 +34,9 @@ import com.emxsys.wildfirefx.particles.Particle;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.animation.Interpolator;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
@@ -50,34 +53,66 @@ import javafx.scene.paint.Color;
  */
 public class FireEmitter implements Emitter {
 
+    private SimpleIntegerProperty numParticlesProperty = new SimpleIntegerProperty(10);
+    private SimpleIntegerProperty particleSizeProperty = new SimpleIntegerProperty(10);
+    private SimpleDoubleProperty expireTimeProperty = new SimpleDoubleProperty(2);
+    private SimpleDoubleProperty xVelocityProperty = new SimpleDoubleProperty(2);
+    private SimpleDoubleProperty yVelocityProperty = new SimpleDoubleProperty(4);
+    private SimpleObjectProperty innerColorProperty = new SimpleObjectProperty(Color.YELLOW);
+    private SimpleObjectProperty outerColorProperty = new SimpleObjectProperty(Color.RED);
+
+    private Interpolator spline = Interpolator.SPLINE(0.0000, 0.3000, 1.0000, 0.5000);
+
+    public SimpleIntegerProperty numParticlesProperty() {
+        return numParticlesProperty;
+    }
+
+    public SimpleIntegerProperty particleSizeProperty() {
+        return particleSizeProperty;
+    }
+
+    public SimpleDoubleProperty expireTimeProperty() {
+        return expireTimeProperty;
+    }
+
+    public SimpleDoubleProperty xVelocityProperty() {
+        return xVelocityProperty;
+    }
+
+    public SimpleDoubleProperty yVelocityProperty() {
+        return yVelocityProperty;
+    }
+
     @Override
     public List<Particle> emit(double x, double y) {
         List<Particle> particles = new ArrayList<>();
+        Color innerColor = (Color) innerColorProperty.get();
+        Color outerColor = (Color) outerColorProperty.get();
+        double radius = particleSizeProperty.get();
+        double expireTime = expireTimeProperty.get();
+        double xVelocity = this.xVelocityProperty.get();
+        double yVelocity = this.yVelocityProperty.get() * -1;
 
-//        Interpolator spline = Interpolator.SPLINE(1.0000, 0.0000, 0.0000, 0.0000);
-        Interpolator spline = Interpolator.SPLINE(0.0000, 0.3000, 1.0000, 0.5000);
-
-        int numParticles = 100;
-
-        for (int i = 0; i < numParticles; i++) {
-
-            double x1 = x + (Math.random() - 0.5) * 20; // vary x left/right
+        long max = this.numParticlesProperty.get() * Math.round(Math.random());
+        for (long i = 0; i < max; i++) {
+            // Compute origin
+            double x1 = x + (Math.random() - 0.5) * 40; // vary x left/right
             double y1 = y + Math.random() * 20;         // vary y upwards
-            
+            // Compute velocity
             double x2 = Math.random() - 0.5;
             double y2 = Math.random();
-            // Constrain x to y for flame shape (vs rectangle)
-            double vx = x2 * spline.interpolate(1.0, 0.0, y2) * 2.0;
-            double vy = y2 * -4.0;
+            double vx = x2 * spline.interpolate(1.0, 0.0, y2) * xVelocity;
+            double vy = y2 * yVelocity;
 
             Particle p = new Particle(
                     x1, y1,
                     new Point2D(vx, vy),
-                    10, // radius
-                    2,  // expire time in secs
-                    Color.YELLOW,
-                    Color.RED,
+                    radius,
+                    expireTime,
+                    innerColor,
+                    outerColor,
                     BlendMode.SRC_OVER);
+
             particles.add(p);
         }
         return particles;

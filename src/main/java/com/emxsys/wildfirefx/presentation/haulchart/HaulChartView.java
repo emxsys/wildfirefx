@@ -33,10 +33,10 @@ import com.emxsys.wildfirefx.presentation.BasicView;
 
 
 /**
- *
+ * 
  * @author Bruce Schubert
  */
-public class HaulChartView extends BasicView<HaulChartPresenter> {
+public class HaulChartView extends BasicView<HaulChartController> {
 
     public HaulChartView() {
         super(HaulChartView.class.getResource("/fxml/HaulChart.fxml"));

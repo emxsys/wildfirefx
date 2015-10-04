@@ -30,7 +30,7 @@
 
 package com.emxsys.wildfirefx.presentation;
 
-public interface Presenter<M, V> {
+public interface Controller<M, V> {
 
     /**
      * Returns the model object.
