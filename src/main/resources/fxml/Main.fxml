@@ -38,11 +38,7 @@
                 </TitledPane>
                 <TitledPane animated="false" text="Primary Forces">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <VBox layoutX="64.0" layoutY="50.0" prefHeight="325.0" prefWidth="216.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
+                    <AnchorPane fx:id="forcesPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                   </content>
                 </TitledPane>
                   <TitledPane animated="false" layoutX="10.0" layoutY="85.0" text="Simulation">

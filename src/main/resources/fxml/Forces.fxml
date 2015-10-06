@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<ScrollPane prefHeight="539.0" prefWidth="263.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.emxsys.wildfirefx.presentation.forces.ForcesController">
+   <content>
+      <VBox>
+         <children>
+            <TitledPane collapsible="false" prefHeight="200.0" prefWidth="200.0" text="Solar">
+               <content>
+                  <AnchorPane fx:id="solarPane" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </TitledPane>
+            <TitledPane collapsible="false" prefHeight="181.0" prefWidth="233.0" text="Wind">
+               <content>
+                  <AnchorPane fx:id="windPane" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </TitledPane>
+            <TitledPane animated="false" text="Terrain">
+              <content>
+                <AnchorPane fx:id="terrainPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </TitledPane>
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>

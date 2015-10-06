@@ -31,6 +31,8 @@ package com.emxsys.wildfirefx.presentation;
 
 import com.emxsys.wildfirefx.presentation.Controller;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Node;
+import javafx.scene.layout.AnchorPane;
 
 /**
  *
@@ -55,6 +57,7 @@ public class FxmlController<M, V> implements Controller<M, V> {
 
     /**
      * Sets the model managed and/or observed by this controller.
+     *
      * @param model The model object.
      */
     protected void setModel(M model) {
@@ -82,15 +85,23 @@ public class FxmlController<M, V> implements Controller<M, V> {
             throw new IllegalStateException("View has already be set.");
         }
         this.view = view;
-        
+
         // Provide an opportunity to initialize view dependent objects.
         postInitialize();
     }
 
     /**
-     * Post-initialization routines that require an initialized view object. 
+     * Post-initialization routines that require an initialized view object.
      * Called after the view has been loaded.
      */
     protected void postInitialize() {
+    }
+
+    public static Node fitToParent(Node child) {
+        AnchorPane.setTopAnchor(child, 0.0);
+        AnchorPane.setBottomAnchor(child, 0.0);
+        AnchorPane.setLeftAnchor(child, 0.0);
+        AnchorPane.setRightAnchor(child, 0.0);
+        return child;
     }
 }

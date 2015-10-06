@@ -33,6 +33,7 @@ import com.emxsys.wildfirefx.WildfireFxApp;
 import com.emxsys.wildfirefx.model.FuelModel;
 import com.emxsys.wildfirefx.model.Model;
 import com.emxsys.wildfirefx.presentation.FxmlController;
+import com.emxsys.wildfirefx.presentation.forces.ForcesView;
 import com.emxsys.wildfirefx.presentation.haulchart.HaulChartView;
 import com.emxsys.wildfirefx.presentation.simulation.SimView;
 import com.emxsys.wildfirefx.presentation.simulation.SimController;
@@ -62,6 +63,9 @@ public class MainController extends FxmlController<Model, MainView> implements I
 
     @FXML
     private HBox centerLayout;
+
+    @FXML
+    private AnchorPane forcesPane;
 
     @FXML
     private AnchorPane haulChartPane;
@@ -126,16 +130,32 @@ public class MainController extends FxmlController<Model, MainView> implements I
         System.out.println("Initializing " + getClass().getSimpleName());
 
         // Preconditions
-        assert centerLayout != null : "fx:id=\"centerLayout\" was not injected: check your FXML file 'Scene.fxml'.";
-        assert haulChartPane != null : "fx:id=\"haulChartPane\" was not injected: check your FXML file 'Scene.fxml'.";
-        assert centerPane != null : "fx:id=\"centerPane\" was not injected: check your FXML file 'Scene.fxml'.";
+        assert forcesPane != null : "fx:id=\"forcesPane\" was not injected: check your FXML file 'Main.fxml'.";
+        assert centerLayout != null : "fx:id=\"centerLayout\" was not injected: check your FXML file 'Main.fxml'.";
+        assert fuelModelGroup != null : "fx:id=\"fuelModelGroup\" was not injected: check your FXML file 'Main.fxml'.";
+        assert labelExpireTime != null : "fx:id=\"labelExpireTime\" was not injected: check your FXML file 'Main.fxml'.";
+        assert labelXVelocity != null : "fx:id=\"labelXVelocity\" was not injected: check your FXML file 'Main.fxml'.";
+        assert labelParticleSize != null : "fx:id=\"labelParticleSize\" was not injected: check your FXML file 'Main.fxml'.";
+        assert haulChartPane != null : "fx:id=\"haulChartPane\" was not injected: check your FXML file 'Main.fxml'.";
+        assert sliderNumParticles != null : "fx:id=\"sliderNumParticles\" was not injected: check your FXML file 'Main.fxml'.";
+        assert labelYVelocity != null : "fx:id=\"labelYVelocity\" was not injected: check your FXML file 'Main.fxml'.";
+        assert choiceFuelModel != null : "fx:id=\"choiceFuelModel\" was not injected: check your FXML file 'Main.fxml'.";
+        assert sliderExpireTime != null : "fx:id=\"sliderExpireTime\" was not injected: check your FXML file 'Main.fxml'.";
+        assert sliderParticleSize != null : "fx:id=\"sliderParticleSize\" was not injected: check your FXML file 'Main.fxml'.";
+        assert labelNumParticles != null : "fx:id=\"labelNumParticles\" was not injected: check your FXML file 'Main.fxml'.";
+        assert radioStandard != null : "fx:id=\"radioStandard\" was not injected: check your FXML file 'Main.fxml'.";
+        assert radioOriginal != null : "fx:id=\"radioOriginal\" was not injected: check your FXML file 'Main.fxml'.";
+        assert sliderYVelocity != null : "fx:id=\"sliderYVelocity\" was not injected: check your FXML file 'Main.fxml'.";
+        assert sliderXVelocity != null : "fx:id=\"sliderXVelocity\" was not injected: check your FXML file 'Main.fxml'.";
+        assert centerPane != null : "fx:id=\"centerPane\" was not injected: check your FXML file 'Main.fxml'.";
 
-        // Establish relationship with model object
+        // Establish a relationship with the application's model object
         setModel(WildfireFxApp.getModel());
 
         // Initialize child views
         SimView simView = new SimView();
         centerPane.getChildren().add(fitToParent(simView.getRoot()));
+        forcesPane.getChildren().add(fitToParent(new ForcesView().getRoot()));
         haulChartPane.getChildren().add(fitToParent(new HaulChartView().getRoot()));
 
         // Setup the Fuel controls
@@ -205,12 +225,4 @@ public class MainController extends FxmlController<Model, MainView> implements I
         prefs.putDouble(Y_VELOCITY, sliderYVelocity.getValue());
     }
 
-    private static Node fitToParent(Node child) {
-
-        AnchorPane.setTopAnchor(child, 0.0);
-        AnchorPane.setBottomAnchor(child, 0.0);
-        AnchorPane.setLeftAnchor(child, 0.0);
-        AnchorPane.setRightAnchor(child, 0.0);
-        return child;
-    }
 }
