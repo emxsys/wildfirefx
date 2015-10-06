@@ -32,17 +32,32 @@ package com.emxsys.wildfirefx.presentation;
 import com.emxsys.wildfirefx.presentation.Controller;
 import javafx.beans.property.SimpleObjectProperty;
 
-public class BasicController<M, V> implements Controller<M, V> {
+/**
+ *
+ * @author Bruce Schubert
+ * @param <M> The model type.
+ * @param <V> The view type.
+ */
+public class FxmlController<M, V> implements Controller<M, V> {
 
-    private SimpleObjectProperty<M> model = new SimpleObjectProperty<> ();
+    private SimpleObjectProperty<M> model = new SimpleObjectProperty<>();
     private V view;
 
+    /**
+     * Gets the model object.
+     *
+     * @return The model object. May be null.
+     */
     @Override
     public M getModel() {
         return this.model.get();
     }
-    
-    public final void setModel(M model) {
+
+    /**
+     * Sets the model managed and/or observed by this controller.
+     * @param model The model object.
+     */
+    protected void setModel(M model) {
         if (model == null) {
             throw new NullPointerException("model cannot be null.");
         }
@@ -54,8 +69,10 @@ public class BasicController<M, V> implements Controller<M, V> {
     }
 
     /**
-     * 
-     * @param view 
+     * Establishes the view that will be managed by this controller. Called by
+     * FxmlView after the FMXL has been loaded.
+     *
+     * @param view The view object to be controlled.
      */
     public final void setView(V view) {
         if (view == null) {
@@ -65,13 +82,15 @@ public class BasicController<M, V> implements Controller<M, V> {
             throw new IllegalStateException("View has already be set.");
         }
         this.view = view;
+        
+        // Provide an opportunity to initialize view dependent objects.
         postInitialize();
     }
-    
+
     /**
-     * Called after the view has been set.
+     * Post-initialization routines that require an initialized view object. 
+     * Called after the view has been loaded.
      */
     protected void postInitialize() {
-        
     }
 }

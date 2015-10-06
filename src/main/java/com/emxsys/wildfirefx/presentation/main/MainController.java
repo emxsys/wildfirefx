@@ -30,8 +30,9 @@
 package com.emxsys.wildfirefx.presentation.main;
 
 import com.emxsys.wildfirefx.WildfireFxApp;
-import com.emxsys.wildfirefx.model.FireBehavior;
-import com.emxsys.wildfirefx.presentation.BasicController;
+import com.emxsys.wildfirefx.model.FuelModel;
+import com.emxsys.wildfirefx.model.Model;
+import com.emxsys.wildfirefx.presentation.FxmlController;
 import com.emxsys.wildfirefx.presentation.haulchart.HaulChartView;
 import com.emxsys.wildfirefx.presentation.simulation.SimView;
 import com.emxsys.wildfirefx.presentation.simulation.SimController;
@@ -41,8 +42,11 @@ import java.util.prefs.Preferences;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
@@ -51,7 +55,7 @@ import javafx.scene.layout.HBox;
  *
  * @author Bruce Schubert
  */
-public class MainController extends BasicController<FireBehavior, MainView> implements Initializable {
+public class MainController extends FxmlController<Model, MainView> implements Initializable {
 
     @FXML
     private AnchorPane centerPane;
@@ -61,6 +65,18 @@ public class MainController extends BasicController<FireBehavior, MainView> impl
 
     @FXML
     private AnchorPane haulChartPane;
+
+    @FXML
+    private ToggleGroup fuelModelGroup;
+
+    @FXML
+    private RadioButton radioStandard;
+
+    @FXML
+    private RadioButton radioOriginal;
+
+    @FXML
+    private ChoiceBox choiceFuelModel;
 
     @FXML
     private Slider sliderNumParticles;
@@ -100,39 +116,51 @@ public class MainController extends BasicController<FireBehavior, MainView> impl
 
     /**
      * Initializes the child views.
-     * 
+     *
      * @param location Not used.
      * @param resources Not used.
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("Initializing MainPresenter");
+
+        System.out.println("Initializing " + getClass().getSimpleName());
+
+        // Preconditions
         assert centerLayout != null : "fx:id=\"centerLayout\" was not injected: check your FXML file 'Scene.fxml'.";
         assert haulChartPane != null : "fx:id=\"haulChartPane\" was not injected: check your FXML file 'Scene.fxml'.";
         assert centerPane != null : "fx:id=\"centerPane\" was not injected: check your FXML file 'Scene.fxml'.";
 
-        // Populate panes with model views.
-        SimView simView = new SimView();
-        SimController simController = simView.getController();
+        // Establish relationship with model object
+        setModel(WildfireFxApp.getModel());
 
+        // Initialize child views
+        SimView simView = new SimView();
         centerPane.getChildren().add(fitToParent(simView.getRoot()));
         haulChartPane.getChildren().add(fitToParent(new HaulChartView().getRoot()));
 
+        // Setup the Fuel controls
+        choiceFuelModel.getItems().addAll(getModel().getOriginalFuelModels());
+        choiceFuelModel.getSelectionModel().selectFirst();
+        choiceFuelModel.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> {
+                    System.out.println(newValue + " chosen in ChoiceBox");
+                    getModel().setFuelModel((FuelModel) newValue);
+                });
+        
+        // Wire up the Simulation controls
+        SimController simController = simView.getController();
         sliderNumParticles.valueProperty().addListener((observable, oldValue, newValue) -> {
             simController.getEmitter().numParticlesProperty().set(newValue.intValue());
             labelNumParticles.setText("Num Particles: " + newValue.intValue());
         });
-
         sliderParticleSize.valueProperty().addListener((observable, oldValue, newValue) -> {
             simController.getEmitter().particleSizeProperty().set(newValue.intValue());
             labelParticleSize.setText("Particle Size: " + newValue.intValue());
         });
-
         sliderExpireTime.valueProperty().addListener((observable, oldValue, newValue) -> {
             simController.getEmitter().expireTimeProperty().set(newValue.intValue() / 10.0);
             labelExpireTime.setText("ExpireTime: " + newValue.intValue() / 10.);
         });
-
         sliderXVelocity.valueProperty().addListener((observable, oldValue, newValue) -> {
             simController.getEmitter().xVelocityProperty().set(newValue.intValue() / 10.0);
             labelXVelocity.setText("X Velocity: " + newValue.intValue() / 10.);
@@ -142,16 +170,17 @@ public class MainController extends BasicController<FireBehavior, MainView> impl
             labelYVelocity.setText("Y Velocity: " + newValue.intValue() / 10.);
         });
 
+        // Set the initial values of the controls
         loadPreferences();
     }
 
     /**
-     * Initializes the resources dependent on the view creation. 
+     * Initializes the resources dependent on the view creation.
      */
     @Override
     protected void postInitialize() {
-        
-        WildfireFxApp.getPrimaryStage().setOnCloseRequest(event -> {
+        // Save the current values found in the controls
+        WildfireFxApp.getPrimaryStage().setOnCloseRequest((event) -> {
             savePreferences();
         });
     }
@@ -177,6 +206,7 @@ public class MainController extends BasicController<FireBehavior, MainView> impl
     }
 
     private static Node fitToParent(Node child) {
+
         AnchorPane.setTopAnchor(child, 0.0);
         AnchorPane.setBottomAnchor(child, 0.0);
         AnchorPane.setLeftAnchor(child, 0.0);

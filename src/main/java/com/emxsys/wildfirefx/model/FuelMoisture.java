@@ -12,7 +12,7 @@
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
  *
- *     - Neither the name of Bruce Schubert, Emxsys nor the names of its 
+ *     - Neither the name of Bruce Schubert,  nor the names of its 
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -27,33 +27,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wildfirefx.presentation.haulchart;
+package com.emxsys.wildfirefx.model;
 
-import com.emxsys.wildfirefx.chart.LogScatterChart;
-import com.emxsys.wildfirefx.model.FireBehavior;
-import com.emxsys.wildfirefx.presentation.FxmlController;
-import java.net.URL;
-import java.util.ResourceBundle;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.chart.ScatterChart;
+import javax.json.JsonObject;
 
 /**
- * FXML Controller class
  *
  * @author Bruce Schubert
  */
-public class HaulChartController extends FxmlController<FireBehavior, HaulChartView> implements Initializable {
+public class FuelMoisture {
 
-    @FXML
-    ScatterChart chart;
+    private final JsonObject jsonFuelMoisture;
 
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+    public FuelMoisture(JsonObject jsonFuelMoisture) {
+        this.jsonFuelMoisture = jsonFuelMoisture;
     }
 
 }

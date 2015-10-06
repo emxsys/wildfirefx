@@ -34,18 +34,30 @@ import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
-
-public class BasicView<Ctlr extends BasicController> {
+/**
+ * 
+ * @author Bruce Schubert
+ * @param <Ctlr> The controller type.
+ */
+public class FxmlView<Ctlr extends FxmlController> {
 
     private final Ctlr controller;
     private final Node root;
 
-    
-    public BasicView(String fxmlPath) {
-        this(BasicView.class.getResource(fxmlPath));
+
+    /**
+     * Constructs an FxmlView and FxmlController pair from an FXML file.
+     * @param fxmlPath The FXML resource.
+     */
+    public FxmlView(String fxmlPath) {
+        this(FxmlView.class.getResource(fxmlPath));
     }
 
-    public BasicView(URL fxmlUrl) {
+    /**
+     * Constructs an FxmlView and FxmlController pair from an FXML file.
+     * @param fxmlUrl The FXML resource.
+     */
+    public FxmlView(URL fxmlUrl) {
         if (fxmlUrl == null) {            
             throw new IllegalArgumentException(getClass().getSimpleName() + ": url cannot be null");
         }
@@ -65,10 +77,16 @@ public class BasicView<Ctlr extends BasicController> {
         this.controller.setView(this);
     }
 
+    /**
+     * @return The controller defined in the FXML.
+     */
     public Ctlr getController() {
         return this.controller;
     }
 
+    /**
+     * @return The root node defined in the FXML.
+     */
     public Node getRoot() {
         return this.root;
     }

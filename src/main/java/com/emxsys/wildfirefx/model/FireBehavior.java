@@ -27,14 +27,58 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.emxsys.wildfirefx.model;
+
+import javax.json.JsonObject;
 
 /**
  *
  * @author Bruce Schubert
- * @version $Id$
  */
 public class FireBehavior {
 
+    private final JsonObject jsonObject;
+
+    /**
+     * Constructs a FuelBehavior object from a JSON representation obtained from
+     * the WMT-REST server.
+     *
+     * @param jsonObject JSON fire behavior.
+     */
+    public FireBehavior(JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
+
+    }
+
+    /**
+     * Gets the flame length.
+     * @return [flame_length:ft]
+     */
+    public double getFlameLength() {
+        return Double.parseDouble(jsonObject.getJsonObject("flameLength").getString("value"));
+    }
+
+    /**
+     * Gets Byram's intensity.
+     * @return [fire_line_intensity:Btu/ft/s]
+     */
+    public double getFirelineIntensity() {
+        return Double.parseDouble(jsonObject.getJsonObject("firelineIntensity").getString("value"));
+    }
+
+    /**
+     * Gets the rate of spread.
+     * @return [rate_of_spread:ft/min]
+     */
+    public double getRateOfSpreadMax() {
+        return Double.parseDouble(jsonObject.getJsonObject("rateOfSpreadMax").getString("value"));
+    }
+
+    /**
+     * Gets the conditioned fuel bed.
+     * @return The fuel bed including the FuelModel and FuelMoisture.
+     */
+    public FuelBed getFuelBed() {
+        return new FuelBed(jsonObject.getJsonObject("fuelBed"));
+    }
 }

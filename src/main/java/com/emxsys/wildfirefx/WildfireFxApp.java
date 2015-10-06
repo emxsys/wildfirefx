@@ -29,20 +29,30 @@
  */
 package com.emxsys.wildfirefx;
 
+import com.emxsys.wildfirefx.model.Model;
 import com.emxsys.wildfirefx.presentation.main.MainView;
-import com.emxsys.wildfirefx.service.WmtRestService;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
 
+/**
+ * The WildfireFxApp JavaFX application.
+ * @author Bruce Schubert
+ */
 public class WildfireFxApp extends Application {
 
     private static Stage primaryStage = null;
+    private static Model model = null;
+
+    @Override
+    public void init() throws Exception {
+        System.out.println("Initializing application...");
+        model = new Model();
+        System.out.println("Initializing application complete.");
+    }
+    
     
     @Override
     public void start(Stage stage) throws Exception {
@@ -51,18 +61,23 @@ public class WildfireFxApp extends Application {
         
         Scene scene = new Scene((Parent) new MainView().getRoot());
         scene.getStylesheets().add("/styles/Styles.css");
-
         stage.setTitle("WildfireFX");
         stage.setScene(scene);
+        
+        System.out.println("Showing application...");
         stage.show();
     }
 
     @Override
     public void stop() throws Exception {
-        System.out.println("TODO: Save preferences");
-        super.stop(); 
+        System.out.println("Stopping application...");
     }
 
+    public static Model getModel() {
+        return model;
+    }
+
+    
     public static Stage getPrimaryStage() {
         return primaryStage;
     }

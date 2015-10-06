@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<SplitPane dividerPositions="0.24556616643929058, 0.8076398362892224" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="403.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.emxsys.wildfirefx.presentation.main.MainController">
+<SplitPane dividerPositions="0.24556616643929058, 0.757162346521146" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="403.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.emxsys.wildfirefx.presentation.main.MainController">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="157.0">
          <children>
@@ -15,7 +15,20 @@
               <panes>
                 <TitledPane animated="false" text="Fuel">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <VBox layoutX="38.0" layoutY="22.0" prefHeight="300.0" prefWidth="175.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <RadioButton fx:id="radioOriginal" mnemonicParsing="false" selected="true" text="Original">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="fuelModelGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="radioStandard" mnemonicParsing="false" text="Standard" toggleGroup="$fuelModelGroup" />
+                                    <ChoiceBox fx:id="choiceFuelModel" prefWidth="150.0" />
+                                 </children>
+                              </VBox>
+                           </children></AnchorPane>
                   </content>
                 </TitledPane>
                 <TitledPane animated="false" text="Environment">
@@ -32,16 +45,7 @@
                         </AnchorPane>
                   </content>
                 </TitledPane>
-                  <TitledPane animated="false" layoutX="10.0" layoutY="60.0" text="Particles">
-                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <VBox layoutX="64.0" layoutY="50.0" prefHeight="325.0" prefWidth="216.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                     </content>
-                  </TitledPane>
-                  <TitledPane animated="false" layoutX="10.0" layoutY="85.0" text="Emitter">
+                  <TitledPane animated="false" layoutX="10.0" layoutY="85.0" text="Simulation">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
@@ -53,7 +57,7 @@
                                     <Slider fx:id="sliderParticleSize" blockIncrement="1.0" layoutX="10.0" layoutY="27.0" min="1.0" showTickMarks="true" value="10.0" />
                                     <Region prefHeight="14.0" prefWidth="156.0" />
                                     <Label fx:id="labelExpireTime" layoutX="10.0" layoutY="51.0" text="Expire Time:" />
-                                    <Slider fx:id="sliderExpireTime" blockIncrement="1.0" layoutX="10.0" layoutY="68.0" min="1.0" minorTickCount="4" showTickMarks="true" value="10.0" />
+                                    <Slider fx:id="sliderExpireTime" blockIncrement="1.0" layoutX="10.0" layoutY="68.0" majorTickUnit="1.0" max="20.0" minorTickCount="0" showTickMarks="true" value="1.0" />
                                     <Region prefHeight="14.0" prefWidth="156.0" />
                                     <Label fx:id="labelXVelocity" text="X Velocity" />
                                     <Slider fx:id="sliderXVelocity" blockIncrement="1.0" min="1.0" minorTickCount="4" showTickMarks="true" value="10.0" />

@@ -1,12 +1,10 @@
 package com.emxsys.wildfirefx.particles;
 
 import javafx.animation.Interpolator;
-import static javafx.animation.Interpolator.LINEAR;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 /**
  * A particle in our particle system.
@@ -68,10 +66,13 @@ public class Particle {
      * determines the color.
      */
     public void update(double frameRate) {
-//        double decay = 1.0 / 120.0;    // decay in secs per frame
-//        double scale = 1;                  // 1x == 60 hz
         double decay = 1 / (expireTime * frameRate);    // decay in secs per frame
         double scale = 60 / frameRate;                  // 1x == 60 hz
+        
+        // BDS: testing wind profile\
+        //double mag = velocity.magnitude();
+        //velocity = velocity.add(0.2 + (velocity.getY()*-0.01) , 0);
+        
         x += velocity.getX() * scale;
         y += velocity.getY() * scale;
         life -= decay;

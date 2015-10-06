@@ -29,10 +29,12 @@
  */
 package com.emxsys.wildfirefx.presentation.simulation;
 
+import com.emxsys.wildfirefx.WildfireFxApp;
 import com.emxsys.wildfirefx.particles.FireEmitter;
 import com.emxsys.wildfirefx.model.FireBehavior;
+import com.emxsys.wildfirefx.model.Model;
 import com.emxsys.wildfirefx.particles.Particle;
-import com.emxsys.wildfirefx.presentation.BasicController;
+import com.emxsys.wildfirefx.presentation.FxmlController;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,14 +51,14 @@ import javafx.scene.paint.Color;
 
 /**
  * SimController is an off-canvas particle system for rendering flames based on
- "JavaFX Game Development: Particle System" by Almas Baimagambetov.
+ * "JavaFX Game Development: Particle System" by Almas Baimagambetov.
  *
  * @see <a href="https://youtu.be/vLcJRm6Y72U">JavaFX Game Development: Particle
  * System</a>
  *
  * @author Bruce Schubert
  */
-public class SimController extends BasicController<FireBehavior, SimView> implements
+public class SimController extends FxmlController<Model, SimView> implements
         Initializable {
 
     /** The particle emitter/generator */
@@ -75,15 +77,23 @@ public class SimController extends BasicController<FireBehavior, SimView> implem
     @FXML
     private Label countLabel;
     @FXML
+    private Label flameLengthLabel;
+    @FXML
     private Canvas canvas;
-
-    private GraphicsContext g;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("Initializing Simulation");
+        System.out.println("Initializing Simulation...");
 
-        this.g = canvas.getGraphicsContext2D();
+        // Establish relationship with model object
+        setModel(WildfireFxApp.getModel());
+
+        // 
+        getModel().fireBehaviorProperty().addListener((observable, oldValue, newValue) -> {
+            FireBehavior fire = (FireBehavior) newValue;
+            flameLengthLabel.setText(String.format("Flame Length: %.1f'", fire.getFlameLength()));
+            emitter.fireBehaviorProperty().set(fire);
+        });
 
         // Create the timer that render the particles on each frame.
         this.timer = new AnimationTimer() {
@@ -99,6 +109,7 @@ public class SimController extends BasicController<FireBehavior, SimView> implem
 
     /**
      * Computes and returns the current frame rate.
+     *
      * @param now Parameter from AnimationTimer handle
      * @return Computed frames per second.
      */
@@ -117,11 +128,12 @@ public class SimController extends BasicController<FireBehavior, SimView> implem
 
     /**
      * Updates the particle system on each timer frame.
+     *
      * @param frameRate The current frames per second.
      */
     private void updateSimulation(double frameRate) {
 
-        //g = canvas.getGraphicsContext2D();
+        GraphicsContext g = canvas.getGraphicsContext2D();
         double w = canvas.getWidth();
         double h = canvas.getHeight();
         double x = w / 2;
@@ -153,7 +165,7 @@ public class SimController extends BasicController<FireBehavior, SimView> implem
         }
         fpsLabel.setText(String.format("Current frame rate: %.3f", frameRate));
         countLabel.setText(String.format("Particle count: %d", particles.size()));
-        
+
     }
 
     public FireEmitter getEmitter() {

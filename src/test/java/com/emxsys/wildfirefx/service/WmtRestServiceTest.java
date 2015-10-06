@@ -31,11 +31,8 @@ package com.emxsys.wildfirefx.service;
 
 import com.emxsys.wildfirefx.service.WmtRestService.Conditions;
 import com.emxsys.wildfirefx.service.WmtRestService.FuelModelCategory;
-import java.util.Map;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.json.JsonValue;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
@@ -57,10 +54,10 @@ public class WmtRestServiceTest {
         System.out.println("getFuelModels(ALL)");
         JsonArray result = WmtRestService.getFuelModels(FuelModelCategory.ALL);
         assertTrue(result.size() > 0);
-        for (JsonValue value : result) {
-            JsonObject fuelModel = (JsonObject) value;
+        
+        result.stream().map((value) -> (JsonObject) value).forEach((fuelModel) -> {
             System.out.println("\t" + fuelModel.getString("modelNo") + " : " + fuelModel.getString("modelName"));
-        }
+        });
     }
 
     @Test
@@ -69,15 +66,17 @@ public class WmtRestServiceTest {
         String fuelModelNo = "4";
         JsonObject result = WmtRestService.getFuelModel(fuelModelNo);
         assertEquals(fuelModelNo, result.getString("modelNo"));
-        for (Map.Entry<String, JsonValue> entry : result.entrySet()) {
+
+        result.entrySet().stream().forEach((entry) -> {
             System.out.println("\t" + entry.getKey() + " : " + entry.getValue().toString());
-        }
+        });
     }
 
     @Test
     public void testGetFuelMoisture() {
         System.out.println("getFuelMoisture(HOT_AND_DRY)");
         JsonObject result = WmtRestService.getFuelMoisture(Conditions.HOT_AND_DRY);
+        
         result.entrySet().stream().forEach((entry) -> {
             System.out.println("\t" + entry.getKey() + " : " + entry.getValue().toString());
         });
@@ -90,9 +89,9 @@ public class WmtRestServiceTest {
         JsonObject moisture = WmtRestService.getFuelMoisture(Conditions.HOT_AND_DRY);
         JsonObject fuel = WmtRestService.getSurfaceFuel(model, moisture);
 
-        for (Map.Entry<String, JsonValue> entry : fuel.entrySet()) {
+        fuel.entrySet().stream().forEach((entry) -> {
             System.out.println("\t" + entry.getKey() + " : " + entry.getValue().toString());
-        }
+        });
     }
     @Test
     public void testGetSurfaceFire() {
@@ -107,9 +106,9 @@ public class WmtRestServiceTest {
         System.out.println("   " + fuel.toString()+ ",");
         System.out.println("   " + weather.toString()+ ",");
         System.out.println("   " + terrain.toString() + ")");
-        for (Map.Entry<String, JsonValue> entry : fire.entrySet()) {
+        fire.entrySet().stream().forEach((entry) -> {
             System.out.println("\t" + entry.getKey() + " : " + entry.getValue().toString());
-        }
+        });
     }
 
 }

@@ -29,14 +29,14 @@
  */
 package com.emxsys.wildfirefx.presentation.haulchart;
 
-import com.emxsys.wildfirefx.presentation.BasicView;
+import com.emxsys.wildfirefx.presentation.FxmlView;
 
 
 /**
  * 
  * @author Bruce Schubert
  */
-public class HaulChartView extends BasicView<HaulChartController> {
+public class HaulChartView extends FxmlView<HaulChartController> {
 
     public HaulChartView() {
         super(HaulChartView.class.getResource("/fxml/HaulChart.fxml"));
