@@ -1,4 +1,4 @@
-package com.emxsys.wildfirefx.chart.axis;
+package com.emxsys.chartext.axis;
 
 /*
  * Copyright (c) 2015, Bruce Schubert <bruce@emxsys.com>

@@ -9,9 +9,9 @@
 
     <name>WildfireFX</name>
     <description>A wildland fire behavior demonstration application based on JavaFX. 
-The WildfireFX application lets you explore the effects of wind, slope 
-and solar preheating on wildfire behavior (these are primary forces 
-described in the Campbell Prediction System).
+        The WildfireFX application lets you explore the effects of wind, slope 
+        and solar preheating on wildfire behavior (these are primary forces 
+        described in the Campbell Prediction System).
     </description>
 
     <properties>
@@ -107,9 +107,58 @@ described in the Campbell Prediction System).
                     </additionalClasspathElements>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-install-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>2.5.1</version>
+                <executions>
+                    <execution>
+                        <id>install-jcommon-library</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/lib/jcommon-1.0.23.jar</file>
+                            <!--<sources>${project.basedir}/lib/jcommon_src.jar</sources>-->
+                            <!--<javadoc>${project.basedir}/lib/jcommon_doc.jar</javadoc>-->
+                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <groupId>org.jfree</groupId>
+                            <artifactId>jcommon</artifactId>
+                            <version>1.0.23</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-jfreechart-library</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/lib/jfreechart-1.0.19.jar</file>
+                            <!--<sources>${project.basedir}/lib/jfreechart_src.jar</sources>-->
+                            <!--<javadoc>${project.basedir}/lib/jfreechart_doc.jar</javadoc>-->
+                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <groupId>org.jfree</groupId>
+                            <artifactId>jfreechart</artifactId>
+                            <version>1.0.19</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
@@ -121,15 +170,19 @@ described in the Campbell Prediction System).
             <version>1.0.4</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-multipart</artifactId>
             <version>2.21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.19</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jcommon</artifactId>
+            <version>1.0.23</version>
         </dependency>
     </dependencies>
 </project>
