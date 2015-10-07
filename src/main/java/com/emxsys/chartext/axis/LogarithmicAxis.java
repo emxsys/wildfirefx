@@ -266,6 +266,17 @@ public class LogarithmicAxis extends NumericAxis {
         return this.base;
     }
 
+    public void setBase(double base) {
+        if (base <= 1.0) {
+            throw new IllegalArgumentException("'base' must be > 1.0.");
+        }
+        this.base = base;
+        this.baseLog = Math.log(base);
+        
+        // TODO: notify chart that axis has changed
+        //fireChangeEvent();
+    }
+
     public double calculateLog(double value) {
         return Math.log(value) / this.baseLog;
     }
