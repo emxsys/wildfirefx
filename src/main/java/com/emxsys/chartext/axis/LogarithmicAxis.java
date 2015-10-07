@@ -69,22 +69,22 @@ public class LogarithmicAxis extends NumericAxis {
     private double baseLog = Math.log(base);
 
     /**
-     * Create an auto-ranging number access.
+     * Constructs an auto-ranging numeric axis.
      */
     public LogarithmicAxis() {
         super();
     }
 
     /**
-     * Create an non-auto-ranging number access.
+     * Constructs an non-auto-ranging numeric axis.
      */
     public LogarithmicAxis(double lowerBound, double upperBound) {
         this(lowerBound, upperBound, 9);
     }
 
     /**
-     * Create a non-auto-ranging NumberAxis with the given upper bound, lower
-     * bound and tick unit
+     * Constructs a non-auto-ranging numeric with the given upper bound, lower
+     * bound and tick unit.
      *
      * @param lowerBound The lower bound for this axis, ie min plottable value
      * @param upperBound The upper bound for this axis, ie max plottable value
@@ -95,8 +95,8 @@ public class LogarithmicAxis extends NumericAxis {
     }
 
     /**
-     * Create a non-auto-ranging NumberAxis with the given upper bound, lower
-     * bound and tick unit
+     * Constructs a non-auto-ranging NumberAxis with the given lablel, upper
+     * bound, lower bound and tick unit.
      *
      * @param axisLabel The name to display for this axis
      * @param lowerBound The lower bound for this axis, ie min plottable value
@@ -111,10 +111,10 @@ public class LogarithmicAxis extends NumericAxis {
     }
 
     /**
-     * Bind our logarithmic bounds with the super class bounds, consider the
-     * base 10 logarithmic scale.
+     * Binds our logarithmic bounds with the super class bounds. 
      */
     private void bindLogBoundsToDefaultBounds() {
+        // TODO: consider the base 10 logarithmic scale.
         logLowerBound.bind(new DoubleBinding() {
             {
                 super.bind(lowerBoundProperty());
@@ -145,7 +145,7 @@ public class LogarithmicAxis extends NumericAxis {
     }
 
     /**
-     * Calculate a list of all the data values for each tick mark in range
+     * Calculates a list of all the data values for each tick mark in range.
      *
      * @param length The length of the axis in display units
      * @param range A range object returned from autoRange()
@@ -183,12 +183,14 @@ public class LogarithmicAxis extends NumericAxis {
         return tickValues;
     }
 
-    // The Logic modeled after JFreeChart LogAxis class
+    // This logic is modeled after JFreeChart LogAxis class
     @Override
     protected List<Number> calculateMinorTickMarks() {
         final Object[] range = (Object[]) getRange();
         List<Number> minorTickMarksPositions = new ArrayList<>();
-
+        
+// JFree: This logic is modeled after JFreeChart LogAxis class:
+//        
 //        double lowerBound = (double) range[0];
 //        double upperBound = (double) range[1];
 //
@@ -272,7 +274,7 @@ public class LogarithmicAxis extends NumericAxis {
         }
         this.base = base;
         this.baseLog = Math.log(base);
-        
+
         // TODO: notify chart that axis has changed
         //fireChangeEvent();
     }

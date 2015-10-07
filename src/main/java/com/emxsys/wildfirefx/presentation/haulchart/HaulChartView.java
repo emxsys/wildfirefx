@@ -46,12 +46,12 @@ import javafx.scene.paint.Color;
  * @author Bruce Schubert
  */
 public class HaulChartView implements View<HaulChartController> {
-    static final int ALPHA = 200;    
-    public static final Color COLOR_LOW = new Color(128, 127, 255, ALPHA);         // blue
-    public static final Color COLOR_MODERATE = new Color(127, 193, 151, ALPHA);    // green
-    public static final Color COLOR_ACTIVE = new Color(255, 179, 130, ALPHA);      // tan
-    public static final Color COLOR_VERY_ACTIVE = new Color(255, 128, 255, ALPHA); // magenta
-    public static final Color COLOR_EXTREME = new Color(253, 128, 124, ALPHA);     // orange
+    private static final double ALPHA = 0.8;    
+    public static final Color COLOR_LOW =  Color.rgb(128, 127, 255, ALPHA);         // blue
+    public static final Color COLOR_MODERATE =  Color.rgb(127, 193, 151, ALPHA);    // green
+    public static final Color COLOR_ACTIVE =  Color.rgb(255, 179, 130, ALPHA);      // tan
+    public static final Color COLOR_VERY_ACTIVE =  Color.rgb(255, 128, 255, ALPHA); // magenta
+    public static final Color COLOR_EXTREME =  Color.rgb(253, 128, 124, ALPHA);     // orange
     // Flame Length thresholds
     public static final double FL_THRESHOLD_LOW = 1D;
     public static final double FL_THRESHOLD_MODERATE = 3D;
