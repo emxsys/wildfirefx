@@ -39,16 +39,33 @@ import javafx.scene.Node;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.paint.Color;
 
 /**
  *
  * @author Bruce Schubert
  */
 public class HaulChartView implements View<HaulChartController> {
-
+    static final int ALPHA = 200;    
+    public static final Color COLOR_LOW = new Color(128, 127, 255, ALPHA);         // blue
+    public static final Color COLOR_MODERATE = new Color(127, 193, 151, ALPHA);    // green
+    public static final Color COLOR_ACTIVE = new Color(255, 179, 130, ALPHA);      // tan
+    public static final Color COLOR_VERY_ACTIVE = new Color(255, 128, 255, ALPHA); // magenta
+    public static final Color COLOR_EXTREME = new Color(253, 128, 124, ALPHA);     // orange
+    // Flame Length thresholds
+    public static final double FL_THRESHOLD_LOW = 1D;
+    public static final double FL_THRESHOLD_MODERATE = 3D;
+    public static final double FL_THRESHOLD_ACTIVE = 7D;
+    public static final double FL_THRESHOLD_VERY_ACTIVE = 15D;
+    //
+    private String title = "Haul Chart";
+    private String subtitle = "fuel model goes here!";
+    private String xAxisTitle = "Heat per Unit Area (HPA) Btu/ft^2"; // + heatStr;
+    private String yAxisTitle = "Rate of Spread (ROS) ch/hr"; // + rosStr;
+    
     private ScatterChart chart;
-    private ValueAxis xAxis;
-    private ValueAxis yAxis;
+    private LogarithmicAxis xAxis;
+    private LogarithmicAxis yAxis;
 
     public HaulChartView() {
         createContent();
@@ -67,13 +84,8 @@ public class HaulChartView implements View<HaulChartController> {
     @SuppressWarnings("unchecked")
     private void createContent() {
         
-        xAxis = new LogarithmicAxis("X-Log Axis", 0.1d, 100.0d, 1.0d);
-        yAxis = new NumericAxis("Y-Axis", 0.0d, 10.0d, 1.0d);
-        
-//        xAxis = new com.emxsys.jfxchartext.axis.NumericAxis("X-Axis", 0d, 8.0d, 2.d);
-//        yAxis = new com.emxsys.jfxchartext.axis.NumericAxis("Y-Axis", 0.0d, 5.0d, 1.0d);
-//        xAxis = new javafx.scene.chart.NumberAxis("X-Axis", 0d, 8.0d, 2.d);
-//        yAxis = javafx.scene.chart.new NumberAxis("Y-Axis", 0.0d, 5.0d, 1.0d);
+        xAxis = new LogarithmicAxis(xAxisTitle, 0.1d, 100.0d, 1.0d);
+        yAxis = new LogarithmicAxis(yAxisTitle, 0.0d, 10.0d, 1.0d);
         
         ObservableList<XYChart.Series> data = FXCollections.observableArrayList(
                 new ScatterChart.Series("Series 1",

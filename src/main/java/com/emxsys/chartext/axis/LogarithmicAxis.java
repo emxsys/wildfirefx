@@ -40,9 +40,9 @@ import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.shape.Path;
 
-
 /**
- * A axis class that plots a logarithmic range of numbers with major tick marks every "tickUnit".
+ * A axis class that plots a logarithmic range of numbers with major tick marks
+ * every "tickUnit".
  *
  *
  * @author Bruce Schubert
@@ -68,16 +68,23 @@ public class LogarithmicAxis extends NumericAxis {
      */
     private double baseLog = Math.log(base);
 
+    /**
+     * Create an auto-ranging number access.
+     */
     public LogarithmicAxis() {
-        this(1, 100);
+        super();
     }
 
+    /**
+     * Create an non-auto-ranging number access.
+     */
     public LogarithmicAxis(double lowerBound, double upperBound) {
         this(lowerBound, upperBound, 9);
     }
 
     /**
-     * Create a non-auto-ranging NumberAxis with the given upper bound, lower bound and tick unit
+     * Create a non-auto-ranging NumberAxis with the given upper bound, lower
+     * bound and tick unit
      *
      * @param lowerBound The lower bound for this axis, ie min plottable value
      * @param upperBound The upper bound for this axis, ie max plottable value
@@ -88,7 +95,8 @@ public class LogarithmicAxis extends NumericAxis {
     }
 
     /**
-     * Create a non-auto-ranging NumberAxis with the given upper bound, lower bound and tick unit
+     * Create a non-auto-ranging NumberAxis with the given upper bound, lower
+     * bound and tick unit
      *
      * @param axisLabel The name to display for this axis
      * @param lowerBound The lower bound for this axis, ie min plottable value
@@ -103,8 +111,8 @@ public class LogarithmicAxis extends NumericAxis {
     }
 
     /**
-     * Bind our logarithmic bounds with the super class bounds, consider the base 10 logarithmic
-     * scale.
+     * Bind our logarithmic bounds with the super class bounds, consider the
+     * base 10 logarithmic scale.
      */
     private void bindLogBoundsToDefaultBounds() {
         logLowerBound.bind(new DoubleBinding() {
@@ -132,7 +140,7 @@ public class LogarithmicAxis extends NumericAxis {
     private void validateBounds(double lowerBound, double upperBound) {
         if (lowerBound >= upperBound) {
             throw new IllegalArgumentException(
-                "Invalid range: the lowerBound value (" + lowerBound + ") must be less that upperBound value (" + upperBound + ").");
+                    "Invalid range: the lowerBound value (" + lowerBound + ") must be less that upperBound value (" + upperBound + ").");
         }
     }
 
@@ -141,7 +149,8 @@ public class LogarithmicAxis extends NumericAxis {
      *
      * @param length The length of the axis in display units
      * @param range A range object returned from autoRange()
-     * @return A list of tick marks that fit along the axis if it was the given length
+     * @return A list of tick marks that fit along the axis if it was the given
+     * length
      */
     @Override
     protected List<Number> calculateTickValues(double length, Object range) {
@@ -252,7 +261,7 @@ public class LogarithmicAxis extends NumericAxis {
         }
 
     }
-    
+
     public double getBase() {
         return this.base;
     }

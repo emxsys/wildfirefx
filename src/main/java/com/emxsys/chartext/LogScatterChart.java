@@ -45,7 +45,8 @@ import javafx.scene.shape.Rectangle;
 
 
 /**
- *
+ * A logarithmic scatter chart.
+ * 
  * @author Bruce Schubert
  * @version $Id$
  * @param <X>

@@ -1,5 +1,3 @@
-package com.emxsys.chartext.axis;
-
 /*
  * Copyright (c) 2015, Bruce Schubert <bruce@emxsys.com>
  * All rights reserved.
@@ -29,25 +27,27 @@ package com.emxsys.chartext.axis;
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.emxsys.chartext.axis;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 /**
+ * A JFreeChart-based class used by the DateAxis and NumericAxis classes to
+ * obtain a suitable {@link TickUnit}.
  *
  * @author Bruce Schubert
  */
 public class TickUnitSource {
-    List<TickUnit> tickUnits = new ArrayList<>();
 
+    List<TickUnit> tickUnits = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     public void add(TickUnit tickUnit) {
         tickUnits.add(tickUnit);
         Collections.sort(tickUnits);
     }
-
 
     /**
      * Returns a tick unit that is larger than the supplied unit.
@@ -60,17 +60,15 @@ public class TickUnitSource {
         int index = Collections.binarySearch(this.tickUnits, unit, null);
         if (index >= 0) {
             index = index + 1;
-        }
-        else {
+        } else {
             index = -index;
         }
         return this.tickUnits.get(Math.min(index, this.tickUnits.size() - 1));
     }
 
-
     /**
-     * Returns the tick unit in the collection that is greater than or equal to (in size) the
-     * specified unit.
+     * Returns the tick unit in the collection that is greater than or equal to
+     * (in size) the specified unit.
      *
      * @param unit the unit.
      *
@@ -80,17 +78,16 @@ public class TickUnitSource {
         int index = Collections.binarySearch(this.tickUnits, unit, null);
         if (index >= 0) {
             return this.tickUnits.get(index);
-        }
-        else {
+        } else {
             index = -(index + 1);
             return this.tickUnits.get(Math.min(index, this.tickUnits.size() - 1));
         }
 
     }
 
-
     /**
-     * Returns the tick unit in the collection that is greater than or equal to the specified size.
+     * Returns the tick unit in the collection that is greater than or equal to
+     * the specified size.
      *
      * @param size the size.
      *
