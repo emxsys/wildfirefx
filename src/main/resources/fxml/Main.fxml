@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<SplitPane dividerPositions="0.24556616643929058, 0.757162346521146" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="403.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.emxsys.wildfirefx.presentation.main.MainController">
+<SplitPane dividerPositions="0.24556616643929058, 0.548431105047749" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="403.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.emxsys.wildfirefx.presentation.main.MainController">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="157.0">
          <children>
@@ -74,8 +74,8 @@
          </children></AnchorPane>
       <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
         <items>
-          <AnchorPane fx:id="haulChartPane" minHeight="0.0" minWidth="0.0" prefHeight="189.0" prefWidth="231.0" />
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="205.0" prefWidth="163.0" />
+          <AnchorPane fx:id="chartPane" minHeight="0.0" minWidth="0.0" prefHeight="189.0" prefWidth="231.0" />
+          <AnchorPane fx:id="jfreeChartPane" minHeight="0.0" minWidth="0.0" prefHeight="205.0" prefWidth="163.0" />
         </items>
       </SplitPane>
   </items>

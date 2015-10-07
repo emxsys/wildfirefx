@@ -68,7 +68,10 @@ public class MainController extends FXMLController<Model, MainView> implements I
     private AnchorPane forcesPane;
 
     @FXML
-    private AnchorPane haulChartPane;
+    private AnchorPane chartPane;
+    
+    @FXML
+    private AnchorPane jfreeChartPane;
 
     @FXML
     private ToggleGroup fuelModelGroup;
@@ -125,6 +128,7 @@ public class MainController extends FXMLController<Model, MainView> implements I
      * @param resources Not used.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
 
         System.out.println("Initializing " + getClass().getSimpleName());
@@ -136,7 +140,8 @@ public class MainController extends FXMLController<Model, MainView> implements I
         assert labelExpireTime != null : "fx:id=\"labelExpireTime\" was not injected: check your FXML file 'Main.fxml'.";
         assert labelXVelocity != null : "fx:id=\"labelXVelocity\" was not injected: check your FXML file 'Main.fxml'.";
         assert labelParticleSize != null : "fx:id=\"labelParticleSize\" was not injected: check your FXML file 'Main.fxml'.";
-        assert haulChartPane != null : "fx:id=\"haulChartPane\" was not injected: check your FXML file 'Main.fxml'.";
+        assert chartPane != null : "fx:id=\"chartPane\" was not injected: check your FXML file 'Main.fxml'.";
+        assert jfreeChartPane != null : "fx:id=\"jfreeChartPane\" was not injected: check your FXML file 'Main.fxml'.";
         assert sliderNumParticles != null : "fx:id=\"sliderNumParticles\" was not injected: check your FXML file 'Main.fxml'.";
         assert labelYVelocity != null : "fx:id=\"labelYVelocity\" was not injected: check your FXML file 'Main.fxml'.";
         assert choiceFuelModel != null : "fx:id=\"choiceFuelModel\" was not injected: check your FXML file 'Main.fxml'.";
@@ -156,7 +161,7 @@ public class MainController extends FXMLController<Model, MainView> implements I
         SimView simView = new SimView();
         centerPane.getChildren().add(fitToParent(simView.getRoot()));
         forcesPane.getChildren().add(fitToParent(new ForcesView().getRoot()));
-        haulChartPane.getChildren().add(fitToParent(new HaulChartView().getRoot()));
+        chartPane.getChildren().add(fitToParent(new HaulChartView().getRoot()));
 
         // Setup the Fuel controls
         choiceFuelModel.getItems().addAll(getModel().getOriginalFuelModels());
