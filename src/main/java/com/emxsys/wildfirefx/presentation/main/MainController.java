@@ -32,7 +32,7 @@ package com.emxsys.wildfirefx.presentation.main;
 import com.emxsys.wildfirefx.WildfireFxApp;
 import com.emxsys.wildfirefx.model.FuelModel;
 import com.emxsys.wildfirefx.model.Model;
-import com.emxsys.wildfirefx.presentation.FxmlController;
+import com.emxsys.wildfirefx.presentation.FXMLController;
 import com.emxsys.wildfirefx.presentation.forces.ForcesView;
 import com.emxsys.wildfirefx.presentation.haulchart.HaulChartView;
 import com.emxsys.wildfirefx.presentation.simulation.SimView;
@@ -56,7 +56,7 @@ import javafx.scene.layout.HBox;
  *
  * @author Bruce Schubert
  */
-public class MainController extends FxmlController<Model, MainView> implements Initializable {
+public class MainController extends FXMLController<Model, MainView> implements Initializable {
 
     @FXML
     private AnchorPane centerPane;

@@ -29,31 +29,26 @@
  */
 package com.emxsys.wildfirefx.presentation.haulchart;
 
-import com.emxsys.chartext.LogScatterChart;
-import com.emxsys.wildfirefx.model.FireBehavior;
-import com.emxsys.wildfirefx.presentation.FxmlController;
-import java.net.URL;
-import java.util.ResourceBundle;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.chart.ScatterChart;
+import com.emxsys.wildfirefx.WildfireFxApp;
+import com.emxsys.wildfirefx.model.Model;
+import com.emxsys.wildfirefx.presentation.Controller;
 
 /**
- * FXML Controller class
+ * Controller class
  *
  * @author Bruce Schubert
  */
-public class HaulChartController extends FxmlController<FireBehavior, HaulChartView> implements Initializable {
+public class HaulChartController implements Controller<Model, HaulChartView> {
 
-    @FXML
-    ScatterChart chart;
+    HaulChartView view;
 
-    /**
-     * Initializes the controller class.
-     */
+    public HaulChartController(HaulChartView view) {
+        this.view = view;
+    }
+
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+    public Model getModel() {
+        return WildfireFxApp.getModel();
     }
 
 }

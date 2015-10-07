@@ -40,7 +40,7 @@ import javafx.scene.layout.AnchorPane;
  * @param <M> The model type.
  * @param <V> The view type.
  */
-public class FxmlController<M, V> implements Controller<M, V> {
+public class FXMLController<M, V> implements Controller<M, V> {
 
     private SimpleObjectProperty<M> model = new SimpleObjectProperty<>();
     private V view;

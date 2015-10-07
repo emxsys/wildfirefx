@@ -58,6 +58,7 @@ public class FireBehavior {
         return Double.parseDouble(jsonObject.getJsonObject("flameLength").getString("value"));
     }
 
+
     /**
      * Gets Byram's intensity.
      * @return [fire_line_intensity:Btu/ft/s]

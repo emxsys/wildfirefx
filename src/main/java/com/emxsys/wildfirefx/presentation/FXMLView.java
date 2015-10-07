@@ -37,27 +37,28 @@ import javafx.scene.Node;
 /**
  * 
  * @author Bruce Schubert
- * @param <Ctlr> The controller type.
+ * @param <C> The controller type.
  */
-public class FxmlView<Ctlr extends FxmlController> {
+public class FXMLView<C extends FXMLController> implements View<C> {
 
-    private final Ctlr controller;
+    private final C controller;
     private final Node root;
 
 
     /**
-     * Constructs an FxmlView and FxmlController pair from an FXML file.
+     * Constructs an FxmlView and FXMLController pair from an FXML file.
      * @param fxmlPath The FXML resource.
      */
-    public FxmlView(String fxmlPath) {
-        this(FxmlView.class.getResource(fxmlPath));
+    public FXMLView(String fxmlPath) {
+        this(FXMLView.class.getResource(fxmlPath));
     }
 
     /**
-     * Constructs an FxmlView and FxmlController pair from an FXML file.
+     * Constructs an FxmlView and FXMLController pair from an FXML file.
      * @param fxmlUrl The FXML resource.
      */
-    public FxmlView(URL fxmlUrl) {
+    @SuppressWarnings("LeakingThisInConstructor")
+    public FXMLView(URL fxmlUrl) {
         if (fxmlUrl == null) {            
             throw new IllegalArgumentException(getClass().getSimpleName() + ": url cannot be null");
         }
@@ -80,13 +81,15 @@ public class FxmlView<Ctlr extends FxmlController> {
     /**
      * @return The controller defined in the FXML.
      */
-    public Ctlr getController() {
+    @Override
+    public C getController() {
         return this.controller;
     }
 
     /**
      * @return The root node defined in the FXML.
      */
+    @Override
     public Node getRoot() {
         return this.root;
     }

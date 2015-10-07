@@ -27,20 +27,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wildfirefx.presentation.forces;
+package com.emxsys.wildfirefx.presentation;
 
-import com.emxsys.wildfirefx.presentation.FXMLView;
+import javafx.scene.Node;
 
 /**
  *
  * @author Bruce Schubert
+ * @param <C>
  */
-public class ForcesView extends FXMLView<ForcesController> {
+public interface View<C> {
 
-    private static final String FXML = "/fxml/Forces.fxml";
+    /**
+     * @return The controller for this view.
+     */
+    C getController();
 
-    public ForcesView() {
-        super(ForcesView.class.getResource(FXML));
-    }
+    /**
+     * @return The root node defined in this view.
+     */
+    Node getRoot();
 
 }

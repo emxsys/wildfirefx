@@ -29,13 +29,13 @@
  */
 package com.emxsys.wildfirefx.presentation.main;
 
-import com.emxsys.wildfirefx.presentation.FxmlView;
+import com.emxsys.wildfirefx.presentation.FXMLView;
 
 /**
  *
  * @author Bruce Schubert
  */
-public class MainView extends FxmlView<MainController> {
+public class MainView extends FXMLView<MainController> {
 
     private static String FXML = "/fxml/Main.fxml";
     

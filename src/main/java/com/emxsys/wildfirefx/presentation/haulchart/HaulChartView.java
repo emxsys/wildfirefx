@@ -29,16 +29,77 @@
  */
 package com.emxsys.wildfirefx.presentation.haulchart;
 
-import com.emxsys.wildfirefx.presentation.FxmlView;
-
+import com.emxsys.chartext.LogScatterChart;
+import com.emxsys.chartext.axis.LogarithmicAxis;
+import com.emxsys.chartext.axis.NumericAxis;
+import com.emxsys.wildfirefx.presentation.View;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.ValueAxis;
+import javafx.scene.chart.XYChart;
 
 /**
- * 
+ *
  * @author Bruce Schubert
  */
-public class HaulChartView extends FxmlView<HaulChartController> {
+public class HaulChartView implements View<HaulChartController> {
+
+    private ScatterChart chart;
+    private ValueAxis xAxis;
+    private ValueAxis yAxis;
 
     public HaulChartView() {
-        super(HaulChartView.class.getResource("/fxml/HaulChart.fxml"));
+        createContent();
+    }
+
+    @Override
+    public HaulChartController getController() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Node getRoot() {
+        return chart;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void createContent() {
+        
+        xAxis = new LogarithmicAxis("X-Log Axis", 0.1d, 100.0d, 1.0d);
+        yAxis = new NumericAxis("Y-Axis", 0.0d, 10.0d, 1.0d);
+        
+//        xAxis = new com.emxsys.jfxchartext.axis.NumericAxis("X-Axis", 0d, 8.0d, 2.d);
+//        yAxis = new com.emxsys.jfxchartext.axis.NumericAxis("Y-Axis", 0.0d, 5.0d, 1.0d);
+//        xAxis = new javafx.scene.chart.NumberAxis("X-Axis", 0d, 8.0d, 2.d);
+//        yAxis = javafx.scene.chart.new NumberAxis("Y-Axis", 0.0d, 5.0d, 1.0d);
+        
+        ObservableList<XYChart.Series> data = FXCollections.observableArrayList(
+                new ScatterChart.Series("Series 1",
+                        FXCollections.<ScatterChart.Data>observableArrayList(
+                                new XYChart.Data(1, 1),
+                                new XYChart.Data(2, 2),
+                                new XYChart.Data(3, 3),
+                                new XYChart.Data(4, 4),
+                                new XYChart.Data(5, 5),
+                                new XYChart.Data(6, 6),
+                                new XYChart.Data(7, 7),
+                                new XYChart.Data(8, 8),
+                                new XYChart.Data(9, 9),
+                                new XYChart.Data(10, 10)
+                        //                    new XYChart.Data(0.2, 3.5),
+                        //                    new XYChart.Data(0.7, 4.6),
+                        //                    new XYChart.Data(1.8, 1.7),
+                        //                    new XYChart.Data(2.1, 2.8),
+                        //                    new XYChart.Data(4.0, 2.2),
+                        //                    new XYChart.Data(4.1, 2.6),
+                        //                    new XYChart.Data(4.5, 2.0),
+                        //                    new XYChart.Data(6.0, 3.0),
+                        //                    new XYChart.Data(7.0, 2.0),
+                        //                    new XYChart.Data(7.8, 4.0)
+                        ))
+        );
+        chart = new LogScatterChart(xAxis, yAxis, data);
     }
 }

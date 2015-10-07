@@ -34,7 +34,7 @@ import com.emxsys.wildfirefx.particles.FireEmitter;
 import com.emxsys.wildfirefx.model.FireBehavior;
 import com.emxsys.wildfirefx.model.Model;
 import com.emxsys.wildfirefx.particles.Particle;
-import com.emxsys.wildfirefx.presentation.FxmlController;
+import com.emxsys.wildfirefx.presentation.FXMLController;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -58,7 +58,7 @@ import javafx.scene.paint.Color;
  *
  * @author Bruce Schubert
  */
-public class SimController extends FxmlController<Model, SimView> implements
+public class SimController extends FXMLController<Model, SimView> implements
         Initializable {
 
     /** The particle emitter/generator */

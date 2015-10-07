@@ -29,7 +29,7 @@
  */
 package com.emxsys.wildfirefx.presentation.simulation;
 
-import com.emxsys.wildfirefx.presentation.FxmlView;
+import com.emxsys.wildfirefx.presentation.FXMLView;
 import com.emxsys.wildfirefx.presentation.simulation.SimController;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -39,7 +39,7 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author Bruce Schubert
  */
-public class SimView extends FxmlView<SimController> {
+public class SimView extends FXMLView<SimController> {
 
     public SimView() {
         super("/fxml/Simulation.fxml");

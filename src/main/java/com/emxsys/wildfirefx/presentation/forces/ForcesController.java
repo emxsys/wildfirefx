@@ -34,7 +34,7 @@ import com.emxsys.jfree.SolarChart;
 import com.emxsys.jfree.WindDirChart;
 import com.emxsys.wildfirefx.WildfireFxApp;
 import com.emxsys.wildfirefx.model.Model;
-import com.emxsys.wildfirefx.presentation.FxmlController;
+import com.emxsys.wildfirefx.presentation.FXMLController;
 import org.jfree.chart.fx.ChartViewer;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -46,7 +46,7 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author Bruce Schubert
  */
-public class ForcesController extends FxmlController<Model, ForcesView> implements Initializable {
+public class ForcesController extends FXMLController<Model, ForcesView> implements Initializable {
 
     @FXML
     private AnchorPane solarPane;
