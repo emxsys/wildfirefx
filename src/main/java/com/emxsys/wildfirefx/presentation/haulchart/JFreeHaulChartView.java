@@ -40,8 +40,12 @@ import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import javafx.scene.Node;
+import javax.imageio.ImageIO;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -71,7 +75,6 @@ import org.jfree.ui.Layer;
 import org.jfree.ui.LengthAdjustmentType;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
-
 
 /**
  *
@@ -118,9 +121,8 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
     private String rosStr;
     private String flnStr;
     private String fliStr;
-    private SurfaceFuel fuel;
-    private SurfaceFire fire;
-
+//    private SurfaceFuel fuel;
+//    private SurfaceFire fire;
 
     private final class MyLogAxis extends LogAxis {
 
@@ -132,8 +134,8 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         }
 
         /**
-         * Returns a collection of tick units for log (base 10) values. Uses a given Locale to
-         * create the DecimalFormats.
+         * Returns a collection of tick units for log (base 10) values. Uses a
+         * given Locale to create the DecimalFormats.
          *
          * @param locale the locale to use to represent Numbers.
          *
@@ -149,10 +151,10 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         }
     }
 
-
     /**
-     * An implementation of the {@link Drawable} interface, to illustrate the use of the
-     * {@link org.jfree.chart.annotations.XYDrawableAnnotation} class. Used by MarkerDemo1.java.
+     * An implementation of the {@link Drawable} interface, to illustrate the
+     * use of the {@link org.jfree.chart.annotations.XYDrawableAnnotation}
+     * class. Used by MarkerDemo1.java.
      */
     private class CircleDrawer implements Drawable {
 
@@ -168,8 +170,8 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
          * @param fillPaint the fill paint.
          */
         CircleDrawer(Paint outlinePaint,
-                     Stroke outlineStroke,
-                     Paint fillPaint) {
+                Stroke outlineStroke,
+                Paint fillPaint) {
             this.outlinePaint = outlinePaint;
             this.outlineStroke = outlineStroke;
             this.fillPaint = fillPaint;
@@ -184,7 +186,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         @Override
         public void draw(Graphics2D g2, Rectangle2D area) {
             Ellipse2D ellipse = new Ellipse2D.Double(area.getX(), area.getY(),
-                area.getWidth(), area.getHeight());
+                    area.getWidth(), area.getHeight());
             if (this.fillPaint != null) {
                 g2.setPaint(this.fillPaint);
                 g2.fill(ellipse);
@@ -198,9 +200,9 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
             g2.setPaint(Color.black);
             g2.setStroke(new BasicStroke(1.0f));
             Line2D line1 = new Line2D.Double(area.getCenterX(), area.getMinY(),
-                area.getCenterX(), area.getMaxY());
+                    area.getCenterX(), area.getMaxY());
             Line2D line2 = new Line2D.Double(area.getMinX(), area.getCenterY(),
-                area.getMaxX(), area.getCenterY());
+                    area.getMaxX(), area.getCenterY());
             g2.draw(line1);
             g2.draw(line2);
         }
@@ -300,16 +302,16 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         // Resetting the chart so we don't display stale data if we don't have a valid fire.
         seriesMax.clear();
         seriesFlank.clear();
-        if (fuel == null || fire == null) {
-            chart.clearSubtitles();
-            return;
-        }
-
-        // Updating the subtitle with the fuel model name
-        subTitle.setText(fuel.getFuelModel().getModelName());
-        if (chart.getSubtitleCount() == 0) {
-            chart.addSubtitle(subTitle);
-        }
+//        if (fuel == null || fire == null) {
+//            chart.clearSubtitles();
+//            return;
+//        }
+//
+//        // Updating the subtitle with the fuel model name
+//        subTitle.setText(fuel.getFuelModel().getModelName());
+//        if (chart.getSubtitleCount() == 0) {
+//            chart.addSubtitle(subTitle);
+//        }
 
         // Get values in units compatible with Chart        
         double heat = 0;
@@ -323,24 +325,24 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         double rosFlank_US = 0;
         double fln_US = 0;
         double fli_US = 0;
-        try {
-            // Use US values for placement inside the chart
-            heat_US = fuel.getHeatRelease().getValue(heatUS);
-            rosMax_US = fire.getRateOfSpreadMax().getValue(rosUS);
-            rosFlank_US = fire.getRateOfSpreadFlanking().getValue(rosUS);
-            fln_US = fire.getFlameLength().getValue(flnUS);
-            fli_US = fire.getFirelineIntensity().getValue(fliUS);
-
-            // Get values used for labels
-            heat = fuel.getHeatRelease().getValue(heatUOM);
-            rosMax = fire.getRateOfSpreadMax().getValue(rosUOM);
-            rosFlank = fire.getRateOfSpreadFlanking().getValue(rosUOM);
-            fln = fire.getFlameLength().getValue(flnUOM);
-            fli = fire.getFirelineIntensity().getValue(fliUOM);
-        }
-        catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+//        try {
+//            // Use US values for placement inside the chart
+//            heat_US = fuel.getHeatRelease().getValue(heatUS);
+//            rosMax_US = fire.getRateOfSpreadMax().getValue(rosUS);
+//            rosFlank_US = fire.getRateOfSpreadFlanking().getValue(rosUS);
+//            fln_US = fire.getFlameLength().getValue(flnUS);
+//            fli_US = fire.getFirelineIntensity().getValue(fliUS);
+//
+//            // Get values used for labels
+//            heat = fuel.getHeatRelease().getValue(heatUOM);
+//            rosMax = fire.getRateOfSpreadMax().getValue(rosUOM);
+//            rosFlank = fire.getRateOfSpreadFlanking().getValue(rosUOM);
+//            fln = fire.getFlameLength().getValue(flnUOM);
+//            fli = fire.getFirelineIntensity().getValue(fliUOM);
+//        }
+//        catch (VisADException ex) {
+//            Exceptions.printStackTrace(ex);
+//        }
         // Add our two x/y points
         seriesMax.add(heat_US, rosMax_US);
         seriesFlank.add(heat_US, rosFlank_US);
@@ -394,9 +396,9 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         plot.clearAnnotations();
         plot.addAnnotation(annFln);
         XYPointerAnnotation pointer = new XYPointerAnnotation(
-            dfFln.format(fln) + " Flame",
-            heat_US,
-            rosMax_US, (rosMax_US > 550 ? 3.0 : 5.0) * Math.PI / 4.0);
+                dfFln.format(fln) + " Flame",
+                heat_US,
+                rosMax_US, (rosMax_US > 550 ? 3.0 : 5.0) * Math.PI / 4.0);
         pointer.setBaseRadius(35.0);
         pointer.setTipRadius(10.0);
         pointer.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -464,7 +466,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         dataset.addSeries(seriesFlank);
 
         chart = ChartFactory.createScatterPlot(title, xAxisTitle, yAxisTitle,
-            dataset, PlotOrientation.VERTICAL, true, true, false);
+                dataset, PlotOrientation.VERTICAL, true, true, false);
 
         subTitle = new TextTitle();
         chart.addSubtitle(subTitle);
@@ -513,25 +515,25 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         double yEndVeryActive = HaulChartUtil.computeRosChainsPerHour(FL_THRESHOLD_VERY_ACTIVE, xMin);
         //
         XYPolygonAnnotation lowBkgnd = new XYPolygonAnnotation(
-            new double[]{
-                xMin, yMin, xEndLow, yMin, xMin, yEndLow
-            }, null, null, COLOR_LOW);
+                new double[]{
+                    xMin, yMin, xEndLow, yMin, xMin, yEndLow
+                }, null, null, COLOR_LOW);
         XYPolygonAnnotation modBkgnd = new XYPolygonAnnotation(
-            new double[]{
-                xEndLow, yMin, xMin, yEndLow, xMin, yEndModerate, xEndModerate, yMin
-            }, null, null, COLOR_MODERATE);
+                new double[]{
+                    xEndLow, yMin, xMin, yEndLow, xMin, yEndModerate, xEndModerate, yMin
+                }, null, null, COLOR_MODERATE);
         XYPolygonAnnotation activeBkgnd = new XYPolygonAnnotation(
-            new double[]{
-                xEndModerate, yMin, xMin, yEndModerate, xMin, yEndActive, xEndActive, yMin
-            }, null, null, COLOR_ACTIVE);
+                new double[]{
+                    xEndModerate, yMin, xMin, yEndModerate, xMin, yEndActive, xEndActive, yMin
+                }, null, null, COLOR_ACTIVE);
         XYPolygonAnnotation veryActiveBkgnd = new XYPolygonAnnotation(
-            new double[]{
-                xEndActive, yMin, xMin, yEndActive, xMin, yEndVeryActive, xEndVeryActive, yMin
-            }, null, null, COLOR_VERY_ACTIVE);
+                new double[]{
+                    xEndActive, yMin, xMin, yEndActive, xMin, yEndVeryActive, xEndVeryActive, yMin
+                }, null, null, COLOR_VERY_ACTIVE);
         XYPolygonAnnotation extremeBkgnd = new XYPolygonAnnotation(
-            new double[]{
-                xEndVeryActive, yMin, xMin, yEndVeryActive, xMax * 10, yMax * 10
-            }, null, null, COLOR_EXTREME);
+                new double[]{
+                    xEndVeryActive, yMin, xMin, yEndVeryActive, xMax * 10, yMax * 10
+                }, null, null, COLOR_EXTREME);
         //
         lowBkgnd.setToolTipText("LOW");
         modBkgnd.setToolTipText("MODERATE");
@@ -569,16 +571,20 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
 
     private void addImageAnnotations(XYLineAndShapeRenderer renderer) {
         // Setup background
-        Image imgFireBehaviorLow = ImageUtilities.loadImage("com/emxsys/wmt/cps/images/fire-behavior-low.gif", true);
-        Image imgFireBehaviorModerate = ImageUtilities.loadImage("com/emxsys/wmt/cps/images/fire-behavior-moderate.gif", true);
-        Image imgFireBehaviorActive = ImageUtilities.loadImage("com/emxsys/wmt/cps/images/fire-behavior-active.gif", true);
-        Image imgFireBehaviorVeryActive = ImageUtilities.loadImage("com/emxsys/wmt/cps/images/fire-behavior-very-active.gif", true);
-        Image imgFireBehaviorExtreme = ImageUtilities.loadImage("com/emxsys/wmt/cps/images/fire-behavior-extreme.gif", true);
-        renderer.addAnnotation(new XYImageAnnotation(30, 3, imgFireBehaviorLow, RectangleAnchor.CENTER), Layer.BACKGROUND);
-        renderer.addAnnotation(new XYImageAnnotation(110, 11, imgFireBehaviorModerate, RectangleAnchor.CENTER), Layer.BACKGROUND);
-        renderer.addAnnotation(new XYImageAnnotation(300, 30, imgFireBehaviorActive, RectangleAnchor.CENTER), Layer.BACKGROUND);
-        renderer.addAnnotation(new XYImageAnnotation(600, 60, imgFireBehaviorVeryActive, RectangleAnchor.CENTER), Layer.BACKGROUND);
-        renderer.addAnnotation(new XYImageAnnotation(1200, 120, imgFireBehaviorExtreme, RectangleAnchor.CENTER), Layer.BACKGROUND);
+        try {
+            BufferedImage imgFireBehaviorLow = ImageIO.read(getClass().getResourceAsStream("/images/fire-behavior-low.gif"));
+            BufferedImage imgFireBehaviorModerate = ImageIO.read(getClass().getResourceAsStream("/images/fire-behavior-moderate.gif"));
+            BufferedImage imgFireBehaviorActive = ImageIO.read(getClass().getResourceAsStream("/images/fire-behavior-active.gif"));
+            BufferedImage imgFireBehaviorVeryActive = ImageIO.read(getClass().getResourceAsStream("/images/fire-behavior-very-active.gif"));
+            BufferedImage imgFireBehaviorExtreme = ImageIO.read(getClass().getResourceAsStream("/images/fire-behavior-extreme.gif"));
+            renderer.addAnnotation(new XYImageAnnotation(30, 3, imgFireBehaviorLow, RectangleAnchor.CENTER), Layer.BACKGROUND);
+            renderer.addAnnotation(new XYImageAnnotation(110, 11, imgFireBehaviorModerate, RectangleAnchor.CENTER), Layer.BACKGROUND);
+            renderer.addAnnotation(new XYImageAnnotation(300, 30, imgFireBehaviorActive, RectangleAnchor.CENTER), Layer.BACKGROUND);
+            renderer.addAnnotation(new XYImageAnnotation(600, 60, imgFireBehaviorVeryActive, RectangleAnchor.CENTER), Layer.BACKGROUND);
+            renderer.addAnnotation(new XYImageAnnotation(1200, 120, imgFireBehaviorExtreme, RectangleAnchor.CENTER), Layer.BACKGROUND);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to load background image.", e);
+        }
     }
 
     /**
@@ -588,9 +594,9 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
 
         // draw flame length divisions
         int[] flameLens
-            = {
-                1, 2, 4, 8, 11, 15, 20
-            };    // [ft]
+                = {
+                    1, 2, 4, 8, 11, 15, 20
+                };    // [ft]
         for (int i : flameLens) {
             drawFlameLenDivision(renderer, i, false);
         }
@@ -605,7 +611,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
      * @param drawLegendOnly - if true, draws the legend labels
      */
     private void drawFlameLenDivision(XYLineAndShapeRenderer renderer, double flameLen,
-                                      boolean drawLegendOnly) {
+            boolean drawLegendOnly) {
         Font font = new Font("SansSerif", Font.BOLD, 12);
 
         // get BTU value at bottom of chart for give flame length and 1 ch/hr
@@ -614,10 +620,10 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         double ros = HaulChartUtil.computeRosChainsPerHour(flameLen, xMin);
         // add the line annonation
         renderer.addAnnotation(new XYLineAnnotation(
-            btu, yMin,
-            xMin, ros,
-            new BasicStroke(1.5f), Color.gray),
-            Layer.BACKGROUND);
+                btu, yMin,
+                xMin, ros,
+                new BasicStroke(1.5f), Color.gray),
+                Layer.BACKGROUND);
 
         // Draw flame length labels in the lower diagonal half.
         // Compute new btu and ros to represent x,y values for label placement
@@ -628,7 +634,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         flLabel.setPaint(Color.darkGray);
         // add the flame len label annonation
         renderer.addAnnotation(flLabel,
-            Layer.BACKGROUND);
+                Layer.BACKGROUND);
 
         // Draw fireline intensity labels in the upper in the diagonal half
         // Compute new btu and ros to represent x,y values for label placement
@@ -645,9 +651,8 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         fliLabel.setFont(font);
         fliLabel.setPaint(Color.darkGray);
         renderer.addAnnotation(fliLabel,
-            Layer.BACKGROUND);
+                Layer.BACKGROUND);
 
     }
-                      
 
 }

@@ -35,6 +35,7 @@ import com.emxsys.wildfirefx.model.Model;
 import com.emxsys.wildfirefx.presentation.FXMLController;
 import com.emxsys.wildfirefx.presentation.forces.ForcesView;
 import com.emxsys.wildfirefx.presentation.haulchart.HaulChartView;
+import com.emxsys.wildfirefx.presentation.haulchart.JFreeHaulChartView;
 import com.emxsys.wildfirefx.presentation.simulation.SimView;
 import com.emxsys.wildfirefx.presentation.simulation.SimController;
 import java.net.URL;
@@ -159,9 +160,11 @@ public class MainController extends FXMLController<Model, MainView> implements I
 
         // Initialize child views
         SimView simView = new SimView();
+        SimController simController = simView.getController();
         centerPane.getChildren().add(fitToParent(simView.getRoot()));
         forcesPane.getChildren().add(fitToParent(new ForcesView().getRoot()));
         chartPane.getChildren().add(fitToParent(new HaulChartView().getRoot()));
+        jfreeChartPane.getChildren().add(fitToParent(new JFreeHaulChartView().getRoot()));
 
         // Setup the Fuel controls
         choiceFuelModel.getItems().addAll(getModel().getOriginalFuelModels());
@@ -173,7 +176,6 @@ public class MainController extends FXMLController<Model, MainView> implements I
                 });
         
         // Wire up the Simulation controls
-        SimController simController = simView.getController();
         sliderNumParticles.valueProperty().addListener((observable, oldValue, newValue) -> {
             simController.getEmitter().numParticlesProperty().set(newValue.intValue());
             labelNumParticles.setText("Num Particles: " + newValue.intValue());
