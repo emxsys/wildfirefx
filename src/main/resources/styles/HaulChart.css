@@ -1,0 +1,15 @@
+.chart-subtitle {
+  -fx-text-fill: #4682b4;
+  -fx-font-size: 1.0em;
+}
+.chart-symbol { /* hollow circle */
+    -fx-background-color: #EE0909, white;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+.default-color1.chart-symbol { /*  solid blue circle */
+    -fx-background-color: #1939EE;
+    -fx-background-radius: 4px;
+    -fx-padding: 4px;
+}

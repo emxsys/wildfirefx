@@ -60,7 +60,7 @@ public class WildfireFxApp extends Application {
         primaryStage = stage;
         
         Scene scene = new Scene((Parent) new MainView().getRoot());
-        scene.getStylesheets().add("/styles/Styles.css");
+        scene.getStylesheets().add("/styles/Main.css");
         stage.setTitle("WildfireFX");
         stage.setScene(scene);
         

@@ -43,10 +43,13 @@ import javafx.scene.paint.Color;
 
 /**
  * A JavaFX version of the "Haul Chart".
+ *
  * @author Bruce Schubert
  */
 public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
+
     // Color constants
+
     private static final double ALPHA = 0.8;
     public static final Color COLOR_LOW = Color.rgb(128, 127, 255, ALPHA);         // blue
     public static final Color COLOR_MODERATE = Color.rgb(127, 193, 151, ALPHA);    // green
@@ -81,7 +84,8 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
     private final JavaFxHaulChartController controller;
 
     /**
-     * Constructs an MVC view (and controller) hosting a JavaFX-based "Haul Chart".
+     * Constructs an MVC view (and controller) hosting a JavaFX-based "Haul
+     * Chart".
      */
     public JavaFxHaulChartView() {
         createChart();
@@ -106,25 +110,27 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         seriesMax.getData().clear();
         seriesFlank.getData().clear();
         if (fire == null) {
-            //chart.clearSubtitles();
+            chart.setSubtitle(null);
             return;
         }
 
-        // Updating the subtitle with the fuel model name
         FuelBed fuel = fire.getFuelBed();
         String modelName = fuel.getFuelModel().getModelName();
         double heat = fuel.getHeatRelease();
         double rosMax = fire.getRateOfSpreadMax();
         double rosFlank = fire.getRateOfSpreadFlanking();
-        double fln = fire.getFlameLength();
 
+        // Updating the subtitle with the fuel model name
         chart.setSubtitle(modelName);
         chart.layout();
 
+        // Update the plot with our x,y points for max and flanking fire behavior
         seriesMax.getData().add(new XYChart.Data(heat, rosMax));
         seriesFlank.getData().add(new XYChart.Data(heat, rosFlank));
         
-        // When the 
+        // Add range (ros) and domain (heat) markers
+        
+        
     }
 
     /**
@@ -146,20 +152,22 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
 
         seriesFlank = new ScatterChart.Series();
         seriesFlank.setName(seriesFlankName);
-        
-        // Add a dummy value to our series to provide the chart's legend with
+
+        // HACK: Addinng a dummy value to our series to provide the chart with
         // the necessary data to generate a legend.  Without inital values the
-        // legend will contain only the name, no symbol. 
-        seriesMax.getData().add(new XYChart.Data(0, 0)); 
+        // legend will not contain a symbol, only the name. 
+        seriesMax.getData().add(new XYChart.Data(0, 0));
         seriesFlank.getData().add(new XYChart.Data(0, 0));
 
         dataset = FXCollections.observableArrayList(seriesMax, seriesFlank);
         chart = new LogScatterChart(xAxis, yAxis, dataset);
         chart.setTitle(title);
-        
+        // Set the drawing style for the symbols
+        chart.getStylesheets().add("/styles/HaulChart.css");
+
         // Clear out the dummy data now that the legend has been created.
-        seriesMax.getData().clear(); 
+        seriesMax.getData().clear();
         seriesFlank.getData().clear();
-   }
+    }
 
 }
