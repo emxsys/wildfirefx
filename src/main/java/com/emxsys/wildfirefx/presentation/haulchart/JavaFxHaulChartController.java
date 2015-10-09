@@ -39,11 +39,11 @@ import com.emxsys.wildfirefx.presentation.Controller;
  *
  * @author Bruce Schubert
  */
-public final class HaulChartController implements Controller<Model, HaulChartView> {
+public final class JavaFxHaulChartController implements Controller<Model, JavaFxHaulChartView> {
 
-    HaulChartView view;
+    JavaFxHaulChartView view;
 
-    public HaulChartController(HaulChartView view) {
+    public JavaFxHaulChartController(JavaFxHaulChartView view) {
         this.view = view;
         
         // Update the view whenever the fire behavior changes

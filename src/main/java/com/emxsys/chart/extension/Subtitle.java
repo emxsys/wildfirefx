@@ -30,6 +30,7 @@
 package com.emxsys.chart.extension;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.Label;
@@ -51,18 +52,21 @@ public class Subtitle {
     private final Node legend;
 
     /**
+     * Constructs a Subtitle for a JavaFX chart.
      *
-     * @param chart
-     * @param children A modifiable list.
-     * @param legend
+     * @param chart The chart to have a subtitle.
+     * @param children A modifiable list of the chart's children.
+     * @param legend The chart's legend object.
      */
     public Subtitle(Chart chart, ObservableList<Node> children, Node legend) {
         this.chart = chart;
         this.children = children;
         this.children.add(subtitleLabel);
-        
-        // TODO: could discover title and content based on styles...
-        // excerpt from the Chart constructor:
+        subtitleLabel.getStyleClass().add("chart-subtitle");
+        subtitleLabel.setAlignment(Pos.CENTER);
+
+        // TODO: could possibly discover or validate title and content based on styles...
+        // Observe this excerpt from the Chart constructor:
         //        titleLabel.getStyleClass().add("chart-title");
         //        chartContent.getStyleClass().add("chart-content");
         this.titleLabel = (Label) children.get(0);
@@ -70,63 +74,67 @@ public class Subtitle {
         this.legend = legend;
     }
 
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
+        this.subtitleLabel.setText(subtitle);
+        this.chart.requestLayout();
+    }
+
     //
     public void layoutChildren() {
-        
+
         if (subtitle == null || subtitle.isEmpty()) {
             subtitleLabel.setVisible(false);
             return;
         }
+        subtitleLabel.setVisible(true);
 
-        
         double top = titleLabel.getLayoutY() + titleLabel.getHeight();
         double left = chart.snappedLeftInset();
         double bottom = chart.snappedBottomInset();
         double right = chart.snappedRightInset();
         final double width = chart.getWidth();
         final double height = chart.getHeight();
-        // layout title
-        subtitleLabel.setVisible(true);
+
         switch (chart.getTitleSide()) {
             case TOP: {
-                final double titleHeight = (subtitleLabel.prefHeight(width - left - right));
-                subtitleLabel.resizeRelocate(left, top, width - left - right, titleHeight);
-                top += titleHeight;
+                final double subtitleHeight = (subtitleLabel.prefHeight(width - left - right));
+                subtitleLabel.resizeRelocate(left, top, width - left - right, subtitleHeight);
+                // Resize the chart content to accomdate the subtitle
+                top += subtitleHeight;
                 chartContent.resizeRelocate(
                         chartContent.getLayoutX(),
-                        chartContent.getLayoutY() + titleHeight, 
-                        chartContent.getWidth(), 
-                        chartContent.getHeight() - titleHeight);
-                        break;
+                        chartContent.getLayoutY() + subtitleHeight,
+                        chartContent.getWidth(),
+                        chartContent.getHeight() - subtitleHeight);
+                break;
             }
             case BOTTOM: {
-                final double titleHeight = (subtitleLabel.prefHeight(width - left - right));
-                subtitleLabel.resizeRelocate(left, height - bottom - titleHeight, width - left - right, titleHeight);
-                bottom += titleHeight;
-                break;
+                throw new UnsupportedOperationException("BOTTOM side Subtitle not implemented yet.");
+//                final double subtitleHeight = (subtitleLabel.prefHeight(width - left - right));
+//                subtitleLabel.resizeRelocate(left, height - bottom - subtitleHeight, width - left - right, subtitleHeight);
+//                bottom += subtitleHeight;
+//                top += subtitleHeight;
+//                break;
             }
             case LEFT: {
-                final double titleWidth = (subtitleLabel.prefWidth(height - top - bottom));
-                subtitleLabel.resizeRelocate(left, top, titleWidth, height - top - bottom);
-                left += titleWidth;
-                break;
+                throw new UnsupportedOperationException("LEFT side Subtitle not implemented yet.");
+//                final double titleWidth = (subtitleLabel.prefWidth(height - top - bottom));
+//                subtitleLabel.resizeRelocate(left, top, titleWidth, height - top - bottom);
+//                left += titleWidth;
+//                break;
             }
             case RIGHT: {
-                final double titleWidth = (subtitleLabel.prefWidth(height - top - bottom));
-                subtitleLabel.resizeRelocate(width - right - titleWidth, top, titleWidth, height - top - bottom);
-                right += titleWidth;
-                break;
+                throw new UnsupportedOperationException("RIGHT side Subtitle not implemented yet.");
+//                final double titleWidth = (subtitleLabel.prefWidth(height - top - bottom));
+//                subtitleLabel.resizeRelocate(width - right - titleWidth, top, titleWidth, height - top - bottom);
+//                right += titleWidth;
+//                break;
             }
             default:
                 break;
         }
 
-    }
-
-    public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
-        this.subtitleLabel.setText(subtitle);
-        this.chart.requestLayout();
     }
 
 }

@@ -42,11 +42,11 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 
 /**
- *
+ * A JavaFX version of the "Haul Chart".
  * @author Bruce Schubert
  */
-public class HaulChartView implements View<HaulChartController> {
-
+public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
+    // Color constants
     private static final double ALPHA = 0.8;
     public static final Color COLOR_LOW = Color.rgb(128, 127, 255, ALPHA);         // blue
     public static final Color COLOR_MODERATE = Color.rgb(127, 193, 151, ALPHA);    // green
@@ -78,15 +78,18 @@ public class HaulChartView implements View<HaulChartController> {
     /**
      * The MVC view controller.
      */
-    private final HaulChartController controller;
+    private final JavaFxHaulChartController controller;
 
-    public HaulChartView() {
+    /**
+     * Constructs an MVC view (and controller) hosting a JavaFX-based "Haul Chart".
+     */
+    public JavaFxHaulChartView() {
         createChart();
-        controller = new HaulChartController(this);
+        controller = new JavaFxHaulChartController(this);
     }
 
     @Override
-    public HaulChartController getController() {
+    public JavaFxHaulChartController getController() {
         return controller;
     }
 
@@ -96,8 +99,7 @@ public class HaulChartView implements View<HaulChartController> {
     }
 
     /**
-     * Plots the fire behavior. The FireBehavior object is provided by the
-     * controller.
+     * Plots the fire behavior. Called by the controller.
      */
     void plotFireBehavior(FireBehavior fire) {
         // Resetting the chart so we don't display stale data if we don't have a valid fire.
@@ -120,7 +122,9 @@ public class HaulChartView implements View<HaulChartController> {
         chart.layout();
 
         seriesMax.getData().add(new XYChart.Data(heat, rosMax));
-        seriesMax.getData().add(new XYChart.Data(heat, rosFlank));
+        seriesFlank.getData().add(new XYChart.Data(heat, rosFlank));
+        
+        // When the 
     }
 
     /**
@@ -128,8 +132,7 @@ public class HaulChartView implements View<HaulChartController> {
      */
     @SuppressWarnings("unchecked")
     private void createChart() {
-        String title = "Haul Chart";
-        String subtitle = "fuel model goes here!";
+        String title = "JavaFX Haul Chart";
         String xAxisTitle = "Heat per Unit Area (HPA) Btu/ft^2"; // + heatStr;
         String yAxisTitle = "Rate of Spread (ROS) ch/hr"; // + rosStr;
         String seriesMaxName = "Max Spread";
@@ -143,26 +146,20 @@ public class HaulChartView implements View<HaulChartController> {
 
         seriesFlank = new ScatterChart.Series();
         seriesFlank.setName(seriesFlankName);
+        
+        // Add a dummy value to our series to provide the chart's legend with
+        // the necessary data to generate a legend.  Without inital values the
+        // legend will contain only the name, no symbol. 
+        seriesMax.getData().add(new XYChart.Data(0, 0)); 
+        seriesFlank.getData().add(new XYChart.Data(0, 0));
 
         dataset = FXCollections.observableArrayList(seriesMax, seriesFlank);
-
-//        seriesMax = FXCollections.observableArrayList(
-//                new ScatterChart.Series(seriesMaxName,
-//                        FXCollections.<ScatterChart.Data>observableArrayList(
-//                                new XYChart.Data(1, 1),
-//                                new XYChart.Data(2, 2),
-//                                new XYChart.Data(3, 3),
-//                                new XYChart.Data(4, 4),
-//                                new XYChart.Data(5, 5),
-//                                new XYChart.Data(6, 6),
-//                                new XYChart.Data(7, 7),
-//                                new XYChart.Data(8, 8),
-//                                new XYChart.Data(9, 9),
-//                                new XYChart.Data(10, 10)
-//                        ))
-//        );
         chart = new LogScatterChart(xAxis, yAxis, dataset);
         chart.setTitle(title);
-    }
+        
+        // Clear out the dummy data now that the legend has been created.
+        seriesMax.getData().clear(); 
+        seriesFlank.getData().clear();
+   }
 
 }

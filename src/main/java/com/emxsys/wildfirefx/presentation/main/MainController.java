@@ -34,7 +34,7 @@ import com.emxsys.wildfirefx.model.FuelModel;
 import com.emxsys.wildfirefx.model.Model;
 import com.emxsys.wildfirefx.presentation.FXMLController;
 import com.emxsys.wildfirefx.presentation.forces.ForcesView;
-import com.emxsys.wildfirefx.presentation.haulchart.HaulChartView;
+import com.emxsys.wildfirefx.presentation.haulchart.JavaFxHaulChartView;
 import com.emxsys.wildfirefx.presentation.haulchart.JFreeHaulChartView;
 import com.emxsys.wildfirefx.presentation.simulation.SimView;
 import com.emxsys.wildfirefx.presentation.simulation.SimController;
@@ -163,7 +163,7 @@ public class MainController extends FXMLController<Model, MainView> implements I
         SimController simController = simView.getController();
         centerPane.getChildren().add(fitToParent(simView.getRoot()));
         forcesPane.getChildren().add(fitToParent(new ForcesView().getRoot()));
-        chartPane.getChildren().add(fitToParent(new HaulChartView().getRoot()));
+        chartPane.getChildren().add(fitToParent(new JavaFxHaulChartView().getRoot()));
         jfreeChartPane.getChildren().add(fitToParent(new JFreeHaulChartView().getRoot()));
 
         // Setup the Fuel controls

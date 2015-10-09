@@ -27,25 +27,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wildfirefx.presentation.haulchart;
-
+package com.emxsys.wildfirefx.model;
 
 /**
- * Package utility class for generating a Haul Chart.
+ * Utility class for computing fire behavior outputs. Useful for generating Haul
+ * Chart indices.
  *
  * @author Bruce Schubert
  */
-class HaulChartUtil {
+public class FireBehaviorUtil {
 
     /**
-     * Compute fireline intensity (to be used as color key) from "Fire as a Physical Process" page
-     * 47
+     * Compute fireline intensity (to be used as color key) from "Fire as a
+     * Physical Process" page 47.
      *
      * @param heatAreaBtus [btus / ft^2 ]
      * @param rosChainsPerHour [chains per hour]
      * @return fireline intensity [btu / ft / sec]
      */
-    static double computeFirelineIntensity(double heatAreaBtus, double rosChainsPerHour) {
+    public static double computeFirelineIntensity(double heatAreaBtus, double rosChainsPerHour) {
         // convert chains per hour to feet per minute
         double rosFtPerMin = rosChainsPerHour * 1.100;
         double fli = (heatAreaBtus * rosFtPerMin) / 60d;
@@ -53,13 +53,13 @@ class HaulChartUtil {
     }
 
     /**
-     * Computes the flame length from fireline intensity from Andrews and Rothermel GTR-INT-131 Note:
-     * algorythim in "Fire as a Physical Process" page 47 is wrong (typo).
+     * Computes the flame length from fireline intensity from Andrews and
+     * Rothermel GTR-INT-131.
      *
      * @param fliBtuPerFtPerSec - fireline intensity [btu / ft / sec]
      * @return flame length [ft]
      */
-    static double computeFlameLength(double fliBtuPerFtPerSec) {
+    public static double computeFlameLength(double fliBtuPerFtPerSec) {
         double fl = 0.45 * Math.pow(fliBtuPerFtPerSec, 0.46);
         return fl;
     }
@@ -67,9 +67,11 @@ class HaulChartUtil {
     /**
      * Computes heat/area BTUs from chart flame length and ROS.
      *
+     * @param flameLen [ft]
+     * @param rosChainsPerHour [chains/hour]
      * @return [btu / ft^2]
      */
-    static double computeHeatAreaBtus(double flameLen, double rosChainsPerHour) {
+    public static double computeHeatAreaBtus(double flameLen, double rosChainsPerHour) {
         double fliBtuFtSec = 5.67 * Math.pow(flameLen, 2.17);
         double rosFtPerMin = rosChainsPerHour * 1.100;
         double heatArea = (60 * fliBtuFtSec) / rosFtPerMin;
@@ -79,9 +81,11 @@ class HaulChartUtil {
     /**
      * Computes rate of spread from chart flame length and heat area.
      *
+     * @param flameLen [ft]
+     * @param heatAreaBtus btu / ft^2]
      * @return [chains/hour]
      */
-    static double computeRosChainsPerHour(double flameLen, double heatAreaBtus) {
+    public static double computeRosChainsPerHour(double flameLen, double heatAreaBtus) {
         double fliBtuFtSec = 5.67 * Math.pow(flameLen, 2.17);
         double rosFtPerMin = (60 * fliBtuFtSec) / heatAreaBtus;
         double rosChainsPerHour = rosFtPerMin * 0.9091;
