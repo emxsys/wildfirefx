@@ -258,6 +258,14 @@ public class FuelBed {
         return Double.parseDouble(jsonFuelBed.getJsonObject("flameResidenceTime").getString("value"));
     }
     /**
+     * Gets the heat release per unit area.
+     *
+     * @return hpa [Btu/ft2]     
+     */
+    public double getHeatRelease() {
+        return Double.parseDouble(jsonFuelBed.getJsonObject("heatRelease").getString("value"));
+    }
+    /**
      * @return
      */
     public double getReactionVelocity() {

@@ -95,18 +95,20 @@ public class FireEmitter implements Emitter {
 
             double fl = fire.getFlameLength();
             double fi = fire.getFirelineIntensity();
+            double hr = fuel.getHeatRelease();
+            double ros = fire.getRateOfSpreadMax();
             double sav = fire.getFuelBed().getCharacteristicSAV();
             double frt = fire.getFuelBed().getFlameResidenceTime();
             double rv = fire.getFuelBed().getReactionVelocity();
 
             yVelocityProperty.setValue(fl);
-            xVelocityProperty.setValue(fl / 5);
+            xVelocityProperty.setValue(fl / 5.0);
             //xVelocityProperty.setValue(rv);
             //xVarianceProperty.setValue(fl * 2);
-            xVarianceProperty.setValue(frt * 100);
-            particleSizeProperty.setValue(fl * 2);
+            xVarianceProperty.setValue(fl * 3);
+            particleSizeProperty.setValue(Math.log(hr) * 10.0);
             //particleSizeProperty.setValue(fi / 100);
-            numParticlesProperty.setValue(fl * 4);
+            numParticlesProperty.setValue(Math.log(ros) * 10);
             //numParticlesProperty.setValue(rv * 4);
         });
     }

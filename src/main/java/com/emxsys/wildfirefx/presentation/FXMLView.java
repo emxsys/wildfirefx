@@ -55,6 +55,7 @@ public class FXMLView<C extends FXMLController> implements View<C> {
 
     /**
      * Constructs an FxmlView and FXMLController pair from an FXML file.
+     * 
      * @param fxmlUrl The FXML resource.
      */
     @SuppressWarnings("LeakingThisInConstructor")
@@ -79,6 +80,8 @@ public class FXMLView<C extends FXMLController> implements View<C> {
     }
 
     /**
+     * Gets the controller returned by the FXMLLoader.
+     * 
      * @return The controller defined in the FXML.
      */
     @Override
@@ -87,6 +90,8 @@ public class FXMLView<C extends FXMLController> implements View<C> {
     }
 
     /**
+     * Gets the root node returned by the FXMLLoader.
+     * 
      * @return The root node defined in the FXML.
      */
     @Override

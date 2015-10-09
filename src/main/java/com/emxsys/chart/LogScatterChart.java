@@ -27,9 +27,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.chartext;
+package com.emxsys.chart;
 
-import com.emxsys.chartext.axis.LogarithmicAxis;
+import com.emxsys.chart.extension.Subtitle;
+import com.emxsys.chart.axis.LogarithmicAxis;
 import java.util.Iterator;
 import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
@@ -43,10 +44,9 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 
-
 /**
  * A logarithmic scatter chart.
- * 
+ *
  * @author Bruce Schubert
  * @version $Id$
  * @param <X>
@@ -59,13 +59,21 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
     private Path vertGridLines = null;
     private Path majorHorzGridLines = new Path();
     private Path majorVertGridLines = new Path();
+    
+    
+    private Subtitle subtitle;
 
     public LogScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
 
+    @SuppressWarnings("OverridableMethodCallInConstructor")
     public LogScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis, data);
+
+        // BDS: Adding JFree subtitle capability
+        // Inserting subtitle after title 
+        subtitle = new Subtitle(this, getChildren(), getLegend());
 
         majorHorzGridLines.getStyleClass().setAll("chart-horizontal-zero-line");
         majorVertGridLines.getStyleClass().setAll("chart-vertical-zero-line");
@@ -76,6 +84,7 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
         //  plotArea
         //  xAxis
         //  yAxis
+        @SuppressWarnings("OverridableMethodCallInConstructor")
         ObservableList<Node> chartChildren = getChartChildren();
         Iterator<Node> chartIt = chartChildren.iterator();
         while (chartIt.hasNext() && plotArea == null) {
@@ -117,7 +126,11 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
     protected void layoutChildren() {
         // Invoked during the layout pass to layout this chart and all its content.
         super.layoutChildren();
-
+        
+        // BDS: Injectable Subtitle
+        subtitle.layoutChildren();
+        
+        
         final Rectangle clip = (Rectangle) plotArea.getClip();
         final Axis<X> xa = getXAxis();
         final Axis<Y> ya = getYAxis();
@@ -155,7 +168,13 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
 
     }
 
-    @Override
+    public void setSubtitle(String subtitle) {
+        this.subtitle.setSubtitle(subtitle);
+        this.requestLayout();
+    }
+
+
+   @Override
     protected void layoutPlotChildren() {
         // Called to update and layout the plot children. This should include all work to updates 
         // nodes representing the plot on top of the axis and grid lines etc. The origin is the 
@@ -166,8 +185,9 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
     }
 
     /**
-     * Modifiable and observable list of all content in the plot. This is where implementations of
-     * XYChart should add any nodes they use to draw their plot.
+     * Modifiable and observable list of all content in the plot. This is where
+     * implementations of XYChart should add any nodes they use to draw their
+     * plot.
      *
      * @return Observable list of plot children
      */

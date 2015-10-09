@@ -30,6 +30,7 @@
 package com.emxsys.wildfirefx.presentation.haulchart;
 
 import com.emxsys.wildfirefx.WildfireFxApp;
+import com.emxsys.wildfirefx.model.FireBehavior;
 import com.emxsys.wildfirefx.model.Model;
 import com.emxsys.wildfirefx.presentation.Controller;
 
@@ -38,12 +39,19 @@ import com.emxsys.wildfirefx.presentation.Controller;
  *
  * @author Bruce Schubert
  */
-public class HaulChartController implements Controller<Model, HaulChartView> {
+public final class HaulChartController implements Controller<Model, HaulChartView> {
 
     HaulChartView view;
 
     public HaulChartController(HaulChartView view) {
         this.view = view;
+        
+        // Update the view whenever the fire behavior changes
+        getModel().fireBehaviorProperty().addListener((observable, oldValue, newValue) -> {
+            FireBehavior fire = (FireBehavior) newValue;
+            view.plotFireBehavior(fire);
+        });
+
     }
 
     @Override

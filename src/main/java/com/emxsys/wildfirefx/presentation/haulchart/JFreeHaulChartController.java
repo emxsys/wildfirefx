@@ -30,21 +30,28 @@
 package com.emxsys.wildfirefx.presentation.haulchart;
 
 import com.emxsys.wildfirefx.WildfireFxApp;
+import com.emxsys.wildfirefx.model.FireBehavior;
 import com.emxsys.wildfirefx.model.Model;
 import com.emxsys.wildfirefx.presentation.Controller;
-
 
 /**
  * Controller class
  *
  * @author Bruce Schubert
  */
-public class JFreeHaulChartController implements Controller<Model, JFreeHaulChartController> {
+public final class JFreeHaulChartController implements Controller<Model, JFreeHaulChartController> {
 
     JFreeHaulChartView view;
 
     public JFreeHaulChartController(JFreeHaulChartView view) {
         this.view = view;
+        
+        // Update the view whenever the fire behavior changes
+        getModel().fireBehaviorProperty().addListener((observable, oldValue, newValue) -> {
+            FireBehavior fire = (FireBehavior) newValue;
+            view.plotFireBehavior(fire);
+        });
+
     }
 
     @Override
@@ -52,5 +59,4 @@ public class JFreeHaulChartController implements Controller<Model, JFreeHaulChar
         return WildfireFxApp.getModel();
     }
 
- 
 }

@@ -33,6 +33,7 @@ import javax.json.JsonObject;
 
 /**
  *
+ *
  * @author Bruce Schubert
  */
 public class FireBehavior {
@@ -43,7 +44,25 @@ public class FireBehavior {
      * Constructs a FuelBehavior object from a JSON representation obtained from
      * the WMT-REST server.
      *
-     * @param jsonObject JSON fire behavior.
+     * @param jsonObject JSON fire behavior. <pre>
+     * {
+     *  aspect : {"type":"aspect:deg","value":"270.0","unit":"deg"}
+     *  directionMaxSpread : {"type":"dir_of_spread:deg","value":"335.7639305636446","unit":"deg"}
+     *  effectiveWindSpeed : {"type":"wind_speed:mph","value":"5.260550905405299"}
+     *  firelineIntensity : {"type":"fire_line_intensity:Btu/ft/s","value":"5246.0434298657"}
+     *  flameLength : {"type":"flame_length:ft","value":"23.138498817644386","unit":"international foot"}
+     *  flameLengthBacking : {"type":"flame_length:ft","value":"5.916587884266262","unit":"international foot"}
+     *  flameLengthFlanking : {"type":"flame_length:ft","value":"7.952394393604833","unit":"international foot"}
+     *  fuelBed : {...}
+     *  midFlameWindSpeed : {"type":"wind_speed:mph","value":"6.292451634296434"}
+     *  rateOfSpreadBacking : {"type":"rate_of_spread:ft/min","value":"5.9134694426877665"}
+     *  rateOfSpreadFlanking : {"type":"rate_of_spread:ft/min","value":"11.246842087522502"}
+     *  rateOfSpreadMax : {"type":"rate_of_spread:ft/min","value":"114.64958478903517"}
+     *  rateOfSpreadNoWindNoSlope : {"type":"rate_of_spread:ft/min","value":"5.844834506657489"}
+     *  slope : {"type":"slope:deg","value":"30.0","unit":"deg"}
+     *  windDirection : {"type":"wind_dir:deg","value":"135.0","unit":"deg"}
+     * }
+     * </pre>
      */
     public FireBehavior(JsonObject jsonObject) {
         this.jsonObject = jsonObject;
@@ -52,15 +71,16 @@ public class FireBehavior {
 
     /**
      * Gets the flame length.
+     *
      * @return [flame_length:ft]
      */
     public double getFlameLength() {
         return Double.parseDouble(jsonObject.getJsonObject("flameLength").getString("value"));
     }
 
-
     /**
      * Gets Byram's intensity.
+     *
      * @return [fire_line_intensity:Btu/ft/s]
      */
     public double getFirelineIntensity() {
@@ -69,6 +89,7 @@ public class FireBehavior {
 
     /**
      * Gets the rate of spread.
+     *
      * @return [rate_of_spread:ft/min]
      */
     public double getRateOfSpreadMax() {
@@ -76,7 +97,17 @@ public class FireBehavior {
     }
 
     /**
+     * Gets the rate of spread.
+     *
+     * @return [rate_of_spread:ft/min]
+     */
+    public double getRateOfSpreadFlanking() {
+        return Double.parseDouble(jsonObject.getJsonObject("rateOfSpreadFlanking").getString("value"));
+    }
+
+    /**
      * Gets the conditioned fuel bed.
+     *
      * @return The fuel bed including the FuelModel and FuelMoisture.
      */
     public FuelBed getFuelBed() {

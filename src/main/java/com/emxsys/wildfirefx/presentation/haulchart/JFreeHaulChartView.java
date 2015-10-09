@@ -29,19 +29,19 @@
  */
 package com.emxsys.wildfirefx.presentation.haulchart;
 
+import com.emxsys.wildfirefx.model.FireBehavior;
+import com.emxsys.wildfirefx.model.FuelBed;
 import com.emxsys.wildfirefx.presentation.View;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import javafx.scene.Node;
@@ -82,9 +82,6 @@ import org.jfree.ui.TextAnchor;
  */
 public class JFreeHaulChartView implements View<JFreeHaulChartController> {
 
-    private ChartViewer chartViewer;
-    private JFreeHaulChartController controller;
-
     // Chart colors for fire behavior adjectives
     static final int ALPHA = 200;
     public static final Color COLOR_LOW = new Color(128, 127, 255, ALPHA);         // blue
@@ -104,8 +101,8 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
 
     private JFreeChart chart;
     private XYSeriesCollection dataset;
-    private XYSeries seriesMax;
-    private XYSeries seriesFlank;
+    private XYSeries seriesMaxSpread;
+    private XYSeries seriesFlankSpread;
     private LogAxis xAxis;
     private LogAxis yAxis;
     private TextTitle subTitle;
@@ -121,134 +118,136 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
     private String rosStr;
     private String flnStr;
     private String fliStr;
-//    private SurfaceFuel fuel;
-//    private SurfaceFire fire;
-
-    private final class MyLogAxis extends LogAxis {
-
-        MyLogAxis(String label) {
-            super(label);
-            setDefaultAutoRange(new Range(1, 10000.0));
-            this.setStandardTickUnits(createTickUnits());
-            this.setMinorTickMarksVisible(true);
-        }
-
-        /**
-         * Returns a collection of tick units for log (base 10) values. Uses a
-         * given Locale to create the DecimalFormats.
-         *
-         * @param locale the locale to use to represent Numbers.
-         *
-         * @return A collection of tick units for integer values.
-         *
-         * @since 1.0.7
-         */
-        public TickUnitSource createTickUnits() {
-            TickUnits units = new TickUnits();
-            DecimalFormat numberFormat = new DecimalFormat("0");
-            units.add(new NumberTickUnit(1, numberFormat, 9));
-            return units;
-        }
-    }
 
     /**
-     * An implementation of the {@link Drawable} interface, to illustrate the
-     * use of the {@link org.jfree.chart.annotations.XYDrawableAnnotation}
-     * class. Used by MarkerDemo1.java.
+     * The root node which hosts the JFreeChart.
      */
-    private class CircleDrawer implements Drawable {
-
-        private final Paint outlinePaint;
-        private final Stroke outlineStroke;
-        private final Paint fillPaint;
-
-        /**
-         * Creates a new instance.
-         *
-         * @param outlinePaint the outline paint.
-         * @param outlineStroke the outline stroke.
-         * @param fillPaint the fill paint.
-         */
-        CircleDrawer(Paint outlinePaint,
-                Stroke outlineStroke,
-                Paint fillPaint) {
-            this.outlinePaint = outlinePaint;
-            this.outlineStroke = outlineStroke;
-            this.fillPaint = fillPaint;
-        }
-
-        /**
-         * Draws the circle.
-         *
-         * @param g2 the graphics device.
-         * @param area the area in which to draw.
-         */
-        @Override
-        public void draw(Graphics2D g2, Rectangle2D area) {
-            Ellipse2D ellipse = new Ellipse2D.Double(area.getX(), area.getY(),
-                    area.getWidth(), area.getHeight());
-            if (this.fillPaint != null) {
-                g2.setPaint(this.fillPaint);
-                g2.fill(ellipse);
-            }
-            if (this.outlinePaint != null && this.outlineStroke != null) {
-                g2.setPaint(this.outlinePaint);
-                g2.setStroke(this.outlineStroke);
-                g2.draw(ellipse);
-            }
-
-            g2.setPaint(Color.black);
-            g2.setStroke(new BasicStroke(1.0f));
-            Line2D line1 = new Line2D.Double(area.getCenterX(), area.getMinY(),
-                    area.getCenterX(), area.getMaxY());
-            Line2D line2 = new Line2D.Double(area.getMinX(), area.getCenterY(),
-                    area.getMaxX(), area.getCenterY());
-            g2.draw(line1);
-            g2.draw(line2);
-        }
-    }
+    private ChartViewer chartViewer;
+    /**
+     * The MVC view controller.
+     */
+    private JFreeHaulChartController controller;
 
     /**
-     * Creates new form HaulChart
+     * Constructs a ChartViewer node that hosts a JFreeChart manifestation of
+     * the "Haul Chart".
      */
     public JFreeHaulChartView() {
 
         initUnitsOfMeasure();
-        initChart();
-
-//        // Now update the charts from values in the CPS data model
-//        Model.getInstance().addPropertyChangeListener(Model.PROP_FUELBED, (PropertyChangeEvent evt) -> {
-//            synchronized (fuelLock) {
-//                fuel = (SurfaceFuel) evt.getNewValue();
-//            }
-//            plotFireBehavior();
-//        });
-//        // Now update the charts from values in the CPS data model
-//        Model.getInstance().addPropertyChangeListener(Model.PROP_FIREBEHAVIOR, (PropertyChangeEvent evt) -> {
-//            synchronized (fireLock) {
-//                fire = (SurfaceFire) evt.getNewValue();
-//            }
-//            plotFireBehavior();
-//        });
-//
-//        // React to Wildfire Options
-//        WildfirePreferences.addPreferenceChangeListener((e) -> {
-//            initUnitsOfMeasure();
-//        });
-//
+        createChart();
+        this.chartViewer = new ChartViewer(chart);
+        this.controller = new JFreeHaulChartController(this);
     }
 
     @Override
     public JFreeHaulChartController getController() {
-        if (this.controller == null) {
-            this.controller = new JFreeHaulChartController(this);
-        }
         return this.controller;
     }
 
     @Override
     public Node getRoot() {
-        return chartViewer;
+        return this.chartViewer;
+    }
+
+    /**
+     * Plots the fire behavior. The FireBehavior object is provided by the view
+     * controller.
+     */
+    void plotFireBehavior(FireBehavior fire) {
+        // Reset the chart so we don't display stale data if we don't have a valid fire.
+        seriesMaxSpread.clear();
+        seriesFlankSpread.clear();
+        if (fire == null) {
+            chart.clearSubtitles();
+            return;
+        }
+
+        // Updating the subtitle with the fuel model name
+        FuelBed fuel = fire.getFuelBed();
+        String modelName = fuel.getFuelModel().getModelName();
+        subTitle.setText(modelName);
+        if (chart.getSubtitleCount() == 0) {
+            chart.addSubtitle(subTitle);
+        }
+
+        // Get values in units compatible with Chart        
+        double heat = fuel.getHeatRelease();
+        double rosMax = fire.getRateOfSpreadMax();
+        double rosFlank = fire.getRateOfSpreadFlanking();
+        double fln = fire.getFlameLength();
+
+        // Add our two x/y points
+        seriesMaxSpread.add(heat, rosMax);
+        seriesFlankSpread.add(heat, rosFlank);
+        // Add marker lines to follow Rate of Spread
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.clearRangeMarkers();
+        plot.clearDomainMarkers();
+
+        // Add a labeled marker for "flanking" ROS
+        Font font = new Font("SansSerif", Font.BOLD, 12);
+        DecimalFormat dfRos = new DecimalFormat("#0.0 " + rosStr);
+        Marker mrkRosFlank = new ValueMarker(rosFlank);
+        mrkRosFlank.setLabelOffsetType(LengthAdjustmentType.EXPAND);
+        mrkRosFlank.setPaint(Color.blue);
+        mrkRosFlank.setLabel(dfRos.format(rosFlank) + " ROS-Flank");
+        mrkRosFlank.setLabelFont(font);
+        mrkRosFlank.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
+        mrkRosFlank.setLabelTextAnchor(TextAnchor.TOP_LEFT);
+        plot.addRangeMarker(mrkRosFlank);
+
+        // Add a labeled marker for HPA
+        DecimalFormat dfBtu = new DecimalFormat("#0 " + heatStr);
+        Marker mrkBtu = new ValueMarker(heat);
+        mrkBtu.setLabelOffsetType(LengthAdjustmentType.EXPAND);
+        mrkBtu.setPaint(Color.black);
+        mrkBtu.setLabelFont(font);
+        mrkBtu.setLabel(dfBtu.format(heat) + " HPA");
+        if (heat < 1000) {
+            mrkBtu.setLabelAnchor(RectangleAnchor.BOTTOM_RIGHT);
+            mrkBtu.setLabelTextAnchor(TextAnchor.BOTTOM_LEFT);
+        } else {
+            mrkBtu.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
+            mrkBtu.setLabelTextAnchor(TextAnchor.BOTTOM_RIGHT);
+        }
+        plot.addDomainMarker(mrkBtu);
+
+        // Add a labeled marker for max ROS
+        Marker mrkRosMax = new ValueMarker(rosMax);
+        mrkRosMax.setLabelOffsetType(LengthAdjustmentType.EXPAND);
+        mrkRosMax.setPaint(Color.black);
+        mrkRosMax.setLabel(dfRos.format(rosMax) + " ROS-Max");
+        mrkRosMax.setLabelFont(font);
+        mrkRosMax.setLabelAnchor(rosMax > 700 ? RectangleAnchor.BOTTOM_LEFT : RectangleAnchor.TOP_LEFT);
+        mrkRosMax.setLabelTextAnchor(rosMax > 700 ? TextAnchor.TOP_LEFT : TextAnchor.BOTTOM_LEFT);
+        plot.addRangeMarker(mrkRosMax);
+
+        // Label FlameLength with arrow and label...
+        DecimalFormat dfFln = new DecimalFormat("#0.0 " + flnStr);
+        CircleDrawer cd = new CircleDrawer(Color.red, new BasicStroke(1.0f), null);
+        XYAnnotation annFln = new XYDrawableAnnotation(heat, rosMax, 11, 11, cd);
+        plot.clearAnnotations();
+        plot.addAnnotation(annFln);
+        XYPointerAnnotation pointer = new XYPointerAnnotation(
+                dfFln.format(fln) + " Flame",
+                heat,
+                rosMax, (rosMax > 550 ? 3.0 : 5.0) * Math.PI / 4.0);
+        pointer.setBaseRadius(35.0);
+        pointer.setTipRadius(10.0);
+        pointer.setFont(new Font("SansSerif", Font.BOLD, 14));
+        pointer.setOutlinePaint(Color.white);
+        pointer.setBackgroundPaint(new Color(128, 128, 128, 128));
+        pointer.setOutlineVisible(true);
+        pointer.setPaint(Color.black);
+        pointer.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
+        plot.addAnnotation(pointer);
+
+        // Adjust the range to grow if it exceeds the minimum
+        // This will also reset the chart in case the user zoomed in/out,
+        // which is helpfull because I was unable to reset it interactively.
+        xAxis.setRange(xMin, Math.max(xMax, heat));
+        yAxis.setRange(yMin, Math.max(yMax, rosMax));
     }
 
     private void initUnitsOfMeasure() {
@@ -293,160 +292,11 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
     }
 
     /**
-     * Plots the fire behavior at the specified x/y (heat/ros)
-     *
-     * @param heatReleasePerUnitArea x value in btus per unit area
-     * @param rateOfSpread y value in chains per hour
-     */
-    private void plotFireBehavior() {
-        // Resetting the chart so we don't display stale data if we don't have a valid fire.
-        seriesMax.clear();
-        seriesFlank.clear();
-//        if (fuel == null || fire == null) {
-//            chart.clearSubtitles();
-//            return;
-//        }
-//
-//        // Updating the subtitle with the fuel model name
-//        subTitle.setText(fuel.getFuelModel().getModelName());
-//        if (chart.getSubtitleCount() == 0) {
-//            chart.addSubtitle(subTitle);
-//        }
-
-        // Get values in units compatible with Chart        
-        double heat = 0;
-        double rosMax = 0;
-        double rosFlank = 0;
-        double fln = 0;
-        double fli = 0;
-        double heat_US = 0;
-        double rosMax_US = 0;
-        double btuNoWnd_US = 0;
-        double rosFlank_US = 0;
-        double fln_US = 0;
-        double fli_US = 0;
-//        try {
-//            // Use US values for placement inside the chart
-//            heat_US = fuel.getHeatRelease().getValue(heatUS);
-//            rosMax_US = fire.getRateOfSpreadMax().getValue(rosUS);
-//            rosFlank_US = fire.getRateOfSpreadFlanking().getValue(rosUS);
-//            fln_US = fire.getFlameLength().getValue(flnUS);
-//            fli_US = fire.getFirelineIntensity().getValue(fliUS);
-//
-//            // Get values used for labels
-//            heat = fuel.getHeatRelease().getValue(heatUOM);
-//            rosMax = fire.getRateOfSpreadMax().getValue(rosUOM);
-//            rosFlank = fire.getRateOfSpreadFlanking().getValue(rosUOM);
-//            fln = fire.getFlameLength().getValue(flnUOM);
-//            fli = fire.getFirelineIntensity().getValue(fliUOM);
-//        }
-//        catch (VisADException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-        // Add our two x/y points
-        seriesMax.add(heat_US, rosMax_US);
-        seriesFlank.add(heat_US, rosFlank_US);
-        // Add marker lines to follow Rate of Spread
-        XYPlot plot = (XYPlot) chart.getPlot();
-        plot.clearRangeMarkers();
-        plot.clearDomainMarkers();
-
-        // Add a labeled marker for "flanking" ROS
-        Font font = new Font("SansSerif", Font.BOLD, 12);
-        DecimalFormat dfRos = new DecimalFormat("#0.0 " + rosStr);
-        Marker mrkRosFlank = new ValueMarker(rosFlank_US);
-        mrkRosFlank.setLabelOffsetType(LengthAdjustmentType.EXPAND);
-        mrkRosFlank.setPaint(Color.blue);
-        mrkRosFlank.setLabel(dfRos.format(rosFlank) + " ROS-Flank");
-        mrkRosFlank.setLabelFont(font);
-        mrkRosFlank.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
-        mrkRosFlank.setLabelTextAnchor(TextAnchor.TOP_LEFT);
-        plot.addRangeMarker(mrkRosFlank);
-
-        // Add a labeled marker for HPA
-        DecimalFormat dfBtu = new DecimalFormat("#0 " + heatStr);
-        Marker mrkBtu = new ValueMarker(heat_US);
-        mrkBtu.setLabelOffsetType(LengthAdjustmentType.EXPAND);
-        mrkBtu.setPaint(Color.black);
-        mrkBtu.setLabelFont(font);
-        mrkBtu.setLabel(dfBtu.format(heat) + " HPA");
-        if (heat_US < 1000) {
-            mrkBtu.setLabelAnchor(RectangleAnchor.BOTTOM_RIGHT);
-            mrkBtu.setLabelTextAnchor(TextAnchor.BOTTOM_LEFT);
-        } else {
-            mrkBtu.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
-            mrkBtu.setLabelTextAnchor(TextAnchor.BOTTOM_RIGHT);
-        }
-        plot.addDomainMarker(mrkBtu);
-
-        // Add a labeled marker for max ROS
-        Marker mrkRosMax = new ValueMarker(rosMax_US);
-        mrkRosMax.setLabelOffsetType(LengthAdjustmentType.EXPAND);
-        mrkRosMax.setPaint(Color.black);
-        mrkRosMax.setLabel(dfRos.format(rosMax) + " ROS-Max");
-        mrkRosMax.setLabelFont(font);
-        mrkRosMax.setLabelAnchor(rosMax_US > 700 ? RectangleAnchor.BOTTOM_LEFT : RectangleAnchor.TOP_LEFT);
-        mrkRosMax.setLabelTextAnchor(rosMax_US > 700 ? TextAnchor.TOP_LEFT : TextAnchor.BOTTOM_LEFT);
-        plot.addRangeMarker(mrkRosMax);
-
-        // Label FlameLength with arrow and label...
-        DecimalFormat dfFln = new DecimalFormat("#0.0 " + flnStr);
-        CircleDrawer cd = new CircleDrawer(Color.red, new BasicStroke(1.0f), null);
-        XYAnnotation annFln = new XYDrawableAnnotation(heat_US, rosMax_US, 11, 11, cd);
-        plot.clearAnnotations();
-        plot.addAnnotation(annFln);
-        XYPointerAnnotation pointer = new XYPointerAnnotation(
-                dfFln.format(fln) + " Flame",
-                heat_US,
-                rosMax_US, (rosMax_US > 550 ? 3.0 : 5.0) * Math.PI / 4.0);
-        pointer.setBaseRadius(35.0);
-        pointer.setTipRadius(10.0);
-        pointer.setFont(new Font("SansSerif", Font.BOLD, 14));
-        pointer.setOutlinePaint(Color.white);
-        pointer.setBackgroundPaint(new Color(128, 128, 128, 128));
-        pointer.setOutlineVisible(true);
-        pointer.setPaint(Color.black);
-        pointer.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
-        plot.addAnnotation(pointer);
-
-        // Adjust the range to grow if it exceeds the minimum
-        // This will also reset the chart in case the user zoomed in/out,
-        // which is helpfull because I was unable to reset it interactively.
-        xAxis.setRange(xMin, Math.max(xMax, heat_US));
-        yAxis.setRange(yMin, Math.max(yMax, rosMax_US));
-    }
-
-    private void initChart() {
-        createChart();
-        this.chartViewer = new ChartViewer(chart);
-// JFree ChartPanel vs ChartViewer        
-//        ChartPanel chartPanel = new ChartPanel(chart,
-//            300, //DEFAULT_WIDTH,
-//            400, //DEFAULT_HEIGHT,
-//            150, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
-//            150, // DEFAULT_MINIMUM_DRAW_HEIGHT,
-//            DEFAULT_MAXIMUM_DRAW_WIDTH,
-//            DEFAULT_MAXIMUM_DRAW_HEIGHT,
-//            DEFAULT_BUFFER_USED,
-//            false, // properties
-//            true, // save
-//            true, // print
-//            false, // zoom
-//            true); // tooltips
-//        chartPanel.setMouseZoomable(false);
-//
-//        add(chartPanel, BorderLayout.CENTER);
-    }
-
-    /**
-     * Creates a JFreeChart representing a Hauling Chart.
-     *
-     * @return A chart.
+     * Creates a JFreeChart representing a "Haul Chart".
      */
     private void createChart() {
 
         String title = "Haul Chart";
-        String sub = "fuel model goes here!";
         String xAxisTitle = "Heat per Unit Area (HPA) Btu/ft^2"; // + heatStr;
         String yAxisTitle = "Rate of Spread (ROS) ch/hr"; // + rosStr;
 
@@ -460,10 +310,10 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         xAxis.setRange(xMin, xMax);
         yAxis.setRange(yMin, yMax);
 
-        seriesMax = new XYSeries("Max Spread");
-        seriesFlank = new XYSeries("Flanking Spread");
-        dataset = new XYSeriesCollection(seriesMax);
-        dataset.addSeries(seriesFlank);
+        seriesMaxSpread = new XYSeries("Max Spread");
+        seriesFlankSpread = new XYSeries("Flanking Spread");
+        dataset = new XYSeriesCollection(seriesMaxSpread);
+        dataset.addSeries(seriesFlankSpread);
 
         chart = ChartFactory.createScatterPlot(title, xAxisTitle, yAxisTitle,
                 dataset, PlotOrientation.VERTICAL, true, true, false);
@@ -493,13 +343,6 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         addImageAnnotations(renderer);
 
         ChartUtilities.applyCurrentTheme(chart);
-//        XYItemRenderer renderer = new XYLineAndShapeRenderer(false,true);
-//        plot.setRenderer(renderer);
-//
-//        JFreeChart chart = new JFreeChart(
-//                title, JFreeChart.DEFAULT_TITLE_FONT, plot, false);
-//
-
     }
 
     private void addBackgroundColors(XYLineAndShapeRenderer renderer) {
@@ -653,6 +496,88 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         renderer.addAnnotation(fliLabel,
                 Layer.BACKGROUND);
 
+    }
+
+    private final class MyLogAxis extends LogAxis {
+
+        MyLogAxis(String label) {
+            super(label);
+            setDefaultAutoRange(new Range(1, 10000.0));
+            this.setStandardTickUnits(createTickUnits());
+            this.setMinorTickMarksVisible(true);
+        }
+
+        /**
+         * Returns a collection of tick units for log (base 10) values. Uses a
+         * given Locale to create the DecimalFormats.
+         *
+         * @param locale the locale to use to represent Numbers.
+         *
+         * @return A collection of tick units for integer values.
+         *
+         * @since 1.0.7
+         */
+        public TickUnitSource createTickUnits() {
+            TickUnits units = new TickUnits();
+            DecimalFormat numberFormat = new DecimalFormat("0");
+            units.add(new NumberTickUnit(1, numberFormat, 9));
+            return units;
+        }
+    }
+
+    /**
+     * An implementation of the {@link Drawable} interface.
+     */
+    private class CircleDrawer implements Drawable {
+
+        private final Paint outlinePaint;
+        private final Stroke outlineStroke;
+        private final Paint fillPaint;
+
+        /**
+         * Constructs a new CircleDrawer.
+         *
+         * @param outlinePaint the outline paint.
+         * @param outlineStroke the outline stroke.
+         * @param fillPaint the fill paint.
+         */
+        CircleDrawer(Paint outlinePaint,
+                Stroke outlineStroke,
+                Paint fillPaint) {
+            this.outlinePaint = outlinePaint;
+            this.outlineStroke = outlineStroke;
+            this.fillPaint = fillPaint;
+        }
+
+        /**
+         * Draws the circle.
+         *
+         * @param g2 the graphics device.
+         * @param area the area in which to draw.
+         */
+        @Override
+        public void draw(Graphics2D g2, Rectangle2D area) {
+            Ellipse2D ellipse = new Ellipse2D.Double(area.getX(), area.getY(),
+                    area.getWidth(), area.getHeight());
+            if (this.fillPaint != null) {
+                g2.setPaint(this.fillPaint);
+                g2.fill(ellipse);
+            }
+            if (this.outlinePaint != null && this.outlineStroke != null) {
+                g2.setPaint(this.outlinePaint);
+                g2.setStroke(this.outlineStroke);
+                g2.draw(ellipse);
+            }
+
+            g2.setPaint(Color.black);
+            g2.setStroke(new BasicStroke(1.0f));
+            Line2D line1 = new Line2D.Double(area.getCenterX(), area.getMinY(),
+                    area.getCenterX(), area.getMaxY());
+            Line2D line2 = new Line2D.Double(area.getMinX(), area.getCenterY(),
+                    area.getMaxX(), area.getCenterY());
+            g2.draw(line1);
+            g2.draw(line2);
+        }
     }
 
 }

@@ -29,15 +29,15 @@
  */
 package com.emxsys.wildfirefx.presentation.haulchart;
 
-import com.emxsys.chartext.LogScatterChart;
-import com.emxsys.chartext.axis.LogarithmicAxis;
-import com.emxsys.chartext.axis.NumericAxis;
+import com.emxsys.chart.LogScatterChart;
+import com.emxsys.chart.axis.LogarithmicAxis;
+import com.emxsys.wildfirefx.model.FireBehavior;
+import com.emxsys.wildfirefx.model.FuelBed;
 import com.emxsys.wildfirefx.presentation.View;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.ScatterChart;
-import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 
@@ -46,34 +46,48 @@ import javafx.scene.paint.Color;
  * @author Bruce Schubert
  */
 public class HaulChartView implements View<HaulChartController> {
-    private static final double ALPHA = 0.8;    
-    public static final Color COLOR_LOW =  Color.rgb(128, 127, 255, ALPHA);         // blue
-    public static final Color COLOR_MODERATE =  Color.rgb(127, 193, 151, ALPHA);    // green
-    public static final Color COLOR_ACTIVE =  Color.rgb(255, 179, 130, ALPHA);      // tan
-    public static final Color COLOR_VERY_ACTIVE =  Color.rgb(255, 128, 255, ALPHA); // magenta
-    public static final Color COLOR_EXTREME =  Color.rgb(253, 128, 124, ALPHA);     // orange
+
+    private static final double ALPHA = 0.8;
+    public static final Color COLOR_LOW = Color.rgb(128, 127, 255, ALPHA);         // blue
+    public static final Color COLOR_MODERATE = Color.rgb(127, 193, 151, ALPHA);    // green
+    public static final Color COLOR_ACTIVE = Color.rgb(255, 179, 130, ALPHA);      // tan
+    public static final Color COLOR_VERY_ACTIVE = Color.rgb(255, 128, 255, ALPHA); // magenta
+    public static final Color COLOR_EXTREME = Color.rgb(253, 128, 124, ALPHA);     // orange
     // Flame Length thresholds
     public static final double FL_THRESHOLD_LOW = 1D;
     public static final double FL_THRESHOLD_MODERATE = 3D;
     public static final double FL_THRESHOLD_ACTIVE = 7D;
     public static final double FL_THRESHOLD_VERY_ACTIVE = 15D;
-    //
-    private String title = "Haul Chart";
-    private String subtitle = "fuel model goes here!";
-    private String xAxisTitle = "Heat per Unit Area (HPA) Btu/ft^2"; // + heatStr;
-    private String yAxisTitle = "Rate of Spread (ROS) ch/hr"; // + rosStr;
-    
-    private ScatterChart chart;
+    // X and Y axis properties
+    private final double xMin = 10;
+    private final double yMin = 1;
+    private final double xMax = 11000;
+    private final double yMax = 1100;
     private LogarithmicAxis xAxis;
     private LogarithmicAxis yAxis;
 
+    // Plottable values
+    private ScatterChart.Series seriesMax;
+    private ScatterChart.Series seriesFlank;
+    private ObservableList<XYChart.Series> dataset;
+
+    /**
+     * The chart is root node of this view.
+     */
+    private LogScatterChart chart;
+    /**
+     * The MVC view controller.
+     */
+    private final HaulChartController controller;
+
     public HaulChartView() {
-        createContent();
+        createChart();
+        controller = new HaulChartController(this);
     }
 
     @Override
     public HaulChartController getController() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return controller;
     }
 
     @Override
@@ -81,37 +95,74 @@ public class HaulChartView implements View<HaulChartController> {
         return chart;
     }
 
-    @SuppressWarnings("unchecked")
-    private void createContent() {
-        
-        xAxis = new LogarithmicAxis(xAxisTitle, 0.1d, 100.0d, 1.0d);
-        yAxis = new LogarithmicAxis(yAxisTitle, 0.0d, 10.0d, 1.0d);
-        
-        ObservableList<XYChart.Series> data = FXCollections.observableArrayList(
-                new ScatterChart.Series("Series 1",
-                        FXCollections.<ScatterChart.Data>observableArrayList(
-                                new XYChart.Data(1, 1),
-                                new XYChart.Data(2, 2),
-                                new XYChart.Data(3, 3),
-                                new XYChart.Data(4, 4),
-                                new XYChart.Data(5, 5),
-                                new XYChart.Data(6, 6),
-                                new XYChart.Data(7, 7),
-                                new XYChart.Data(8, 8),
-                                new XYChart.Data(9, 9),
-                                new XYChart.Data(10, 10)
-                        //                    new XYChart.Data(0.2, 3.5),
-                        //                    new XYChart.Data(0.7, 4.6),
-                        //                    new XYChart.Data(1.8, 1.7),
-                        //                    new XYChart.Data(2.1, 2.8),
-                        //                    new XYChart.Data(4.0, 2.2),
-                        //                    new XYChart.Data(4.1, 2.6),
-                        //                    new XYChart.Data(4.5, 2.0),
-                        //                    new XYChart.Data(6.0, 3.0),
-                        //                    new XYChart.Data(7.0, 2.0),
-                        //                    new XYChart.Data(7.8, 4.0)
-                        ))
-        );
-        chart = new LogScatterChart(xAxis, yAxis, data);
+    /**
+     * Plots the fire behavior. The FireBehavior object is provided by the
+     * controller.
+     */
+    void plotFireBehavior(FireBehavior fire) {
+        // Resetting the chart so we don't display stale data if we don't have a valid fire.
+        seriesMax.getData().clear();
+        seriesFlank.getData().clear();
+        if (fire == null) {
+            //chart.clearSubtitles();
+            return;
+        }
+
+        // Updating the subtitle with the fuel model name
+        FuelBed fuel = fire.getFuelBed();
+        String modelName = fuel.getFuelModel().getModelName();
+        double heat = fuel.getHeatRelease();
+        double rosMax = fire.getRateOfSpreadMax();
+        double rosFlank = fire.getRateOfSpreadFlanking();
+        double fln = fire.getFlameLength();
+
+        chart.setSubtitle(modelName);
+        chart.layout();
+
+        seriesMax.getData().add(new XYChart.Data(heat, rosMax));
+        seriesMax.getData().add(new XYChart.Data(heat, rosFlank));
     }
+
+    /**
+     * Creates a LogScatterChart representing a "Haul Chart".
+     */
+    @SuppressWarnings("unchecked")
+    private void createChart() {
+        String title = "Haul Chart";
+        String subtitle = "fuel model goes here!";
+        String xAxisTitle = "Heat per Unit Area (HPA) Btu/ft^2"; // + heatStr;
+        String yAxisTitle = "Rate of Spread (ROS) ch/hr"; // + rosStr;
+        String seriesMaxName = "Max Spread";
+        String seriesFlankName = "Flanking Spread";
+
+        xAxis = new LogarithmicAxis(xAxisTitle, xMin, xMax, 1.0d);
+        yAxis = new LogarithmicAxis(yAxisTitle, yMin, yMax, 1.0d);
+
+        seriesMax = new ScatterChart.Series();
+        seriesMax.setName(seriesMaxName);
+
+        seriesFlank = new ScatterChart.Series();
+        seriesFlank.setName(seriesFlankName);
+
+        dataset = FXCollections.observableArrayList(seriesMax, seriesFlank);
+
+//        seriesMax = FXCollections.observableArrayList(
+//                new ScatterChart.Series(seriesMaxName,
+//                        FXCollections.<ScatterChart.Data>observableArrayList(
+//                                new XYChart.Data(1, 1),
+//                                new XYChart.Data(2, 2),
+//                                new XYChart.Data(3, 3),
+//                                new XYChart.Data(4, 4),
+//                                new XYChart.Data(5, 5),
+//                                new XYChart.Data(6, 6),
+//                                new XYChart.Data(7, 7),
+//                                new XYChart.Data(8, 8),
+//                                new XYChart.Data(9, 9),
+//                                new XYChart.Data(10, 10)
+//                        ))
+//        );
+        chart = new LogScatterChart(xAxis, yAxis, dataset);
+        chart.setTitle(title);
+    }
+
 }

@@ -27,51 +27,50 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.chartext.axis;
+package com.emxsys.chart;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
+import com.emxsys.chart.extension.Subtitle;
+import javafx.beans.NamedArg;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.ScatterChart;
 
 /**
+ * An extended version of a ScatterChart.
  *
  * @author Bruce Schubert
+ * @param <X>
+ * @param <Y>
  */
-public class NumberTickUnit extends TickUnit {
+public class ScatterChartExt<X, Y> extends ScatterChart<X, Y> {
 
-    private final DecimalFormat defaultFormatter = new DecimalFormat("0.00");
-    private NumberFormat formatter;
-
-
-    public NumberTickUnit() {
-        this(1, null, 9);
+    private Subtitle subtitle;
+    public void setSubtitle(String subtitle) {
+        this.subtitle.setSubtitle(subtitle);
+    }
+    
+    
+    public ScatterChartExt(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
+        this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
 
+    @SuppressWarnings("OverridableMethodCallInConstructor")
+    public ScatterChartExt(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
+        super(xAxis, yAxis, data);
 
-    public NumberTickUnit(double size) {
-        this(size, null, 9);
+        // Adding the subtitle extension
+        subtitle = new Subtitle(this, getChildren(), getLegend());
     }
 
-
-    // Compatible with JFree signature
-    public NumberTickUnit(double size, NumberFormat formatter, int minorTickCount) {
-        super(size, minorTickCount);
-        this.formatter = formatter;
-    }
-
-
-    /**
-     * Get the string label name for a tick mark with the given value
-     *
-     * @param value The value to format into a tick label string
-     * @return A formatted string for the given value
-     */
     @Override
-    public String getTickMarkLabel(Number value) {
-        if (formatter == null) {
-            formatter = defaultFormatter;
-        }
-        return formatter.format(value);
+    protected void layoutChildren() {
+        super.layoutChildren();
+
+        // BDS: Injectable Subtitle
+        subtitle.layoutChildren();
+
     }
+
 
 }
