@@ -31,7 +31,9 @@ package com.emxsys.chart;
 
 import com.emxsys.chart.extension.Subtitle;
 import com.emxsys.chart.axis.LogarithmicAxis;
+import com.emxsys.chart.extension.Markers;
 import java.util.Iterator;
+import java.util.Objects;
 import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -62,6 +64,7 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
     
     
     private Subtitle subtitle;
+    private Markers markers;
 
     public LogScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
@@ -72,9 +75,10 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
         super(xAxis, yAxis, data);
 
         // BDS: Adding JFree subtitle capability
-        // Inserting subtitle after title 
         subtitle = new Subtitle(this, getChildren(), getLegend());
-
+        // BDS: Adding JFree style Markers
+        markers = new Markers(this, getPlotChildren());
+        
         majorHorzGridLines.getStyleClass().setAll("chart-horizontal-zero-line");
         majorVertGridLines.getStyleClass().setAll("chart-vertical-zero-line");
 
@@ -173,6 +177,10 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
         this.requestLayout();
     }
 
+    public Markers getMarkers() {
+        return this.markers;
+    }
+
 
    @Override
     protected void layoutPlotChildren() {
@@ -182,6 +190,7 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
         // x axis and its height from the height of the y axis.
         super.layoutPlotChildren();
 
+        this.markers.layoutMarkers();
     }
 
     /**

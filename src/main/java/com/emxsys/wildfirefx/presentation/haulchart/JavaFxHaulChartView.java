@@ -31,6 +31,7 @@ package com.emxsys.wildfirefx.presentation.haulchart;
 
 import com.emxsys.chart.LogScatterChart;
 import com.emxsys.chart.axis.LogarithmicAxis;
+import com.emxsys.chart.extension.ValueMarker;
 import com.emxsys.wildfirefx.model.FireBehavior;
 import com.emxsys.wildfirefx.model.FuelBed;
 import com.emxsys.wildfirefx.presentation.View;
@@ -109,6 +110,8 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         // Resetting the chart so we don't display stale data if we don't have a valid fire.
         seriesMax.getData().clear();
         seriesFlank.getData().clear();
+        chart.getMarkers().clearDomainMarkers();
+        chart.getMarkers().clearRangeMarkers();
         if (fire == null) {
             chart.setSubtitle(null);
             return;
@@ -129,7 +132,8 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         seriesFlank.getData().add(new XYChart.Data(heat, rosFlank));
         
         // Add range (ros) and domain (heat) markers
-        
+        chart.getMarkers().addRangeMarker(new ValueMarker(rosMax));
+        chart.getMarkers().addDomainMarker(new ValueMarker(heat));
         
     }
 
