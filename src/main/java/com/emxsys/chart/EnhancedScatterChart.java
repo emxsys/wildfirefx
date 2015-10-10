@@ -87,7 +87,7 @@ public class EnhancedScatterChart<X, Y> extends ScatterChart<X, Y> {
     @Override
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
-
+        this.annotations.layoutAnnotations();
         this.markers.layoutMarkers();
     }
 

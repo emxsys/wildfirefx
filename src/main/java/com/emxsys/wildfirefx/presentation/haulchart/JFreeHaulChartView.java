@@ -300,7 +300,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
 
         String title = "JFree Haul Chart";
         String xAxisTitle = "Heat per Unit Area (HPA) Btu/ft^2"; // + heatStr;
-        String yAxisTitle = "Rate of Spread (ROS) ch/hr"; // + rosStr;
+        String yAxisTitle = "Rate of Spread (ROS) ft/min"; // + rosStr;
 
         xAxis = new MyLogAxis(xAxisTitle);
         yAxis = new MyLogAxis(yAxisTitle);
@@ -354,10 +354,10 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         double xEndActive = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_ACTIVE, yMin);
         double xEndVeryActive = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_VERY_ACTIVE, yMin);
         //
-        double yEndLow = FireBehaviorUtil.computeRosChainsPerHour(FL_THRESHOLD_LOW, xMin);
-        double yEndModerate = FireBehaviorUtil.computeRosChainsPerHour(FL_THRESHOLD_MODERATE, xMin);
-        double yEndActive = FireBehaviorUtil.computeRosChainsPerHour(FL_THRESHOLD_ACTIVE, xMin);
-        double yEndVeryActive = FireBehaviorUtil.computeRosChainsPerHour(FL_THRESHOLD_VERY_ACTIVE, xMin);
+        double yEndLow = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_LOW, xMin);
+        double yEndModerate = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_MODERATE, xMin);
+        double yEndActive = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_ACTIVE, xMin);
+        double yEndVeryActive = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_VERY_ACTIVE, xMin);
         //
         XYPolygonAnnotation lowBkgnd = new XYPolygonAnnotation(
                 new double[]{
@@ -399,7 +399,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
 
         // compute the x,y location for the Flame Len label.
         double btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, flameLen * 3);
-        double ros = FireBehaviorUtil.computeRosChainsPerHour(flameLen, btu);
+        double ros = FireBehaviorUtil.computeRateOfSpread(flameLen, btu);
         XYTextAnnotation annFln = new XYTextAnnotation("Flame Length, ft", btu, ros);
         annFln.setFont(font);
         annFln.setPaint(Color.darkGray);
@@ -407,7 +407,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
 
         // compute the x,y location for the FLI label
         btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, flameLen * 15);
-        ros = FireBehaviorUtil.computeRosChainsPerHour(flameLen, btu);
+        ros = FireBehaviorUtil.computeRateOfSpread(flameLen, btu);
         XYTextAnnotation annFli = new XYTextAnnotation("Fireline Intensity, Btu/ft/sec", btu, ros);
         annFli.setFont(font);
         annFli.setPaint(Color.darkGray);
@@ -462,7 +462,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         // get BTU value at bottom of chart for give flame length and 1 ch/hr
         double btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, yMin);
         // ... and get the  ROS value on the left edge of chart for 10 btu/ft^2
-        double ros = FireBehaviorUtil.computeRosChainsPerHour(flameLen, xMin);
+        double ros = FireBehaviorUtil.computeRateOfSpread(flameLen, xMin);
         // add the line annonation
         renderer.addAnnotation(new XYLineAnnotation(
                 btu, yMin,
@@ -473,7 +473,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         // Draw flame length labels in the lower diagonal half.
         // Compute new btu and ros to represent x,y values for label placement
         btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, flameLen * 3);
-        ros = FireBehaviorUtil.computeRosChainsPerHour(flameLen, btu);
+        ros = FireBehaviorUtil.computeRateOfSpread(flameLen, btu);
         XYTextAnnotation flLabel = new XYTextAnnotation(Integer.toString((int) flameLen) + "\'", btu, ros);
         flLabel.setFont(font);
         flLabel.setPaint(Color.darkGray);
@@ -484,7 +484,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         // Draw fireline intensity labels in the upper in the diagonal half
         // Compute new btu and ros to represent x,y values for label placement
         btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, flameLen * 15);
-        ros = FireBehaviorUtil.computeRosChainsPerHour(flameLen, btu);
+        ros = FireBehaviorUtil.computeRateOfSpread(flameLen, btu);
         int fli = (int) Math.round(FireBehaviorUtil.computeFirelineIntensity(btu, ros));
         if (fli > 1000) {
             fli = (int) Math.round((double) fli / 1000) * 1000;

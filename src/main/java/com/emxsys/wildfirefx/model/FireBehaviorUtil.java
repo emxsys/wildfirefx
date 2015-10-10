@@ -42,13 +42,12 @@ public class FireBehaviorUtil {
      * Physical Process" page 47.
      *
      * @param heatAreaBtus [btus / ft^2 ]
-     * @param rosChainsPerHour [chains per hour]
+     * @param ros [ft/min]
      * @return fireline intensity [btu / ft / sec]
      */
-    public static double computeFirelineIntensity(double heatAreaBtus, double rosChainsPerHour) {
+    public static double computeFirelineIntensity(double heatAreaBtus, double ros) {
         // convert chains per hour to feet per minute
-        double rosFtPerMin = rosChainsPerHour * 1.100;
-        double fli = (heatAreaBtus * rosFtPerMin) / 60d;
+        double fli = (heatAreaBtus * ros) / 60d;
         return fli;
     }
 
@@ -68,13 +67,12 @@ public class FireBehaviorUtil {
      * Computes heat/area BTUs from chart flame length and ROS.
      *
      * @param flameLen [ft]
-     * @param rosChainsPerHour [chains/hour]
+     * @param ros [ft/min]
      * @return [btu / ft^2]
      */
-    public static double computeHeatAreaBtus(double flameLen, double rosChainsPerHour) {
+    public static double computeHeatAreaBtus(double flameLen, double ros) {
         double fliBtuFtSec = 5.67 * Math.pow(flameLen, 2.17);
-        double rosFtPerMin = rosChainsPerHour * 1.100;
-        double heatArea = (60 * fliBtuFtSec) / rosFtPerMin;
+        double heatArea = (60 * fliBtuFtSec) / ros;
         return heatArea;
     }
 
@@ -83,13 +81,12 @@ public class FireBehaviorUtil {
      *
      * @param flameLen [ft]
      * @param heatAreaBtus btu / ft^2]
-     * @return [chains/hour]
+     * @return [ft/min]
      */
-    public static double computeRosChainsPerHour(double flameLen, double heatAreaBtus) {
+    public static double computeRateOfSpread(double flameLen, double heatAreaBtus) {
         double fliBtuFtSec = 5.67 * Math.pow(flameLen, 2.17);
         double rosFtPerMin = (60 * fliBtuFtSec) / heatAreaBtus;
-        double rosChainsPerHour = rosFtPerMin * 0.9091;
-        return rosChainsPerHour;
+        return rosFtPerMin;
     }
 
 }

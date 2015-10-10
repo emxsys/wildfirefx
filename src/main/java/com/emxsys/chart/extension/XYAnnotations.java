@@ -36,6 +36,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Line;
 
@@ -48,9 +49,10 @@ public class XYAnnotations<X, Y> {
     private final XYChart chart;
     private final ObservableList<Node> chartChildren;
     private final ObservableList<Node> plotChildren;
+    private final Group plotContent;
 
-    private final Region plotBackground;
-    private final Region plotForeground = new Region();
+    private final Group background = new Group();
+    private final Group foreground = new Group();
 
     private final ObservableList<XYLineAnnotation> lines;
     //private final ObservableList<Node> polygons;
@@ -61,16 +63,17 @@ public class XYAnnotations<X, Y> {
         this.chartChildren = chartChildren;
         this.plotChildren = plotChildren;
 
-        // Get a reference to the plot backgound region
-        this.plotBackground = (Region) plotChildren.get(0);
-        if (!plotBackground.getStyleClass().contains("chart-plot-background")) {
-            throw new IllegalStateException("Unable to assert that we found the plotBackground based on the styleClass.");
+        // The chartChildren contains a plotBackground, plotArea, XAxis and YAxis.
+        // Find the plotArea and add our background and foreground on either side 
+        // of the plotContent, which is the last item in the plotArea.
+        Group plotArea = (Group) chartChildren.get(1);
+        int plotContentIndex = plotArea.getChildren().size() - 1;
+        if (plotContentIndex < 0) {
+            throw new IllegalStateException("plotArea is empty!");
         }
-
-        // Add a new plot foreground region to the plot area after the plot contents.
-        this.plotForeground.getStyleClass().add("chart-plot-foreground");
-        Group plotArea = (Group) plotChildren.get(1);
-        plotArea.getChildren().add(plotForeground);
+        plotContent = (Group) plotArea.getChildren().get(plotContentIndex);
+        plotArea.getChildren().add(plotContentIndex + 1, foreground);
+        plotArea.getChildren().add(plotContentIndex, background);
 
         // Create lists that notify on changes
         lines = FXCollections.observableArrayList();
@@ -80,11 +83,14 @@ public class XYAnnotations<X, Y> {
     }
 
     public void add(XYLineAnnotation annotation) {
-        //this.plotForeground.s
+        this.foreground.getChildren().add(annotation.getNode());
         this.lines.add(annotation);
-        
+
     }
+
     public void layoutAnnotations() {
+        foreground.setLayoutX(plotContent.getLayoutX());
+        foreground.setLayoutY(plotContent.getLayoutY());
         layoutLines();
     }
 
@@ -95,10 +101,14 @@ public class XYAnnotations<X, Y> {
         for (XYLineAnnotation annotation : lines) {
 
             // Convert line values to axis values (e.g., log values)
-            X x1 = (X) xAxis.toRealValue(annotation.getX1());
-            X x2 = (X) xAxis.toRealValue(annotation.getX2());
-            Y y1 = (Y) yAxis.toRealValue(annotation.getY1());
-            Y y2 = (Y) yAxis.toRealValue(annotation.getY2());
+//            X x1 = (X) xAxis.toRealValue(annotation.getX1());
+//            X x2 = (X) xAxis.toRealValue(annotation.getX2());
+//            Y y1 = (Y) yAxis.toRealValue(annotation.getY1());
+//            Y y2 = (Y) yAxis.toRealValue(annotation.getY2());
+            double x1 = annotation.getX1();
+            double y1 = annotation.getY1();
+            double x2 = annotation.getX2();
+            double y2 = annotation.getY2();
 
             // Plot the values
             Line line = (Line) annotation.getNode();

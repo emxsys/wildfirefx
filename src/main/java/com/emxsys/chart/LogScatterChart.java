@@ -29,19 +29,14 @@
  */
 package com.emxsys.chart;
 
-import com.emxsys.chart.extension.Subtitle;
 import com.emxsys.chart.axis.LogarithmicAxis;
-import com.emxsys.chart.extension.XYAnnotations;
-import com.emxsys.chart.extension.Markers;
 import java.util.Iterator;
-import java.util.Objects;
 import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
-import javafx.scene.chart.ScatterChart;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -51,22 +46,34 @@ import javafx.scene.shape.Rectangle;
  * A logarithmic scatter chart.
  *
  * @author Bruce Schubert
- * @version $Id$
  * @param <X>
  * @param <Y>
  */
 public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
 
     private Group plotArea = null;
+    // References to XYChart grid lines
     private Path horzGridLines = null;
     private Path vertGridLines = null;
+    // Major log grid lines added to XYChart
     private Path majorHorzGridLines = new Path();
     private Path majorVertGridLines = new Path();
 
+    /**
+     * Constructs a logarithmic scatter chart.
+     * @param xAxis
+     * @param yAxis 
+     */
     public LogScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
 
+    /**
+     * Constructs a logarithmic scatter chart.
+     * @param xAxis
+     * @param yAxis
+     * @param data 
+     */
     @SuppressWarnings("OverridableMethodCallInConstructor")
     public LogScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis, data);

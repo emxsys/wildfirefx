@@ -32,7 +32,9 @@ package com.emxsys.wildfirefx.presentation.haulchart;
 import com.emxsys.chart.LogScatterChart;
 import com.emxsys.chart.axis.LogarithmicAxis;
 import com.emxsys.chart.extension.ValueMarker;
+import com.emxsys.chart.extension.XYLineAnnotation;
 import com.emxsys.wildfirefx.model.FireBehavior;
+import com.emxsys.wildfirefx.model.FireBehaviorUtil;
 import com.emxsys.wildfirefx.model.FuelBed;
 import com.emxsys.wildfirefx.presentation.View;
 import javafx.collections.FXCollections;
@@ -57,17 +59,16 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
     public static final Color COLOR_VERY_ACTIVE = Color.rgb(255, 128, 255, ALPHA); // magenta
     public static final Color COLOR_EXTREME = Color.rgb(253, 128, 124, ALPHA);     // orange
     // Flame Length thresholds
-    public static final double FL_THRESHOLD_LOW = 1D;
-    public static final double FL_THRESHOLD_MODERATE = 3D;
-    public static final double FL_THRESHOLD_ACTIVE = 7D;
-    public static final double FL_THRESHOLD_VERY_ACTIVE = 15D;
+    public static final double FL_THRESHOLD_LOW_TO_MODERATE = 1D;
+    public static final double FL_THRESHOLD_MODERATE_TO_ACTIVE = 3D;
+    public static final double FL_THRESHOLD_ACTIVE_TO_VERY_ACTIVE = 7D;
+    public static final double FL_THRESHOLD_VERY_ACTIVE_TO_EXTREME = 15D;
     // X and Y axis properties
     private final double xMin = 10;
     private final double yMin = 1;
     private final double xMax = 11000;
     private final double yMax = 1100;
-    
-    
+
     private LogarithmicAxis xAxis;
     private LogarithmicAxis yAxis;
 
@@ -137,12 +138,12 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         // Update the plot with our x,y points for max and flanking fire behavior
         seriesMax.getData().add(new XYChart.Data(heat, rosMax));
         seriesFlank.getData().add(new XYChart.Data(heat, rosFlank));
-        
+
         // Add range (ros) and domain (heat) markers
         chart.getMarkers().addRangeMarker(new ValueMarker(rosMax));
         chart.getMarkers().addRangeMarker(new ValueMarker(rosFlank));
         chart.getMarkers().addDomainMarker(new ValueMarker(heat));
-        
+
     }
 
     /**
@@ -152,7 +153,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
     private void createChart() {
         String title = "JavaFX Haul Chart";
         String xAxisTitle = "Heat per Unit Area (HPA) Btu/ft^2"; // + heatStr;
-        String yAxisTitle = "Rate of Spread (ROS) ch/hr"; // + rosStr;
+        String yAxisTitle = "Rate of Spread (ROS) ft/min"; // + rosStr;
         String seriesMaxName = "Max Spread";
         String seriesFlankName = "Flanking Spread";
 
@@ -172,7 +173,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         seriesFlank.getData().add(new XYChart.Data(0, 0));
 
         dataset = FXCollections.observableArrayList(seriesMax, seriesFlank);
-        
+
         chart = new LogScatterChart(xAxis, yAxis, dataset);
         chart.setTitle(title);
         // Set the drawing style for the symbols
@@ -181,6 +182,31 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         // Clear out the dummy data now that the legend has been created.
         seriesMax.getData().clear();
         seriesFlank.getData().clear();
+
+        layoutFlameLengthDivisions();
+    }
+
+    private void layoutFlameLengthDivisions() {
+        // draw flame length divisions
+        final double[] flameLens = {1.0, 2.0, 4.0, 8.0, 11.0, 15.0, 20.0};    // [ft]
+        final double FT_PER_MIN_TO_CH_PER_HOUR = 0.909091;
+        for (double flameLen : flameLens) {
+
+            // get BTU value at bottom of chart for given flame length and 1 ch/hr
+            double btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, yMin);
+
+            // ... and get the  ROS value on the left edge of chart for 10 btu/ft^2
+            double ros = FireBehaviorUtil.computeRateOfSpread(flameLen, xMin);
+
+            chart.getAnnotations().add(new XYLineAnnotation(
+                    btu, yMin,
+                    xMin, ros));
+
+        }
+    }
+
+    private void layoutFireBehaviorThresholds() {
+
     }
 
 }
