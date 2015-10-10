@@ -133,6 +133,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         
         // Add range (ros) and domain (heat) markers
         chart.getMarkers().addRangeMarker(new ValueMarker(rosMax));
+        chart.getMarkers().addRangeMarker(new ValueMarker(rosFlank));
         chart.getMarkers().addDomainMarker(new ValueMarker(heat));
         
     }

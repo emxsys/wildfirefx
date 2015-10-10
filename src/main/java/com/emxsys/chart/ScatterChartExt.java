@@ -29,6 +29,8 @@
  */
 package com.emxsys.chart;
 
+import com.emxsys.chart.extension.Annotations;
+import com.emxsys.chart.extension.Markers;
 import com.emxsys.chart.extension.Subtitle;
 import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
@@ -46,11 +48,9 @@ import javafx.scene.chart.ScatterChart;
 public class ScatterChartExt<X, Y> extends ScatterChart<X, Y> {
 
     private Subtitle subtitle;
-    public void setSubtitle(String subtitle) {
-        this.subtitle.setSubtitle(subtitle);
-    }
-    
-    
+    private Markers markers;
+    private Annotations annotations;
+
     public ScatterChartExt(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
@@ -59,18 +59,36 @@ public class ScatterChartExt<X, Y> extends ScatterChart<X, Y> {
     public ScatterChartExt(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis, data);
 
-        // Adding the subtitle extension
         subtitle = new Subtitle(this, getChildren(), getLegend());
+        markers = new Markers(this, getPlotChildren());
+        annotations = new Annotations(this, getPlotChildren());
+    }
+
+    public void setSubtitle(String subtitle) {
+        this.subtitle.setSubtitle(subtitle);
+        this.requestLayout();
+    }
+
+    public Markers getMarkers() {
+        return this.markers;
+    }
+
+    public Annotations getAnnotations() {
+        return this.annotations;
     }
 
     @Override
     protected void layoutChildren() {
         super.layoutChildren();
 
-        // BDS: Injectable Subtitle
         subtitle.layoutChildren();
-
     }
 
+    @Override
+    protected void layoutPlotChildren() {
+        super.layoutPlotChildren();
+
+        this.markers.layoutMarkers();
+    }
 
 }

@@ -31,6 +31,7 @@ package com.emxsys.chart;
 
 import com.emxsys.chart.extension.Subtitle;
 import com.emxsys.chart.axis.LogarithmicAxis;
+import com.emxsys.chart.extension.Annotations;
 import com.emxsys.chart.extension.Markers;
 import java.util.Iterator;
 import java.util.Objects;
@@ -54,17 +55,13 @@ import javafx.scene.shape.Rectangle;
  * @param <X>
  * @param <Y>
  */
-public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
+public class LogScatterChart<X, Y> extends ScatterChartExt<X, Y> {
 
     private Group plotArea = null;
     private Path horzGridLines = null;
     private Path vertGridLines = null;
     private Path majorHorzGridLines = new Path();
     private Path majorVertGridLines = new Path();
-    
-    
-    private Subtitle subtitle;
-    private Markers markers;
 
     public LogScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
@@ -73,11 +70,6 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
     @SuppressWarnings("OverridableMethodCallInConstructor")
     public LogScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis, data);
-
-        // BDS: Adding JFree subtitle capability
-        subtitle = new Subtitle(this, getChildren(), getLegend());
-        // BDS: Adding JFree style Markers
-        markers = new Markers(this, getPlotChildren());
         
         majorHorzGridLines.getStyleClass().setAll("chart-horizontal-zero-line");
         majorVertGridLines.getStyleClass().setAll("chart-vertical-zero-line");
@@ -123,17 +115,12 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
                 }
             }
         }
-
     }
 
     @Override
     protected void layoutChildren() {
         // Invoked during the layout pass to layout this chart and all its content.
         super.layoutChildren();
-        
-        // BDS: Injectable Subtitle
-        subtitle.layoutChildren();
-        
         
         final Rectangle clip = (Rectangle) plotArea.getClip();
         final Axis<X> xa = getXAxis();
@@ -172,26 +159,6 @@ public class LogScatterChart<X, Y> extends ScatterChart<X, Y> {
 
     }
 
-    public void setSubtitle(String subtitle) {
-        this.subtitle.setSubtitle(subtitle);
-        this.requestLayout();
-    }
-
-    public Markers getMarkers() {
-        return this.markers;
-    }
-
-
-   @Override
-    protected void layoutPlotChildren() {
-        // Called to update and layout the plot children. This should include all work to updates 
-        // nodes representing the plot on top of the axis and grid lines etc. The origin is the 
-        // top left of the plot area, the plot area with can be got by getting the width of the 
-        // x axis and its height from the height of the y axis.
-        super.layoutPlotChildren();
-
-        this.markers.layoutMarkers();
-    }
 
     /**
      * Modifiable and observable list of all content in the plot. This is where
