@@ -45,7 +45,7 @@ import javafx.scene.shape.Line;
  * @param <X>
  * @param <Y>
  */
-public final class Markers<X extends Number, Y extends Number> {
+public final class Markers<X, Y> {
 
     private final XYChart chart;
     private final ObservableList<Node> plotChildren;
@@ -81,8 +81,7 @@ public final class Markers<X extends Number, Y extends Number> {
 
     public void clearRangeMarkers() {
         
-        for (Iterator<ValueMarker> it = rangeMarkers.iterator(); it.hasNext(); ){
-            ValueMarker marker = it.next();
+        for (ValueMarker marker : rangeMarkers) {
             plotChildren.remove(marker.getNode());
         }
         rangeMarkers.clear();
@@ -111,8 +110,7 @@ public final class Markers<X extends Number, Y extends Number> {
     }
 
     public void clearDomainMarkers() {
-        for (Iterator<ValueMarker> it = domainMarkers.iterator(); it.hasNext(); ){
-            ValueMarker marker = it.next();
+        for (ValueMarker marker : domainMarkers) {
             plotChildren.remove(marker.getNode());
         }
         domainMarkers.clear();

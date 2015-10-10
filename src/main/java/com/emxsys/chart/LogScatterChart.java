@@ -31,7 +31,7 @@ package com.emxsys.chart;
 
 import com.emxsys.chart.extension.Subtitle;
 import com.emxsys.chart.axis.LogarithmicAxis;
-import com.emxsys.chart.extension.Annotations;
+import com.emxsys.chart.extension.XYAnnotations;
 import com.emxsys.chart.extension.Markers;
 import java.util.Iterator;
 import java.util.Objects;
@@ -55,7 +55,7 @@ import javafx.scene.shape.Rectangle;
  * @param <X>
  * @param <Y>
  */
-public class LogScatterChart<X, Y> extends ScatterChartExt<X, Y> {
+public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
 
     private Group plotArea = null;
     private Path horzGridLines = null;

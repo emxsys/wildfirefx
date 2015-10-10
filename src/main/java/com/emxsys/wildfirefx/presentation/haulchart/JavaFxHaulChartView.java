@@ -50,7 +50,6 @@ import javafx.scene.paint.Color;
 public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
 
     // Color constants
-
     private static final double ALPHA = 0.8;
     public static final Color COLOR_LOW = Color.rgb(128, 127, 255, ALPHA);         // blue
     public static final Color COLOR_MODERATE = Color.rgb(127, 193, 151, ALPHA);    // green
@@ -67,6 +66,8 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
     private final double yMin = 1;
     private final double xMax = 11000;
     private final double yMax = 1100;
+    
+    
     private LogarithmicAxis xAxis;
     private LogarithmicAxis yAxis;
 
@@ -78,7 +79,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
     /**
      * The chart is root node of this view.
      */
-    private LogScatterChart chart;
+    private LogScatterChart<Double, Double> chart;
     /**
      * The MVC view controller.
      */
@@ -93,11 +94,17 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         controller = new JavaFxHaulChartController(this);
     }
 
+    /**
+     * @return The view's controller.
+     */
     @Override
     public JavaFxHaulChartController getController() {
         return controller;
     }
 
+    /**
+     * @return A LogScatterChart.
+     */
     @Override
     public Node getRoot() {
         return chart;
@@ -165,6 +172,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         seriesFlank.getData().add(new XYChart.Data(0, 0));
 
         dataset = FXCollections.observableArrayList(seriesMax, seriesFlank);
+        
         chart = new LogScatterChart(xAxis, yAxis, dataset);
         chart.setTitle(title);
         // Set the drawing style for the symbols

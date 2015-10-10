@@ -29,40 +29,10 @@
  */
 package com.emxsys.chart.extension;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.shape.Line;
-
 /**
  *
  * @author Bruce Schubert
  */
-public class ValueMarker {
-
-    private final DoubleProperty value = new SimpleDoubleProperty();
-    private final Line line = new Line();
-    private final Label label = new Label();
-
-    public double getValue() {
-        return value.get();
-    }
-
-    public void setValue(double value) {
-        this.value.set(value);
-    }
-
-    public DoubleProperty valueProperty() {
-        return value;
-    }
-
-    public ValueMarker(double value) {
-        setValue(value);
-    }
+public class XYImageAnnotation {
     
-    public Node getNode() {
-        return line;
-    }
-
 }

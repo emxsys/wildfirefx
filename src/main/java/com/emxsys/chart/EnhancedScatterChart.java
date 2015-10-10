@@ -29,7 +29,7 @@
  */
 package com.emxsys.chart;
 
-import com.emxsys.chart.extension.Annotations;
+import com.emxsys.chart.extension.XYAnnotations;
 import com.emxsys.chart.extension.Markers;
 import com.emxsys.chart.extension.Subtitle;
 import javafx.beans.NamedArg;
@@ -39,29 +39,29 @@ import javafx.scene.chart.Axis;
 import javafx.scene.chart.ScatterChart;
 
 /**
- * An extended version of a ScatterChart.
+ * An enhanced version of a ScatterChart.
  *
  * @author Bruce Schubert
  * @param <X>
  * @param <Y>
  */
-public class ScatterChartExt<X, Y> extends ScatterChart<X, Y> {
+public class EnhancedScatterChart<X, Y> extends ScatterChart<X, Y> {
 
     private Subtitle subtitle;
-    private Markers markers;
-    private Annotations annotations;
+    private Markers<X,Y> markers;
+    private XYAnnotations annotations;
 
-    public ScatterChartExt(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
+    public EnhancedScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
 
     @SuppressWarnings("OverridableMethodCallInConstructor")
-    public ScatterChartExt(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
+    public EnhancedScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis, data);
 
         subtitle = new Subtitle(this, getChildren(), getLegend());
-        markers = new Markers(this, getPlotChildren());
-        annotations = new Annotations(this, getPlotChildren());
+        markers = new Markers<>(this, getPlotChildren());
+        annotations = new XYAnnotations(this, getChartChildren(), getPlotChildren());
     }
 
     public void setSubtitle(String subtitle) {
@@ -73,7 +73,7 @@ public class ScatterChartExt<X, Y> extends ScatterChart<X, Y> {
         return this.markers;
     }
 
-    public Annotations getAnnotations() {
+    public XYAnnotations getAnnotations() {
         return this.annotations;
     }
 
