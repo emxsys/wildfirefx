@@ -19,15 +19,15 @@ import javafx.scene.paint.Color;
  */
 public class Particle {
 
-    private double x;
-    private double y;
-    private Point2D velocity;
-    private double radius;
-    private double life = 1.0;
-    private double expireTime;
-    private Color startColor;
-    private Color endColor;
-    private BlendMode blendMode;
+    protected double x;
+    protected double y;
+    protected Point2D velocity;
+    protected double radius;
+    protected double life = 1.0;
+    protected double expireTime;
+    protected Color startColor;
+    protected Color endColor;
+    protected BlendMode blendMode;
 
     /**
      * Constructor.
@@ -68,10 +68,6 @@ public class Particle {
     public void update(double frameRate) {
         double decay = 1 / (expireTime * frameRate);    // decay in secs per frame
         double scale = 60 / frameRate;                  // 1x == 60 hz
-        
-        // BDS: testing wind profile\
-        //double mag = velocity.magnitude();
-        //velocity = velocity.add(0.2 + (velocity.getY()*-0.01) , 0);
         
         x += velocity.getX() * scale;
         y += velocity.getY() * scale;

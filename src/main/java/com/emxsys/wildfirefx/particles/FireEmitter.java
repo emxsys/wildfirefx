@@ -31,9 +31,6 @@ package com.emxsys.wildfirefx.particles;
 
 import com.emxsys.wildfirefx.model.FireBehavior;
 import com.emxsys.wildfirefx.model.FuelBed;
-import com.emxsys.wildfirefx.model.FuelModel;
-import com.emxsys.wildfirefx.particles.Emitter;
-import com.emxsys.wildfirefx.particles.Particle;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.animation.Interpolator;
@@ -68,6 +65,8 @@ public class FireEmitter implements Emitter {
     private DoubleProperty xVelocityProperty = new SimpleDoubleProperty(2);
     private DoubleProperty yVelocityProperty = new SimpleDoubleProperty(4);
     private DoubleProperty xVarianceProperty = new SimpleDoubleProperty(40);
+    private DoubleProperty yVarianceProperty = new SimpleDoubleProperty(40);
+    private DoubleProperty windSpeedProperty = new SimpleDoubleProperty(0);
     private ObjectProperty innerColorProperty = new SimpleObjectProperty(Color.YELLOW);
     private ObjectProperty outerColorProperty = new SimpleObjectProperty(Color.RED);
 
@@ -77,11 +76,9 @@ public class FireEmitter implements Emitter {
      * The spline defines the shape of the flame by defining the x velocity as a
      * function of the y velocity.
      */
-    private Interpolator xSpline = Interpolator.SPLINE(0.0000, 0.8004, 0.8000, 1.0000);
-    private Interpolator ySpline = Interpolator.SPLINE(0.2000, 0.8000, 0.8000, 0.2000);
+    private Interpolator xSpline = Interpolator.SPLINE(0.8000, 0.2004, 0.8000, 0.2000);
+    private Interpolator ySpline = Interpolator.SPLINE(0.8000, 0.2000, 0.2000, 0.1000);
 
-    private Interpolator windwardSpline = Interpolator.SPLINE(0.2000, 0.8000, 0.8000, 0.2000);
-    private Interpolator leewardSpline = Interpolator.SPLINE(0.8000, 0.2000, 0.2000, 0.8000);
 
     /**
      * Constructs an emitter.
@@ -94,22 +91,23 @@ public class FireEmitter implements Emitter {
             FuelBed fuel = fire.getFuelBed();
 
             double fl = fire.getFlameLength();
-            double fi = fire.getFirelineIntensity();
-            double hr = fuel.getHeatRelease();
-            double ros = fire.getRateOfSpreadMax();
-            double sav = fire.getFuelBed().getCharacteristicSAV();
-            double frt = fire.getFuelBed().getFlameResidenceTime();
-            double rv = fire.getFuelBed().getReactionVelocity();
+            double heat = fuel.getHeatRelease();
+            double depth = fuel.getFuelModel().getFuelBedDepth();
 
-            yVelocityProperty.setValue(fl);
-            xVelocityProperty.setValue(fl / 5.0);
-            //xVelocityProperty.setValue(rv);
-            //xVarianceProperty.setValue(fl * 2);
-            xVarianceProperty.setValue(fl * 3);
-            particleSizeProperty.setValue(Math.log(hr) * 10.0);
-            //particleSizeProperty.setValue(fi / 100);
-            numParticlesProperty.setValue(Math.log(ros) * 10);
-            //numParticlesProperty.setValue(rv * 4);
+            // Good looking max fire (chapparel) with 5:1 ratio
+            yVelocityProperty.setValue(fl * 0.8);
+            xVelocityProperty.setValue(fl * 0.13);
+
+            xVarianceProperty.setValue(heat / 15);
+            yVarianceProperty.setValue(depth * 20);
+
+            particleSizeProperty.setValue(Math.min(fl * 4, 60));
+            //particleSizeProperty.setValue(Math.log(heat) * 8.0);
+
+            numParticlesProperty.setValue(Math.min(heat / 3, 150));
+            //numParticlesProperty.setValue(fl * 6);
+            
+            windSpeedProperty.setValue(fire.getEffectiveWindSpeed());
         });
     }
 
@@ -163,6 +161,8 @@ public class FireEmitter implements Emitter {
         double xVelocity = this.xVelocityProperty.get();
         double yVelocity = this.yVelocityProperty.get();
         double xVariance = this.xVarianceProperty.get();
+        double yVariance = this.yVarianceProperty.get();
+        double windMph = this.windSpeedProperty.get();
 
         long max = this.numParticlesProperty.get() * Math.round(Math.random());
         for (long i = 0; i < max; i++) {
@@ -170,31 +170,23 @@ public class FireEmitter implements Emitter {
             // Compute origin
             double y0 = Math.random();
             double x0 = (Math.random() - 0.5) * 2;
-            double y1 = y + y0 * 20;
+            double y1 = y + y0 * yVariance;
             double x1 = x + x0 * xVariance;
 
             // Compute velocity...
             double y2 = Math.random();  // Creates a pulsing effect
             double x2 = (Math.random() - 0.5) * 2;
-            // ... attenuate vy as x0 moves away from x to create wide base.
-            double vy = y2 * yVelocity * (1 / (Math.abs(x0) + 1));
-//            double vy = ySpline.interpolate(0, yVelocity, y2);
+            // ... attenuate vy as x0 moves away from x to create flame shape.
+            double vy = ySpline.interpolate(y2 * yVelocity, 0, Math.abs(x0));
             // ... constrain vx as y2 moves upward to create flame tip.
-            double vx = windwardSpline.interpolate(x2 * xVelocity, 0, y2);
-//            double vx = x2 * xSpline.interpolate(x2, x1, y2) * xVelocity;
+            double vx = xSpline.interpolate(x2 * xVelocity, 0, y2);
+         
             Point2D velocity = new Point2D(vx, -vy);
+            // Vary the expire time for a pulsing effect
+            double expireTime = Interpolator.LINEAR.interpolate(0.0, expireBase, y2); 
 
-//            double expireTime = expireBase + Interpolator.LINEAR.interpolate(0.0, 0.3, y2); // slow down upward particles
-            double expireTime = Interpolator.LINEAR.interpolate(0.0, expireBase, y2); //
-
-//            // BDS: testing wind profiles
-//            double vx = x2 * xVelocity;
-//            if (x2 > 0) {
-//                vx = x2 * leewardSpline.interpolate(1.0, 0.0, y2) * xVelocity;
-//            }else{
-//                vx = x2 * windwardSpline.interpolate(1.0, 0.0, y2) * xVelocity;
-//            }
-            Particle p = new Particle(
+            Particle p = new FireParticle(
+                    windMph,
                     x1, y1,
                     velocity,
                     radius,

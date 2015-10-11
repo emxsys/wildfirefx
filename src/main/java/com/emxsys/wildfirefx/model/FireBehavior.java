@@ -106,6 +106,14 @@ public class FireBehavior {
     }
 
     /**
+     *
+     * @return [mph]
+     */
+    public double getEffectiveWindSpeed() {
+        return Double.parseDouble(jsonObject.getJsonObject("effectiveWindSpeed").getString("value"));
+    }
+
+    /**
      * Gets the conditioned fuel bed.
      *
      * @return The fuel bed including the FuelModel and FuelMoisture.

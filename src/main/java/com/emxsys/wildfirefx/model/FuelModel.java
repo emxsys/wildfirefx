@@ -40,6 +40,8 @@ import javax.json.JsonObject;
  */
 public class FuelModel {
 
+    public static double METERS_TO_FEET = 3.28084;
+    
     private final JsonObject jsonObject;
 
     /**
@@ -135,6 +137,13 @@ public class FuelModel {
 
     public double getLowHeatContent() {
         return Double.parseDouble(jsonObject.getJsonObject("lowHeatContent").getString("value"));
+    }
+    
+    /**
+     * @return [ft]
+     */
+    public double getFuelBedDepth() {
+        return Double.parseDouble(jsonObject.getJsonObject("fuelBedDepth").getString("value")) * METERS_TO_FEET; 
     }
 
     public boolean isBurnable() {
