@@ -99,7 +99,7 @@ public class FireEmitter implements Emitter {
             xVelocityProperty.setValue(fl * 0.13);
 
             xVarianceProperty.setValue(heat / 15);
-            yVarianceProperty.setValue(depth * 20);
+            yVarianceProperty.setValue(depth * 50);
 
             particleSizeProperty.setValue(Math.min(fl * 4, 60));
             //particleSizeProperty.setValue(Math.log(heat) * 8.0);
