@@ -397,10 +397,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
     private void addFlameLengthDivisions(XYLineAndShapeRenderer renderer) {
 
         // draw flame length divisions
-        int[] flameLens
-                = {
-                    1, 2, 4, 8, 11, 15, 20
-                };    // [ft]
+        int[] flameLens = {1, 2, 4, 8, 11, 15, 20};    // [ft]
         for (int i : flameLens) {
             drawFlameLenDivision(renderer, i, false);
         }
