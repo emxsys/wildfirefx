@@ -14,6 +14,13 @@
     -fx-padding: 4px;
 }
 
+.chart-annotation-text {
+    -fx-text-fill: darkslategray;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;    
+}
+
+
 .chart-annotation-line {
     -fx-stroke-width: 1.5;
     -fx-stroke: gray;

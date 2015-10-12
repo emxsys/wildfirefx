@@ -29,10 +29,88 @@
  */
 package com.emxsys.chart.extension;
 
+import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
+import javafx.scene.chart.ValueAxis;
+import javafx.scene.control.Label;
+import javafx.scene.text.TextAlignment;
+
 /**
  *
  * @author Bruce Schubert
  */
 public class XYTextAnnotation {
-    
+
+    private final Label label = new Label();
+    private double x;
+    private double y;
+    private Pos textAnchor = Pos.CENTER;
+
+    public XYTextAnnotation(String text, double x, double y) {
+        if (text == null || text.isEmpty()) {
+            throw new IllegalArgumentException("'text' arg cannot be null or empty.");
+        }
+        this.label.setText(text);
+        this.label.getStyleClass().add("chart-annotation-text");
+
+        this.x = x;
+        this.y = y;
+    }
+
+    public void setText(String text) {
+        this.label.setText(text);
+    }
+
+    public Label getNode() {
+        return label;
+    }
+
+    public Pos getTextAnchor() {
+        return textAnchor;
+    }
+
+    public void setTextAnchor(Pos textAnchor) {
+        this.textAnchor = textAnchor;
+    }
+
+    void layoutText(ValueAxis xAxis, ValueAxis yAxis) {
+
+//        label.setLayoutY(yAxis.getDisplayPosition(y));
+//        label.setLayoutX(xAxis.getDisplayPosition(x));
+
+        switch (textAnchor) {
+            case TOP_CENTER:
+            case CENTER:
+            case BOTTOM_CENTER:
+                label.setLayoutX(xAxis.getDisplayPosition(x) - (label.getWidth() / 2));
+                break;
+            case TOP_LEFT:
+            case CENTER_LEFT:
+            case BOTTOM_LEFT:
+                label.setLayoutX(xAxis.getDisplayPosition(x));
+                break;
+            case TOP_RIGHT:
+            case CENTER_RIGHT:
+            case BOTTOM_RIGHT:
+                label.setLayoutX(xAxis.getDisplayPosition(x) - label.getWidth());
+                break;
+        }
+        switch (textAnchor) {
+            case CENTER:
+            case CENTER_LEFT:
+            case CENTER_RIGHT:
+                label.setLayoutY(yAxis.getDisplayPosition(y) - (label.getHeight() / 2));
+                break;
+            case TOP_LEFT:
+            case TOP_CENTER:
+            case TOP_RIGHT:
+                label.setLayoutY(yAxis.getDisplayPosition(y));
+                break;
+            case BOTTOM_LEFT:
+            case BOTTOM_CENTER:
+            case BOTTOM_RIGHT:
+                label.setLayoutY(yAxis.getDisplayPosition(y) - label.getHeight());
+                break;
+        }
+    }
 }

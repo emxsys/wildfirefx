@@ -1,3 +1,7 @@
+.chart-subtitle {
+    -fx-font-size: 1.0em;
+}
+
 .chart-annotation-line {
     -fx-stroke-width: 1.0;
     -fx-stroke: black;
@@ -9,4 +13,12 @@
     -fx-fill: transparent;
 }
 
+.chart-annotation-text {
+    -fx-font-size: 1.0em;
+    -fx-text-alignment: center;
+    
+    -text-anchor-horizontal: center;
+    -text-anchor-vertical: center;
+    
+}
  

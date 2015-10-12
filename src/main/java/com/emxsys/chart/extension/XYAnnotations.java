@@ -57,9 +57,9 @@ public class XYAnnotations {
     private final Group background = new Group();
     private final Group foreground = new Group();
 
+    private final ObservableList<XYTextAnnotation> texts;
     private final ObservableList<XYLineAnnotation> lines;
     private final ObservableList<XYPolygonAnnotation> polygons;
-    //private final ObservableList<Node> labels;
 
     public XYAnnotations(XYChart chart, ObservableList<Node> chartChildren, ObservableList<Node> plotChildren) {
         this.chart = chart;
@@ -79,12 +79,20 @@ public class XYAnnotations {
         plotArea.getChildren().add(plotContentIndex, background);
 
         // Create lists that notify on changes
+        texts = FXCollections.observableArrayList();
         lines = FXCollections.observableArrayList();
         polygons = FXCollections.observableArrayList();
 
         // Listen to list changes and re-plot
+        texts.addListener((InvalidationListener) observable -> layoutTexts());
         lines.addListener((InvalidationListener) observable -> layoutLines());
         polygons.addListener((InvalidationListener) observable -> layoutPolygons());
+    }
+
+    public void add(XYTextAnnotation annotation, Layer backgroundOrForeground) {
+        Group layer = backgroundOrForeground == Layer.BACKGROUND ? background : foreground;
+        layer.getChildren().add(annotation.getNode());
+        this.texts.add(annotation);
     }
 
     public void add(XYLineAnnotation annotation, Layer backgroundOrForeground) {
@@ -103,12 +111,22 @@ public class XYAnnotations {
     public void layoutAnnotations() {
         background.setLayoutX(plotContent.getLayoutX());
         background.setLayoutY(plotContent.getLayoutY());
-        
+
         foreground.setLayoutX(plotContent.getLayoutX());
         foreground.setLayoutY(plotContent.getLayoutY());
-        
-        layoutLines();
+
         layoutPolygons();
+        layoutLines();
+        layoutTexts();
+    }
+
+    private void layoutTexts() {
+
+        ValueAxis xAxis = (ValueAxis) chart.getXAxis();
+        ValueAxis yAxis = (ValueAxis) chart.getYAxis();
+        for (XYTextAnnotation annotation : texts) {
+            annotation.layoutText(xAxis, yAxis);
+        }
     }
 
     private void layoutLines() {

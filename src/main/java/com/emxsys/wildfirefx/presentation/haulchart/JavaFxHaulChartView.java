@@ -35,12 +35,14 @@ import com.emxsys.chart.extension.ValueMarker;
 import com.emxsys.chart.extension.XYAnnotations.Layer;
 import com.emxsys.chart.extension.XYLineAnnotation;
 import com.emxsys.chart.extension.XYPolygonAnnotation;
+import com.emxsys.chart.extension.XYTextAnnotation;
 import com.emxsys.wildfirefx.model.FireBehavior;
 import com.emxsys.wildfirefx.model.FireBehaviorUtil;
 import com.emxsys.wildfirefx.model.FuelBed;
 import com.emxsys.wildfirefx.presentation.View;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
@@ -66,10 +68,10 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
     public static final double FL_THRESHOLD_ACTIVE_TO_VERY_ACTIVE = 7D;
     public static final double FL_THRESHOLD_VERY_ACTIVE_TO_EXTREME = 15D;
     // X and Y axis properties
-    private final double xMin = 10;
-    private final double yMin = 1;
-    private final double xMax = 11000;
-    private final double yMax = 1100;
+    private final double minBtu = 10;     // Heat release
+    private final double maxBtu = 11000;  // Heat release
+    private final double minRos = 1;      // ROS ft/min
+    private final double maxRos = 1100;   // ROS ft/min
 
     private LogarithmicAxis xAxis;
     private LogarithmicAxis yAxis;
@@ -159,8 +161,8 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         String seriesMaxName = "Max Spread";
         String seriesFlankName = "Flanking Spread";
 
-        xAxis = new LogarithmicAxis(xAxisTitle, xMin, xMax, 1.0d);
-        yAxis = new LogarithmicAxis(yAxisTitle, yMin, yMax, 1.0d);
+        xAxis = new LogarithmicAxis(xAxisTitle, minBtu, maxBtu, 1.0d);
+        yAxis = new LogarithmicAxis(yAxisTitle, minRos, maxRos, 1.0d);
 
         seriesMax = new ScatterChart.Series();
         seriesMax.setName(seriesMaxName);
@@ -194,60 +196,94 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         final double[] flameLens = {1.0, 2.0, 4.0, 8.0, 11.0, 15.0, 20.0};    // [ft]
         for (double flameLen : flameLens) {
 
-            // get BTU value at bottom of chart for given flame length and 1 ch/hr
-            double btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, yMin);
-
-            // ... and get the  ROS value on the left edge of chart for 10 btu/ft^2
-            double ros = FireBehaviorUtil.computeRateOfSpread(flameLen, xMin);
-
+            // Draw flame length division from bottom of chart (given flame length 
+            // and min ros) to left edge of chart for (given flame length and min btu)
+            double btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, minRos);
+            double ros = FireBehaviorUtil.computeRateOfSpread(flameLen, minBtu);
             chart.getAnnotations().add(new XYLineAnnotation(
-                    btu, yMin, // start
-                    xMin, ros, // end
+                    btu, minRos, // start
+                    minBtu, ros, // end
                     1.5, Color.GRAY), Layer.BACKGROUND);
 
+            // Draw flame length labels in the lower diagonal half.
+            // Compute new btu and ros to represent x,y values for label placement
+            btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, flameLen * 3);
+            ros = FireBehaviorUtil.computeRateOfSpread(flameLen, btu);
+            chart.getAnnotations().add(new XYTextAnnotation(
+                    Integer.toString((int) flameLen) + "\'", btu, ros),
+                    Layer.BACKGROUND);
+
+            // Draw fireline intensity labels in the upper in the diagonal half
+            // Compute new btu and ros to represent x,y values for label placement
+            btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, flameLen * 15);
+            ros = FireBehaviorUtil.computeRateOfSpread(flameLen, btu);
+            int fli = (int) Math.round(FireBehaviorUtil.computeFirelineIntensity(btu, ros));
+            if (fli > 1000) {
+                fli = (int) Math.round((double) fli / 1000) * 1000;
+            } else if (fli > 100) {
+                fli = (int) Math.round((double) fli / 100) * 100;
+            }
+            chart.getAnnotations().add(new XYTextAnnotation(
+                    Integer.toString((int) fli), btu, ros),
+                    Layer.BACKGROUND);
         }
+        // Draw textual legend for flame length and fireline intensity values
+        final double flameLen = 25;
+        double btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, flameLen * 3);
+        double ros = FireBehaviorUtil.computeRateOfSpread(flameLen, btu);
+        XYTextAnnotation flAnno = new XYTextAnnotation("Flame Length, ft", btu, ros);
+        flAnno.setTextAnchor(Pos.BOTTOM_CENTER);
+        chart.getAnnotations().add(flAnno, Layer.BACKGROUND);
+        // Draw fireline intensity values
+        btu = FireBehaviorUtil.computeHeatAreaBtus(flameLen, flameLen * 15);
+        ros = FireBehaviorUtil.computeRateOfSpread(flameLen, btu);
+        XYTextAnnotation fliAnno = new XYTextAnnotation("Fireline Intensity, Btu/ft/sec", btu, ros);
+        fliAnno.setTextAnchor(Pos.BOTTOM_CENTER);
+        chart.getAnnotations().add(fliAnno, Layer.BACKGROUND);
+
     }
 
     private void layoutFireBehaviorThresholds() {
-        //
-        double xEndLow = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_LOW_TO_MODERATE, yMin);
-        double xEndModerate = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_MODERATE_TO_ACTIVE, yMin);
-        double xEndActive = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_ACTIVE_TO_VERY_ACTIVE, yMin);
-        double xEndVeryActive = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_VERY_ACTIVE_TO_EXTREME, yMin);
-        //
-        double yEndLow = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_LOW_TO_MODERATE, xMin);
-        double yEndModerate = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_MODERATE_TO_ACTIVE, xMin);
-        double yEndActive = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_ACTIVE_TO_VERY_ACTIVE, xMin);
-        double yEndVeryActive = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_VERY_ACTIVE_TO_EXTREME, xMin);
-        //
+        // Compute heat release Btu thresholds
+        double lowBtu = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_LOW_TO_MODERATE, minRos);
+        double moderateBtu = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_MODERATE_TO_ACTIVE, minRos);
+        double activeBtu = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_ACTIVE_TO_VERY_ACTIVE, minRos);
+        double veryActiveBtu = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_VERY_ACTIVE_TO_EXTREME, minRos);
+        // Compute rate of spread thresholds
+        double lowRos = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_LOW_TO_MODERATE, minBtu);
+        double moderateRos = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_MODERATE_TO_ACTIVE, minBtu);
+        double activeRos = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_ACTIVE_TO_VERY_ACTIVE, minBtu);
+        double veryActiveRos = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_VERY_ACTIVE_TO_EXTREME, minBtu);
+
+        // Create polygons that represent the threshold regions.
         XYPolygonAnnotation lowBkgnd = new XYPolygonAnnotation(
-                new double[]{xMin, yMin, xEndLow, yMin, xMin, yEndLow});
+                new double[]{minBtu, minRos, lowBtu, minRos, minBtu, lowRos});
         XYPolygonAnnotation modBkgnd = new XYPolygonAnnotation(
-                new double[]{xEndLow, yMin, xMin, yEndLow, xMin, yEndModerate, xEndModerate, yMin});
+                new double[]{lowBtu, minRos, minBtu, lowRos, minBtu, moderateRos, moderateBtu, minRos});
         XYPolygonAnnotation activeBkgnd = new XYPolygonAnnotation(
-                new double[]{xEndModerate, yMin, xMin, yEndModerate, xMin, yEndActive, xEndActive, yMin});
+                new double[]{moderateBtu, minRos, minBtu, moderateRos, minBtu, activeRos, activeBtu, minRos});
         XYPolygonAnnotation veryActiveBkgnd = new XYPolygonAnnotation(
-                new double[]{xEndActive, yMin, xMin, yEndActive, xMin, yEndVeryActive, xEndVeryActive, yMin});
+                new double[]{activeBtu, minRos, minBtu, activeRos, minBtu, veryActiveRos, veryActiveBtu, minRos});
         XYPolygonAnnotation extremeBkgnd = new XYPolygonAnnotation(
-                new double[]{xEndVeryActive, yMin, xMin, yEndVeryActive, xMax * 10, yMax * 10});
-        
+                new double[]{veryActiveBtu, minRos, minBtu, veryActiveRos, maxBtu * 10, maxRos * 10});
         lowBkgnd.getNode().getStyleClass().add("low-fire-behavior");
         modBkgnd.getNode().getStyleClass().add("moderate-fire-behavior");
         activeBkgnd.getNode().getStyleClass().add("active-fire-behavior");
         veryActiveBkgnd.getNode().getStyleClass().add("very-active-fire-behavior");
         extremeBkgnd.getNode().getStyleClass().add("extreme-fire-behavior");
-        //
-//        lowBkgnd.setToolTipText("LOW");
-//        modBkgnd.setToolTipText("MODERATE");
-//        activeBkgnd.setToolTipText("ACTIVE");
-//        veryActiveBkgnd.setToolTipText("VERY ACTIVE");
-//        extremeBkgnd.setToolTipText("EXTREME");
-        //
+
         chart.getAnnotations().add(lowBkgnd, Layer.BACKGROUND);
         chart.getAnnotations().add(modBkgnd, Layer.BACKGROUND);
         chart.getAnnotations().add(activeBkgnd, Layer.BACKGROUND);
         chart.getAnnotations().add(veryActiveBkgnd, Layer.BACKGROUND);
         chart.getAnnotations().add(extremeBkgnd, Layer.BACKGROUND);
+
+//        lowBkgnd.getNode().setToolTipText("LOW");
+//        modBkgnd.setToolTipText("MODERATE");
+//        activeBkgnd.setToolTipText("ACTIVE");
+//        veryActiveBkgnd.setToolTipText("VERY ACTIVE");
+//        extremeBkgnd.setToolTipText("EXTREME");
+        //
     }
 
 }
