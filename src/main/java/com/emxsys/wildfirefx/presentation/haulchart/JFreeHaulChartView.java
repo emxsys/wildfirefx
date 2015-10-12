@@ -78,8 +78,8 @@ import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
 
 /**
- * A JFreeChart version of the "Haul Chart"
- * .
+ * A JFreeChart version of the "Haul Chart" .
+ *
  * @author Bruce Schubert
  */
 public class JFreeHaulChartView implements View<JFreeHaulChartController> {
@@ -125,6 +125,7 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
      * The root node which hosts the JFreeChart.
      */
     private ChartViewer chartViewer;
+
     /**
      * The MVC view controller.
      */
@@ -136,7 +137,6 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
      */
     public JFreeHaulChartView() {
 
-        initUnitsOfMeasure();
         createChart();
         this.chartViewer = new ChartViewer(chart);
         this.controller = new JFreeHaulChartController(this);
@@ -250,47 +250,6 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         // which is helpfull because I was unable to reset it interactively.
         xAxis.setRange(xMin, Math.max(xMax, heat));
         yAxis.setRange(yMin, Math.max(yMax, rosMax));
-    }
-
-    private void initUnitsOfMeasure() {
-        // Heat Release
-        heatStr = "btu/ft^2";
-        // Rate of Spread
-        rosStr = "ft/min";
-        // Flame Length
-        flnStr = "ft";
-        // Byram's fire line intensity
-        fliStr = "btu/ft/s";
-
-//        heatUOM = WildfirePreferences.getHeatReleaseUnit();
-//        heatStr = (heatUOM == FireUnit.kJ_m2 ? "kJ/m^2" : "btu/ft^2");
-//
-//        // Rate of Spread
-//        rosUOM = WildfirePreferences.getRateOfSpreadUnit();
-//        switch (WildfirePreferences.getRateOfSpreadUom()) {
-//            case WildfirePreferences.UOM_CHAINS:
-//                rosStr = "ch/hr";
-//                break;
-//            case WildfirePreferences.UOM_KPH:
-//                rosStr = "kph";
-//                break;
-//            case WildfirePreferences.UOM_MPH:
-//                rosStr = "mph";
-//                break;
-//            case WildfirePreferences.UOM_MPS:
-//                rosStr = "mps";
-//                break;
-//            default:
-//                throw new IllegalStateException("unhandled ROS: " + WildfirePreferences.getRateOfSpreadUom());
-//        }
-//
-//        // Flame Length
-//        flnUOM = WildfirePreferences.getFlameLengthUnit();
-//        flnStr = (flnUOM == CommonUnit.meter ? "m" : "ft");
-//
-//        // Byram's fire line intensity
-//        fliUOM = WildfirePreferences.getByramsIntensityUnit();
-//        fliStr = (fliUOM == FireUnit.kW_m ? "kW/m" : "btu/ft/s");
     }
 
     /**

@@ -60,7 +60,15 @@ public class ValueMarker {
     public ValueMarker(double value) {
         setValue(value);
     }
-    
+
+    public String getLabel() {
+        return label.getText();
+    }
+
+    public void setLabel(String text) {
+        label.setText(text);
+    }
+
     public Node getNode() {
         return line;
     }

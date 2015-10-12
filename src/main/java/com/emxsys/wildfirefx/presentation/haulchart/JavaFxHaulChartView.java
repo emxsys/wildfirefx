@@ -33,6 +33,7 @@ import com.emxsys.chart.LogScatterChart;
 import com.emxsys.chart.axis.LogarithmicAxis;
 import com.emxsys.chart.extension.ValueMarker;
 import com.emxsys.chart.extension.XYAnnotations.Layer;
+import com.emxsys.chart.extension.XYImageAnnotation;
 import com.emxsys.chart.extension.XYLineAnnotation;
 import com.emxsys.chart.extension.XYPolygonAnnotation;
 import com.emxsys.chart.extension.XYTextAnnotation;
@@ -46,6 +47,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
@@ -187,8 +189,10 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         seriesMax.getData().clear();
         seriesFlank.getData().clear();
 
+        // Create the background for the Haul Chart
         layoutFireBehaviorThresholds();
         layoutFlameLengthDivisions();
+        layoutFireBehaviorImages();
     }
 
     private void layoutFlameLengthDivisions() {
@@ -284,6 +288,21 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
 //        veryActiveBkgnd.setToolTipText("VERY ACTIVE");
 //        extremeBkgnd.setToolTipText("EXTREME");
         //
+    }
+
+    private void layoutFireBehaviorImages() {
+        // Setup background
+        Image imgFireBehaviorLow = new Image(getClass().getResourceAsStream("/images/fire-behavior-low.gif"));
+        Image imgFireBehaviorModerate = new Image(getClass().getResourceAsStream("/images/fire-behavior-moderate.gif"));
+        Image imgFireBehaviorActive = new Image(getClass().getResourceAsStream("/images/fire-behavior-active.gif"));
+        Image imgFireBehaviorVeryActive = new Image(getClass().getResourceAsStream("/images/fire-behavior-very-active.gif"));
+        Image imgFireBehaviorExtreme = new Image(getClass().getResourceAsStream("/images/fire-behavior-extreme.gif"));
+
+        chart.getAnnotations().add(new XYImageAnnotation(30, 3, imgFireBehaviorLow, Pos.CENTER), Layer.BACKGROUND);
+        chart.getAnnotations().add(new XYImageAnnotation(110, 11, imgFireBehaviorModerate, Pos.CENTER), Layer.BACKGROUND);
+        chart.getAnnotations().add(new XYImageAnnotation(300, 30, imgFireBehaviorActive, Pos.CENTER), Layer.BACKGROUND);
+        chart.getAnnotations().add(new XYImageAnnotation(600, 60, imgFireBehaviorVeryActive, Pos.CENTER), Layer.BACKGROUND);
+        chart.getAnnotations().add(new XYImageAnnotation(1200, 120, imgFireBehaviorExtreme, Pos.CENTER), Layer.BACKGROUND);
     }
 
 }

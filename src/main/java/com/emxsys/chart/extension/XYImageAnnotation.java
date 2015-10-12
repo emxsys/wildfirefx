@@ -29,10 +29,77 @@
  */
 package com.emxsys.chart.extension;
 
+import javafx.geometry.Pos;
+import javafx.scene.chart.ValueAxis;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+
 /**
  *
  * @author Bruce Schubert
  */
 public class XYImageAnnotation {
+
+    private final double x;
+    private final double y;
+    private final ImageView imageView = new ImageView();
+    private final AnchorPane pane = new AnchorPane();
+    private Pos imageAnchor;
+
+    public XYImageAnnotation(double x, double y, Image image) {
+        this(x, y, image, Pos.TOP_LEFT);
+    }
+
+    public XYImageAnnotation(double x, double y, Image image, Pos anchor) {
+        this.x = x;
+        this.y = y;
+        this.imageAnchor = anchor;
+        this.imageView.setImage(image);
+        this.imageView.setSmooth(false);
+        this.pane.getChildren().add(imageView);
+    }
+
+    public AnchorPane getNode() {
+        return pane;
+    }
     
+    void layoutImage(ValueAxis xAxis, ValueAxis yAxis) {
+
+        switch (imageAnchor) {
+            case TOP_CENTER:
+            case CENTER:
+            case BOTTOM_CENTER:
+                pane.setLayoutX(xAxis.getDisplayPosition(x) - (pane.getWidth() / 2));
+                break;
+            case TOP_LEFT:
+            case CENTER_LEFT:
+            case BOTTOM_LEFT:
+                pane.setLayoutX(xAxis.getDisplayPosition(x));
+                break;
+            case TOP_RIGHT:
+            case CENTER_RIGHT:
+            case BOTTOM_RIGHT:
+                pane.setLayoutX(xAxis.getDisplayPosition(x) - pane.getWidth());
+                break;
+        }
+        switch (imageAnchor) {
+            case CENTER:
+            case CENTER_LEFT:
+            case CENTER_RIGHT:
+                pane.setLayoutY(yAxis.getDisplayPosition(y) - (pane.getHeight() / 2));
+                break;
+            case TOP_LEFT:
+            case TOP_CENTER:
+            case TOP_RIGHT:
+                pane.setLayoutY(yAxis.getDisplayPosition(y));
+                break;
+            case BOTTOM_LEFT:
+            case BOTTOM_CENTER:
+            case BOTTOM_RIGHT:
+                pane.setLayoutY(yAxis.getDisplayPosition(y) - pane.getHeight());
+                break;
+        }
+    }
+
 }
