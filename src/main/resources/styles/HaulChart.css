@@ -1,6 +1,6 @@
 .chart-subtitle {
-  -fx-text-fill: #4682b4;
-  -fx-font-size: 1.0em;
+    -fx-text-fill: #4682b4;
+    -fx-font-size: 1.0em;
 }
 .chart-symbol { /* hollow circle */
     -fx-background-color: #EE0909, white;
@@ -12,4 +12,40 @@
     -fx-background-color: #1939EE;
     -fx-background-radius: 4px;
     -fx-padding: 4px;
+}
+
+.chart-annotation-line {
+    -fx-stroke-width: 1.5;
+    -fx-stroke: gray;
+}
+
+.low-fire-behavior.chart-annotation-polygon {
+    -fx-stroke-width: 0;
+    -fx-stroke: transparent;
+    -fx-fill: #807fff;
+    -fx-opacity: 0.8;
+}
+.moderate-fire-behavior.chart-annotation-polygon {
+    -fx-stroke-width: 0;
+    -fx-stroke: transparent;
+    -fx-fill: #7fc197;
+    -fx-opacity: 0.8;
+}
+.active-fire-behavior.chart-annotation-polygon {
+    -fx-stroke-width: 0;
+    -fx-stroke: transparent;
+    -fx-fill: #ffb38f;
+    -fx-opacity: 0.8;
+}
+.very-active-fire-behavior.chart-annotation-polygon {
+    -fx-stroke-width: 0;
+    -fx-stroke: transparent;
+    -fx-fill: #ff80ffff;
+    -fx-opacity: 0.8;
+}
+.extreme-fire-behavior.chart-annotation-polygon {
+    -fx-stroke-width: 0;
+    -fx-stroke: transparent;
+    -fx-fill: #e1807c;
+    -fx-opacity: 0.8;
 }

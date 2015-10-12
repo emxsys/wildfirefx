@@ -32,7 +32,9 @@ package com.emxsys.wildfirefx.presentation.haulchart;
 import com.emxsys.chart.LogScatterChart;
 import com.emxsys.chart.axis.LogarithmicAxis;
 import com.emxsys.chart.extension.ValueMarker;
+import com.emxsys.chart.extension.XYAnnotations.Layer;
 import com.emxsys.chart.extension.XYLineAnnotation;
+import com.emxsys.chart.extension.XYPolygonAnnotation;
 import com.emxsys.wildfirefx.model.FireBehavior;
 import com.emxsys.wildfirefx.model.FireBehaviorUtil;
 import com.emxsys.wildfirefx.model.FuelBed;
@@ -52,7 +54,7 @@ import javafx.scene.paint.Color;
 public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
 
     // Color constants
-    private static final double ALPHA = 0.8;
+    private static final double ALPHA = 0.7;
     public static final Color COLOR_LOW = Color.rgb(128, 127, 255, ALPHA);         // blue
     public static final Color COLOR_MODERATE = Color.rgb(127, 193, 151, ALPHA);    // green
     public static final Color COLOR_ACTIVE = Color.rgb(255, 179, 130, ALPHA);      // tan
@@ -183,13 +185,13 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         seriesMax.getData().clear();
         seriesFlank.getData().clear();
 
+        layoutFireBehaviorThresholds();
         layoutFlameLengthDivisions();
     }
 
     private void layoutFlameLengthDivisions() {
         // draw flame length divisions
         final double[] flameLens = {1.0, 2.0, 4.0, 8.0, 11.0, 15.0, 20.0};    // [ft]
-        final double FT_PER_MIN_TO_CH_PER_HOUR = 0.909091;
         for (double flameLen : flameLens) {
 
             // get BTU value at bottom of chart for given flame length and 1 ch/hr
@@ -199,14 +201,53 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
             double ros = FireBehaviorUtil.computeRateOfSpread(flameLen, xMin);
 
             chart.getAnnotations().add(new XYLineAnnotation(
-                    btu, yMin,
-                    xMin, ros));
+                    btu, yMin, // start
+                    xMin, ros, // end
+                    1.5, Color.GRAY), Layer.BACKGROUND);
 
         }
     }
 
     private void layoutFireBehaviorThresholds() {
-
+        //
+        double xEndLow = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_LOW_TO_MODERATE, yMin);
+        double xEndModerate = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_MODERATE_TO_ACTIVE, yMin);
+        double xEndActive = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_ACTIVE_TO_VERY_ACTIVE, yMin);
+        double xEndVeryActive = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_VERY_ACTIVE_TO_EXTREME, yMin);
+        //
+        double yEndLow = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_LOW_TO_MODERATE, xMin);
+        double yEndModerate = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_MODERATE_TO_ACTIVE, xMin);
+        double yEndActive = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_ACTIVE_TO_VERY_ACTIVE, xMin);
+        double yEndVeryActive = FireBehaviorUtil.computeRateOfSpread(FL_THRESHOLD_VERY_ACTIVE_TO_EXTREME, xMin);
+        //
+        XYPolygonAnnotation lowBkgnd = new XYPolygonAnnotation(
+                new double[]{xMin, yMin, xEndLow, yMin, xMin, yEndLow});
+        XYPolygonAnnotation modBkgnd = new XYPolygonAnnotation(
+                new double[]{xEndLow, yMin, xMin, yEndLow, xMin, yEndModerate, xEndModerate, yMin});
+        XYPolygonAnnotation activeBkgnd = new XYPolygonAnnotation(
+                new double[]{xEndModerate, yMin, xMin, yEndModerate, xMin, yEndActive, xEndActive, yMin});
+        XYPolygonAnnotation veryActiveBkgnd = new XYPolygonAnnotation(
+                new double[]{xEndActive, yMin, xMin, yEndActive, xMin, yEndVeryActive, xEndVeryActive, yMin});
+        XYPolygonAnnotation extremeBkgnd = new XYPolygonAnnotation(
+                new double[]{xEndVeryActive, yMin, xMin, yEndVeryActive, xMax * 10, yMax * 10});
+        
+        lowBkgnd.getNode().getStyleClass().add("low-fire-behavior");
+        modBkgnd.getNode().getStyleClass().add("moderate-fire-behavior");
+        activeBkgnd.getNode().getStyleClass().add("active-fire-behavior");
+        veryActiveBkgnd.getNode().getStyleClass().add("very-active-fire-behavior");
+        extremeBkgnd.getNode().getStyleClass().add("extreme-fire-behavior");
+        //
+//        lowBkgnd.setToolTipText("LOW");
+//        modBkgnd.setToolTipText("MODERATE");
+//        activeBkgnd.setToolTipText("ACTIVE");
+//        veryActiveBkgnd.setToolTipText("VERY ACTIVE");
+//        extremeBkgnd.setToolTipText("EXTREME");
+        //
+        chart.getAnnotations().add(lowBkgnd, Layer.BACKGROUND);
+        chart.getAnnotations().add(modBkgnd, Layer.BACKGROUND);
+        chart.getAnnotations().add(activeBkgnd, Layer.BACKGROUND);
+        chart.getAnnotations().add(veryActiveBkgnd, Layer.BACKGROUND);
+        chart.getAnnotations().add(extremeBkgnd, Layer.BACKGROUND);
     }
 
 }

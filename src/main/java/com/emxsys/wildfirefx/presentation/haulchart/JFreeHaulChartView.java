@@ -340,14 +340,14 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
         plot.setRangeAxis(yAxis);
 
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-        addBackgroundColors(renderer);
+        addFireBehaviorThresholds(renderer);
         addFlameLengthDivisions(renderer);
         addImageAnnotations(renderer);
 
         ChartUtilities.applyCurrentTheme(chart);
     }
 
-    private void addBackgroundColors(XYLineAndShapeRenderer renderer) {
+    private void addFireBehaviorThresholds(XYLineAndShapeRenderer renderer) {
         //
         double xEndLow = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_LOW, yMin);
         double xEndModerate = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_MODERATE, yMin);

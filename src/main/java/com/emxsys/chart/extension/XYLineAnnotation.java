@@ -29,7 +29,8 @@
  */
 package com.emxsys.chart.extension;
 
-import javafx.scene.Node;
+import javafx.scene.chart.ValueAxis;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 
 /**
@@ -38,41 +39,44 @@ import javafx.scene.shape.Line;
  */
 public class XYLineAnnotation {
 
-    private Line line = new Line();
+    private final Line line = new Line();
     private final double x1;
     private final double y1;
     private final double x2;
     private final double y2;
 
-    public XYLineAnnotation(double x1, double y1, double x2, double y2) {
-        
+    /**
+     * Constructs a line annotation from the given X,Y values.
+     *
+     * @param x1 Starting X value.
+     * @param y1 Starting Y value.
+     * @param x2 Ending X value.
+     * @param y2 Ending Y value.
+     */
+    public XYLineAnnotation(double x1, double y1, double x2, double y2, double strokeWidth, Paint color) {
+
         this.line.getStyleClass().add("chart-annotation-line");
-        
+
         this.x1 = x1;
         this.y1 = y1;
 
         this.x2 = x2;
         this.y2 = y2;
+
+        this.line.setStrokeWidth(strokeWidth);
+        this.line.setStroke(color);
     }
 
-    public Node getNode() {
+    public Line getNode() {
         return line;
     }
 
-    public double getX1() {
-        return x1;
-    }
+    void layoutLine(ValueAxis xAxis, ValueAxis yAxis) {
 
-    public double getY1() {
-        return y1;
-    }
-
-    public double getX2() {
-        return x2;
-    }
-
-    public double getY2() {
-        return y2;
+        line.setStartX(xAxis.getDisplayPosition(x1));
+        line.setStartY(yAxis.getDisplayPosition(y1));
+        line.setEndX(xAxis.getDisplayPosition(x2));
+        line.setEndY(yAxis.getDisplayPosition(y2));
     }
 
 }

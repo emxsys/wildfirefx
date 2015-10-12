@@ -36,15 +36,18 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.shape.Line;
 
 /**
  *
  * @author Bruce Schubert
  */
-public class XYAnnotations<X, Y> {
+public class XYAnnotations {
+
+    public enum Layer {
+
+        BACKGROUND, FOREGROUND
+    };
 
     private final XYChart chart;
     private final ObservableList<Node> chartChildren;
@@ -55,7 +58,7 @@ public class XYAnnotations<X, Y> {
     private final Group foreground = new Group();
 
     private final ObservableList<XYLineAnnotation> lines;
-    //private final ObservableList<Node> polygons;
+    private final ObservableList<XYPolygonAnnotation> polygons;
     //private final ObservableList<Node> labels;
 
     public XYAnnotations(XYChart chart, ObservableList<Node> chartChildren, ObservableList<Node> plotChildren) {
@@ -77,21 +80,35 @@ public class XYAnnotations<X, Y> {
 
         // Create lists that notify on changes
         lines = FXCollections.observableArrayList();
+        polygons = FXCollections.observableArrayList();
 
         // Listen to list changes and re-plot
         lines.addListener((InvalidationListener) observable -> layoutLines());
+        polygons.addListener((InvalidationListener) observable -> layoutPolygons());
     }
 
-    public void add(XYLineAnnotation annotation) {
-        this.foreground.getChildren().add(annotation.getNode());
+    public void add(XYLineAnnotation annotation, Layer backgroundOrForeground) {
+        Group layer = backgroundOrForeground == Layer.BACKGROUND ? background : foreground;
+        layer.getChildren().add(annotation.getNode());
         this.lines.add(annotation);
+    }
+
+    public void add(XYPolygonAnnotation annotation, Layer backgroundOrForeground) {
+        Group layer = backgroundOrForeground == Layer.BACKGROUND ? background : foreground;
+        layer.getChildren().add(annotation.getNode());
+        this.polygons.add(annotation);
 
     }
 
     public void layoutAnnotations() {
+        background.setLayoutX(plotContent.getLayoutX());
+        background.setLayoutY(plotContent.getLayoutY());
+        
         foreground.setLayoutX(plotContent.getLayoutX());
         foreground.setLayoutY(plotContent.getLayoutY());
+        
         layoutLines();
+        layoutPolygons();
     }
 
     private void layoutLines() {
@@ -99,23 +116,16 @@ public class XYAnnotations<X, Y> {
         ValueAxis xAxis = (ValueAxis) chart.getXAxis();
         ValueAxis yAxis = (ValueAxis) chart.getYAxis();
         for (XYLineAnnotation annotation : lines) {
+            annotation.layoutLine(xAxis, yAxis);
+        }
+    }
 
-            // Convert line values to axis values (e.g., log values)
-//            X x1 = (X) xAxis.toRealValue(annotation.getX1());
-//            X x2 = (X) xAxis.toRealValue(annotation.getX2());
-//            Y y1 = (Y) yAxis.toRealValue(annotation.getY1());
-//            Y y2 = (Y) yAxis.toRealValue(annotation.getY2());
-            double x1 = annotation.getX1();
-            double y1 = annotation.getY1();
-            double x2 = annotation.getX2();
-            double y2 = annotation.getY2();
+    private void layoutPolygons() {
 
-            // Plot the values
-            Line line = (Line) annotation.getNode();
-            line.setStartX(xAxis.getDisplayPosition(x1));
-            line.setStartY(yAxis.getDisplayPosition(y1));
-            line.setEndX(xAxis.getDisplayPosition(x2));
-            line.setEndY(yAxis.getDisplayPosition(y2));
+        ValueAxis xAxis = (ValueAxis) chart.getXAxis();
+        ValueAxis yAxis = (ValueAxis) chart.getYAxis();
+        for (XYPolygonAnnotation annotation : polygons) {
+            annotation.layoutPolygon(xAxis, yAxis);
         }
     }
 

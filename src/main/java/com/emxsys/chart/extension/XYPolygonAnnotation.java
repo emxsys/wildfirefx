@@ -29,10 +29,67 @@
  */
 package com.emxsys.chart.extension;
 
+import javafx.scene.chart.ValueAxis;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Polygon;
+
 /**
  *
  * @author Bruce Schubert
  */
 public class XYPolygonAnnotation {
-    
+
+    private final Polygon polygon = new Polygon();
+
+    double[] xyValues;
+
+    public XYPolygonAnnotation(double[] xyValues, Double strokeWidth,
+            Paint outlinePaint, Paint fillPaint) {
+        
+        if (xyValues == null || xyValues.length == 0) {
+            throw new IllegalArgumentException("xyValues cannot be null or empty.");
+        }
+        if (xyValues.length % 2 != 0) {
+            throw new IllegalArgumentException("xyValues does not appear to contain an equal number of x and y values.");
+        }
+        this.xyValues = xyValues;
+
+        polygon.getStyleClass().add("chart-annotation-polygon");
+        
+        polygon.setStrokeWidth(strokeWidth == null ? 0.0 : strokeWidth);
+        polygon.setStroke(outlinePaint);
+        polygon.setFill(fillPaint);
+    }
+
+    public XYPolygonAnnotation(double[] xyValues) {
+        
+        if (xyValues == null || xyValues.length == 0) {
+            throw new IllegalArgumentException("xyValues cannot be null or empty.");
+        }
+        if (xyValues.length % 2 != 0) {
+            throw new IllegalArgumentException("xyValues does not appear to contain an equal number of x and y values.");
+        }
+        this.xyValues = xyValues;
+
+        polygon.getStyleClass().add("chart-annotation-polygon");
+    }
+
+    public Polygon getNode() {
+        return polygon;
+    }
+
+    void layoutPolygon(ValueAxis xAxis, ValueAxis yAxis) {
+        polygon.getPoints().clear();
+        int i = 0;
+        for (double xyValue : xyValues) {
+            // Plot the values
+            if (i % 2 == 0) {
+                polygon.getPoints().add(xAxis.getDisplayPosition(xyValue));
+            } else {
+                polygon.getPoints().add(yAxis.getDisplayPosition(xyValue));
+            }
+            ++i;
+        }
+    }
+
 }
