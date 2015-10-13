@@ -143,6 +143,7 @@ public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
 
         }
 
+        double epsilon = 0.000001;
         majorVertGridLines.getElements().clear();
         if (vertGridLines != null && getVerticalGridLinesVisible()) {
             if (xa instanceof LogarithmicAxis) {
@@ -152,7 +153,8 @@ public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
                     Axis.TickMark<X> tick = tickMarks.get(i);
                     Double value = (Double) tick.getValue();
                     double log = ((LogarithmicAxis) xa).calculateLog(value);
-                    if (log % 1 == 0) {
+                    double delta = Math.abs(log - Math.round(log));
+                    if (delta < epsilon) {
                         double pixelOffset = (i == (tickMarks.size() - 1)) ? -0.5 : 0.5;
                         double x = xa.getDisplayPosition(tick.getValue());
                         //if ((x != xAxisZero || !isVerticalZeroLineVisible()) && x > 0 && x <= xAxisWidth) {
@@ -173,7 +175,7 @@ public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
                     Axis.TickMark<Y> tick = tickMarks.get(i);
                     Double value = (Double) tick.getValue();
                     double log = ((LogarithmicAxis) xa).calculateLog(value);
-                    if (log % 1 == 0) {
+                    if ((log % 1) < epsilon) {
                         double pixelOffset = (i == (tickMarks.size() - 1)) ? -0.5 : 0.5;
                         double y = ya.getDisplayPosition(tick.getValue());
                         if (y > 0 && y <= yAxisHeight) {

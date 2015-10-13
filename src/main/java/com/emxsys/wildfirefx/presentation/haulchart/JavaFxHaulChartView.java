@@ -284,14 +284,34 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         chart.getAnnotations().add(veryActiveBkgnd, Layer.BACKGROUND);
         chart.getAnnotations().add(extremeBkgnd, Layer.BACKGROUND);
 
-        lowBkgnd.setTooltipText("LOW: Fire will burn and will spread however \n"
+        lowBkgnd.setTooltipText(
+                "LOW: Fire will burn and will spread however \n"
                 + "it presents very little resistance to \n"
                 + "control and direct attack with \n"
                 + "firefighters is possible ");
-        modBkgnd.setTooltipText("MODERATE");
-        activeBkgnd.setTooltipText("ACTIVE");
-        veryActiveBkgnd.setTooltipText("VERY ACTIVE");
-        extremeBkgnd.setTooltipText("EXTREME");
+        modBkgnd.setTooltipText(
+                "MODERATE : Fire spreads rapidly presenting \n"
+                + "moderate resistance to control but can \n"
+                + "be countered with direct attack by \n"
+                + "firefighters ");
+        activeBkgnd.setTooltipText(
+                "ACTIVE: Fire spreads very rapidly presenting\n"
+                + "substantial resistance to control.\n" 
+                + "Direct attack with firefighters must be \n"
+                + "supplemented with equipment and/or \n"
+                + "air support. ");
+        veryActiveBkgnd.setTooltipText(
+                "VERY ACTIVE: Fire spreads very rapidly\n"
+                + "presenting extreme resistance to control.\n"
+                + "Indirect attack may be effective. Safety of \n"
+                + "firefighters in the area becomes a concern. ");
+        extremeBkgnd.setTooltipText(
+                "EXTREME: Fire spreads very rapidly\n"
+                + "presenting extreme resistance to control.\n"
+                + "extreme resistance to control.  Any \n"
+                + "form of attack will probably not be \n"
+                + "effective.  Safety of firefighters in the \n"
+                + "area is of critical concern. ");
     }
 
     private void layoutFireBehaviorImages() {
