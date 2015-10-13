@@ -30,6 +30,7 @@
 package com.emxsys.chart.extension;
 
 import javafx.scene.chart.ValueAxis;
+import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 
@@ -45,7 +46,7 @@ public class XYPolygonAnnotation {
 
     public XYPolygonAnnotation(double[] xyValues, Double strokeWidth,
             Paint outlinePaint, Paint fillPaint) {
-        
+
         if (xyValues == null || xyValues.length == 0) {
             throw new IllegalArgumentException("xyValues cannot be null or empty.");
         }
@@ -55,14 +56,14 @@ public class XYPolygonAnnotation {
         this.xyValues = xyValues;
 
         polygon.getStyleClass().add("chart-annotation-polygon");
-        
+
         polygon.setStrokeWidth(strokeWidth == null ? 0.0 : strokeWidth);
         polygon.setStroke(outlinePaint);
         polygon.setFill(fillPaint);
     }
 
     public XYPolygonAnnotation(double[] xyValues) {
-        
+
         if (xyValues == null || xyValues.length == 0) {
             throw new IllegalArgumentException("xyValues cannot be null or empty.");
         }
@@ -76,6 +77,10 @@ public class XYPolygonAnnotation {
 
     public Polygon getNode() {
         return polygon;
+    }
+
+    public void setTooltipText(String text) {
+        Tooltip.install(polygon, new Tooltip(text));
     }
 
     void layoutPolygon(ValueAxis xAxis, ValueAxis yAxis) {

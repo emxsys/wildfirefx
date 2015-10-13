@@ -77,7 +77,8 @@ public class XYAnnotations {
         }
         plotContent = (Group) plotArea.getChildren().get(plotContentIndex);
         plotArea.getChildren().add(plotContentIndex + 1, foreground);
-        plotArea.getChildren().add(plotContentIndex, background);
+        plotArea.getChildren().add(0, background);
+//        plotArea.getChildren().add(plotContentIndex, background);
 
         // Create lists that notify on changes
         texts = FXCollections.observableArrayList();

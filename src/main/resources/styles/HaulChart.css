@@ -2,12 +2,38 @@
     -fx-text-fill: #4682b4;
     -fx-font-size: 1.0em;
 }
+
+.chart-major-vertical-grid-lines {
+    -fx-stroke: white;
+    -fx-stroke-width: 0.5;
+    -fx-opacity: 0.5;
+}
+
+.chart-major-horizontal-grid-lines {
+    -fx-stroke: white;
+    -fx-stroke-width: 0.5;
+    -fx-opacity: 0.5;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: white;
+    -fx-stroke-width: 0.2;
+    -fx-opacity: 0.5;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: white;
+    -fx-stroke-width: 0.2;
+    -fx-opacity: 0.5;
+}
+
 .chart-symbol { /* hollow circle */
     -fx-background-color: #EE0909, white;
     -fx-background-insets: 0, 2;
     -fx-background-radius: 5px;
     -fx-padding: 5px;
 }
+
 .default-color1.chart-symbol { /*  solid blue circle */
     -fx-background-color: #1939EE;
     -fx-background-radius: 4px;

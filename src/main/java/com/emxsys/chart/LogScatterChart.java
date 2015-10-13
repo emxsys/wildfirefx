@@ -41,6 +41,7 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
+import javax.swing.plaf.metal.MetalIconFactory;
 
 /**
  * A logarithmic scatter chart.
@@ -78,8 +79,8 @@ public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
     public LogScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis, data);
         
-        majorHorzGridLines.getStyleClass().setAll("chart-horizontal-zero-line");
-        majorVertGridLines.getStyleClass().setAll("chart-vertical-zero-line");
+        majorHorzGridLines.getStyleClass().setAll("chart-major-horizontal-grid-lines");
+        majorVertGridLines.getStyleClass().setAll("chart-major-vertical-grid-lines");
 
         // Find the gridlines contained in the plotArea of the XYChart.
         // The chart children include:
@@ -98,15 +99,15 @@ public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
             if (chartChild instanceof Group) {
 
                 plotArea = (Group) chartChild;
-                // Insert our custom background annotations before 
-                // the plotContent found at the end of the plotArea children
+                // Insert our custom background annotations after the zero lines (indices 0 and 1). 
                 ObservableList<Node> plotAreaChildren = plotArea.getChildren();
-                plotAreaChildren.add(plotAreaChildren.size() - 1, majorHorzGridLines);
-                plotAreaChildren.add(plotAreaChildren.size() - 1, majorVertGridLines);
+                plotAreaChildren.add(2, majorHorzGridLines);
+                plotAreaChildren.add(2, majorVertGridLines);
 
                 // Obtain references to the factory "grid lines" which are Path instances
                 for (Node plotAreaChild : plotAreaChildren) {
                     if (plotAreaChild instanceof Path) {
+                        
                         // We can identify the horizontal and vertical grid lines by the CSS.
                         ObservableList<String> styles = plotAreaChild.getStyleClass();
 
@@ -158,6 +159,26 @@ public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
                         if (x > 0 && x <= xAxisWidth) {
                             majorVertGridLines.getElements().add(new MoveTo(left + x + pixelOffset, top));
                             majorVertGridLines.getElements().add(new LineTo(left + x + pixelOffset, top + yAxisHeight));
+                        }
+                    }
+                }
+            }
+        }
+        majorHorzGridLines.getElements().clear();
+        if (horzGridLines != null && isHorizontalGridLinesVisible()) {
+            if (ya instanceof LogarithmicAxis) {
+                // Move the major grid lines from the default Path to our custom Path
+                final ObservableList<Axis.TickMark<Y>> tickMarks = ya.getTickMarks();
+                for (int i = 0; i < tickMarks.size(); i++) {
+                    Axis.TickMark<Y> tick = tickMarks.get(i);
+                    Double value = (Double) tick.getValue();
+                    double log = ((LogarithmicAxis) xa).calculateLog(value);
+                    if (log % 1 == 0) {
+                        double pixelOffset = (i == (tickMarks.size() - 1)) ? -0.5 : 0.5;
+                        double y = ya.getDisplayPosition(tick.getValue());
+                        if (y > 0 && y <= yAxisHeight) {
+                            majorHorzGridLines.getElements().add(new MoveTo(left, top + y + pixelOffset));
+                            majorHorzGridLines.getElements().add(new LineTo(left + xAxisWidth, top + y + pixelOffset));
                         }
                     }
                 }

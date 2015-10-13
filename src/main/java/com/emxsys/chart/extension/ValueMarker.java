@@ -45,6 +45,16 @@ public class ValueMarker {
     private final Line line = new Line();
     private final Label label = new Label();
 
+    /**
+     * Constructs a marker line drawn at the given value. 
+     */
+    public ValueMarker(double value) {
+        setValue(value);
+        line.getStyleClass().add("chart-marker-line");
+        line.getStyleClass().add("chart-marker-label");
+    }
+
+    
     public double getValue() {
         return value.get();
     }
@@ -55,10 +65,6 @@ public class ValueMarker {
 
     public DoubleProperty valueProperty() {
         return value;
-    }
-
-    public ValueMarker(double value) {
-        setValue(value);
     }
 
     public String getLabel() {

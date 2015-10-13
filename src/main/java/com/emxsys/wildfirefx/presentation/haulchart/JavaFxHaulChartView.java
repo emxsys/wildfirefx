@@ -47,6 +47,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
@@ -248,6 +249,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
     }
 
     private void layoutFireBehaviorThresholds() {
+
         // Compute heat release Btu thresholds
         double lowBtu = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_LOW_TO_MODERATE, minRos);
         double moderateBtu = FireBehaviorUtil.computeHeatAreaBtus(FL_THRESHOLD_MODERATE_TO_ACTIVE, minRos);
@@ -282,12 +284,14 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         chart.getAnnotations().add(veryActiveBkgnd, Layer.BACKGROUND);
         chart.getAnnotations().add(extremeBkgnd, Layer.BACKGROUND);
 
-//        lowBkgnd.getNode().setToolTipText("LOW");
-//        modBkgnd.setToolTipText("MODERATE");
-//        activeBkgnd.setToolTipText("ACTIVE");
-//        veryActiveBkgnd.setToolTipText("VERY ACTIVE");
-//        extremeBkgnd.setToolTipText("EXTREME");
-        //
+        lowBkgnd.setTooltipText("LOW: Fire will burn and will spread however \n"
+                + "it presents very little resistance to \n"
+                + "control and direct attack with \n"
+                + "firefighters is possible ");
+        modBkgnd.setTooltipText("MODERATE");
+        activeBkgnd.setTooltipText("ACTIVE");
+        veryActiveBkgnd.setTooltipText("VERY ACTIVE");
+        extremeBkgnd.setTooltipText("EXTREME");
     }
 
     private void layoutFireBehaviorImages() {
