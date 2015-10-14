@@ -143,7 +143,7 @@ public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
 
         }
 
-        double epsilon = 0.000001;
+        double epsilon = 0.0001;
         majorVertGridLines.getElements().clear();
         if (vertGridLines != null && getVerticalGridLinesVisible()) {
             if (xa instanceof LogarithmicAxis) {
