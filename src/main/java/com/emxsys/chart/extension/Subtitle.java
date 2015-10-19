@@ -74,14 +74,24 @@ public class Subtitle {
         this.legend = legend;
     }
 
+    public String getSubtitle() {
+        return this.subtitle;
+    }
+
+    /**
+     * 
+     * @param subtitle 
+     */
     public void setSubtitle(String subtitle) {
         this.subtitle = subtitle;
         this.subtitleLabel.setText(subtitle);
         this.chart.requestLayout();
     }
 
-    //
-    public void layoutChildren() {
+    /**
+     * 
+     */
+    public void layoutSubtitles() {
 
         if (subtitle == null || subtitle.isEmpty()) {
             subtitleLabel.setVisible(false);

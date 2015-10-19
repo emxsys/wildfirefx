@@ -29,6 +29,8 @@
  */
 package com.emxsys.chart.extension;
 
+import java.util.ArrayList;
+import java.util.Objects;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,6 +39,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.shape.Line;
+
 
 /**
  *
@@ -57,12 +60,12 @@ public class XYAnnotations {
     private final Group background = new Group();
     private final Group foreground = new Group();
 
-    private final ObservableList<XYTextAnnotation> texts;
-    private final ObservableList<XYLineAnnotation> lines;
-    private final ObservableList<XYImageAnnotation> images;
-    private final ObservableList<XYPolygonAnnotation> polygons;
+    private final ObservableList<XYAnnotation> fgAnnotations;
+    private final ObservableList<XYAnnotation> bgAnnotations;
 
-    public XYAnnotations(XYChart chart, ObservableList<Node> chartChildren, ObservableList<Node> plotChildren) {
+
+    public XYAnnotations(XYChart chart, ObservableList<Node> chartChildren,
+        ObservableList<Node> plotChildren) {
         this.chart = chart;
         this.chartChildren = chartChildren;
         this.plotChildren = plotChildren;
@@ -78,92 +81,126 @@ public class XYAnnotations {
         plotContent = (Group) plotArea.getChildren().get(plotContentIndex);
         plotArea.getChildren().add(plotContentIndex + 1, foreground);
         plotArea.getChildren().add(0, background);
-//        plotArea.getChildren().add(plotContentIndex, background);
+
+        // Sync the foreground and background layout to the plotContent
+        foreground.layoutXProperty().bind(plotContent.layoutXProperty());
+        foreground.layoutYProperty().bind(plotContent.layoutYProperty());
+        background.layoutXProperty().bind(plotContent.layoutXProperty());
+        background.layoutYProperty().bind(plotContent.layoutYProperty());
 
         // Create lists that notify on changes
-        texts = FXCollections.observableArrayList();
-        lines = FXCollections.observableArrayList();
-        images = FXCollections.observableArrayList();
-        polygons = FXCollections.observableArrayList();
+        fgAnnotations = FXCollections.observableArrayList();
+        bgAnnotations = FXCollections.observableArrayList();
 
         // Listen to list changes and re-plot
-        texts.addListener((InvalidationListener) observable -> layoutTexts());
-        lines.addListener((InvalidationListener) observable -> layoutLines());
-        images.addListener((InvalidationListener) observable -> layoutImages());
-        polygons.addListener((InvalidationListener) observable -> layoutPolygons());
+        fgAnnotations.addListener((InvalidationListener) observable -> layoutForeground());
+        bgAnnotations.addListener((InvalidationListener) observable -> layoutBackground());
     }
 
-    public void add(XYTextAnnotation annotation, Layer backgroundOrForeground) {
-        Group layer = backgroundOrForeground == Layer.BACKGROUND ? background : foreground;
-        layer.getChildren().add(annotation.getNode());
-        this.texts.add(annotation);
+
+    public void add(XYAnnotation annotation, Layer layer) {
+        Objects.requireNonNull(annotation, getClass().getSimpleName() + ": annotation must not be null");
+        if (layer == Layer.FOREGROUND) {
+            fgAnnotations.add(annotation);
+            foreground.getChildren().add(annotation.getNode());
+            foreground.requestLayout();
+        }
+        else {
+            bgAnnotations.add(annotation);
+            background.getChildren().add(annotation.getNode());
+            background.requestLayout();
+        }
+        plotContent.requestLayout();
     }
 
-    public void add(XYLineAnnotation annotation, Layer backgroundOrForeground) {
-        Group layer = backgroundOrForeground == Layer.BACKGROUND ? background : foreground;
-        layer.getChildren().add(annotation.getNode());
-        this.lines.add(annotation);
+
+    public void remove(XYAnnotation annotation, Layer layer) {
+        Objects.requireNonNull(annotation, getClass().getSimpleName() + ": annotation must not be null");
+
+        Group group = (layer == Layer.BACKGROUND) ? background : foreground;
+        ObservableList<XYAnnotation> collection = (layer == Layer.BACKGROUND) ? bgAnnotations : fgAnnotations;
+
+        if (annotation.getNode() != null) {
+            group.getChildren().remove(annotation.getNode());
+        }
+        collection.remove(annotation);
     }
 
-    public void add(XYImageAnnotation annotation, Layer backgroundOrForeground) {
-        Group layer = backgroundOrForeground == Layer.BACKGROUND ? background : foreground;
-        layer.getChildren().add(annotation.getNode());
-        this.images.add(annotation);
+
+    public void clearAnnotations(Layer layer) {
+        Group group = layer == Layer.BACKGROUND ? background : foreground;
+        ObservableList<XYAnnotation> collection = (layer == Layer.BACKGROUND) ? bgAnnotations : fgAnnotations;
+        for (XYAnnotation annotation : collection) {
+            group.getChildren().remove(annotation.getNode());
+        }
+        collection.clear();
     }
 
-    public void add(XYPolygonAnnotation annotation, Layer backgroundOrForeground) {
-        Group layer = backgroundOrForeground == Layer.BACKGROUND ? background : foreground;
-        layer.getChildren().add(annotation.getNode());
-        this.polygons.add(annotation);
 
+    public void clearLineAnnotations(Layer layer) {
+        ArrayList<XYAnnotation> copy = new ArrayList<>(layer == Layer.BACKGROUND ? bgAnnotations : fgAnnotations);
+
+        for (XYAnnotation annotation : copy) {
+            if (annotation instanceof XYLineAnnotation) {
+                remove(annotation, layer);
+            }
+        }
     }
+
+
+    public void clearTextAnnotations(Layer layer) {
+        ArrayList<XYAnnotation> copy = new ArrayList<>(layer == Layer.BACKGROUND ? bgAnnotations : fgAnnotations);
+
+        for (XYAnnotation annotation : copy) {
+            if (annotation instanceof XYTextAnnotation) {
+                remove(annotation, layer);
+            }
+        }
+    }
+
+
+    public void clearPolygonAnnotations(Layer layer) {
+        ArrayList<XYAnnotation> copy = new ArrayList<>(layer == Layer.BACKGROUND ? bgAnnotations : fgAnnotations);
+
+        for (XYAnnotation annotation : copy) {
+            if (annotation instanceof XYPolygonAnnotation) {
+                remove(annotation, layer);
+            }
+        }
+    }
+
+
+    public void clearImageAnnotations(Layer layer) {
+        ArrayList<XYAnnotation> copy = new ArrayList<>(layer == Layer.BACKGROUND ? bgAnnotations : fgAnnotations);
+
+        for (XYAnnotation annotation : copy) {
+            if (annotation instanceof XYImageAnnotation) {
+                remove(annotation, layer);
+            }
+        }
+    }
+
 
     public void layoutAnnotations() {
-        background.setLayoutX(plotContent.getLayoutX());
-        background.setLayoutY(plotContent.getLayoutY());
-
-        foreground.setLayoutX(plotContent.getLayoutX());
-        foreground.setLayoutY(plotContent.getLayoutY());
-
-        layoutPolygons();
-        layoutLines();
-        layoutImages();
-        layoutTexts();
+        layoutBackground();
+        layoutForeground();
     }
 
-    private void layoutTexts() {
 
+    private void layoutForeground() {
         ValueAxis xAxis = (ValueAxis) chart.getXAxis();
         ValueAxis yAxis = (ValueAxis) chart.getYAxis();
-        for (XYTextAnnotation annotation : texts) {
-            annotation.layoutText(xAxis, yAxis);
+        for (XYAnnotation annotation : fgAnnotations) {
+            annotation.layoutAnnotation(xAxis, yAxis);
         }
     }
 
-    private void layoutLines() {
 
+    private void layoutBackground() {
         ValueAxis xAxis = (ValueAxis) chart.getXAxis();
         ValueAxis yAxis = (ValueAxis) chart.getYAxis();
-        for (XYLineAnnotation annotation : lines) {
-            annotation.layoutLine(xAxis, yAxis);
-        }
-    }
-
-    private void layoutImages() {
-
-        ValueAxis xAxis = (ValueAxis) chart.getXAxis();
-        ValueAxis yAxis = (ValueAxis) chart.getYAxis();
-        for (XYImageAnnotation annotation : images) {
-            annotation.layoutImage(xAxis, yAxis);
-        }
-    }
-
-    private void layoutPolygons() {
-
-        ValueAxis xAxis = (ValueAxis) chart.getXAxis();
-        ValueAxis yAxis = (ValueAxis) chart.getYAxis();
-        for (XYPolygonAnnotation annotation : polygons) {
-            annotation.layoutPolygon(xAxis, yAxis);
+        for (XYAnnotation annotation : bgAnnotations) {
+            annotation.layoutAnnotation(xAxis, yAxis);
         }
     }
 

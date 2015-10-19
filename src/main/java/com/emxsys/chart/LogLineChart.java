@@ -29,86 +29,49 @@
  */
 package com.emxsys.chart;
 
-import com.emxsys.chart.extension.AnnotationExtension;
-import com.emxsys.chart.extension.MarkerExtension;
-import com.emxsys.chart.extension.Subtitle;
-import com.emxsys.chart.extension.SubtitleExtension;
-import com.emxsys.chart.extension.XYAnnotations;
-import com.emxsys.chart.extension.XYMarkers;
-import javafx.application.Platform;
+import com.emxsys.chart.extension.MajorLogGridLines;
 import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.Axis;
-import javafx.scene.chart.ScatterChart;
-
 
 /**
- * An enhanced version of a ScatterChart.
+ * A logarithmic line chart.
  *
  * @author Bruce Schubert
  * @param <X>
  * @param <Y>
  */
-public class EnhancedScatterChart<X, Y> extends ScatterChart<X, Y>
-    implements SubtitleExtension, MarkerExtension, AnnotationExtension {
+public class LogLineChart<X, Y> extends EnhancedLineChart<X, Y> {
 
-    private Subtitle subtitle;
-    private XYMarkers<X, Y> markers;
-    private XYAnnotations annotations;
+    private MajorLogGridLines<X,Y> gridlines;
 
-
-    public EnhancedScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
+    /**
+     * Constructs a logarithmic line chart.
+     *
+     * @param xAxis
+     * @param yAxis
+     */
+    public LogLineChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
 
-
-    @SuppressWarnings("OverridableMethodCallInConstructor")
-    public EnhancedScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis,
-        @NamedArg("data") ObservableList<Series<X, Y>> data) {
+    /**
+     * Constructs a logarithmic line chart.
+     *
+     * @param xAxis
+     * @param yAxis
+     * @param data
+     */
+    public LogLineChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis, data);
-        subtitle = new Subtitle(this, getChildren(), getLegend());
-        markers = new XYMarkers<>(this, getPlotChildren());
-        annotations = new XYAnnotations(this, getChartChildren(), getPlotChildren());
+        this.gridlines = new MajorLogGridLines<>(this, this.getChartChildren());
     }
-
-
-    @Override
-    public String getSubtitle() {
-        return this.subtitle.getSubtitle();
-    }
-
-
-    @Override
-    public void setSubtitle(String subtitle) {
-        this.subtitle.setSubtitle(subtitle);
-    }
-
-
-    @Override
-    public XYAnnotations getAnnotations() {
-        return this.annotations;
-    }
-
-
-    @Override
-    public XYMarkers getMarkers() {
-        return this.markers;
-    }
-
 
     @Override
     protected void layoutChildren() {
+        // Invoked during the layout pass to layout this chart and all its content.
         super.layoutChildren();
-        subtitle.layoutSubtitles();
+        gridlines.layoutGridlines();
     }
-
-
-    @Override
-    protected void layoutPlotChildren() {
-        super.layoutPlotChildren();
-        this.annotations.layoutAnnotations();
-        this.markers.layoutMarkers();
-    }
-
 }

@@ -27,51 +27,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.chart.axis;
+package com.emxsys.chart.extension;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+import javafx.scene.Node;
+import javafx.scene.chart.ValueAxis;
 
 
 /**
  *
  * @author Bruce Schubert
  */
-public class NumberTickUnit extends TickUnit {
+public interface XYAnnotation {
 
-    private final DecimalFormat defaultFormatter = new DecimalFormat("0.00");
-    private NumberFormat formatter;
-
-
-    public NumberTickUnit() {
-        this(1, null, 9);
-    }
+    Node getNode();
 
 
-    public NumberTickUnit(double size) {
-        this(size, null, 9);
-    }
-
-
-    // Compatible with JFree signature
-    public NumberTickUnit(double size, NumberFormat formatter, int minorTickCount) {
-        super(size, minorTickCount);
-        this.formatter = formatter;
-    }
-
-
-    /**
-     * Get the string label name for a tick mark with the given value
-     *
-     * @param value The value to format into a tick label string
-     * @return A formatted string for the given value
-     */
-    @Override
-    public String getTickMarkLabel(Number value) {
-        if (formatter == null) {
-            formatter = defaultFormatter;
-        }
-        return formatter.format(value);
-    }
-
+    void layoutAnnotation(ValueAxis xAxis, ValueAxis yAxis);
+    
 }

@@ -30,7 +30,7 @@
 package com.emxsys.wildfirefx.presentation.haulchart;
 
 import com.emxsys.chart.LogScatterChart;
-import com.emxsys.chart.axis.LogarithmicAxis;
+import com.emxsys.chart.extension.LogarithmicAxis;
 import com.emxsys.chart.extension.ValueMarker;
 import com.emxsys.chart.extension.XYAnnotations.Layer;
 import com.emxsys.chart.extension.XYImageAnnotation;
@@ -47,7 +47,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
