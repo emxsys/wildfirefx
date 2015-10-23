@@ -47,7 +47,7 @@ import javafx.scene.shape.Rectangle;
  * @param <X>
  * @param <Y>
  */
-public class MajorLogGridlinesX<X, Y> {
+public class MajorLogGridlines<X, Y> {
     
     private Group plotArea = null;
     
@@ -63,7 +63,7 @@ public class MajorLogGridlinesX<X, Y> {
      * @param chart The chart desiring major grid lines.
      * @param chartChildren The children returned by chart.getChartChildren().
      */
-    public MajorLogGridlinesX(XYChart<X, Y> chart, ObservableList<Node> chartChildren) {
+    public MajorLogGridlines(XYChart<X, Y> chart, ObservableList<Node> chartChildren) {
         this.chart = chart;
         
         majorHorzGridlines.getStyleClass().setAll("chart-major-horizontal-grid-lines");
