@@ -29,14 +29,16 @@
  */
 package com.emxsys.chart;
 
-import com.emxsys.chart.extension.MajorLogGridLines;
+import com.emxsys.chart.extension.MajorLogGridlinesX;
 import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.Axis;
 
+
 /**
- * A logarithmic line chart.
+ * A JavaFX Chart Extensions' logarithmic line chart with subtitle, markers, annotations and major
+ * logarithmic grid lines.
  *
  * @author Bruce Schubert
  * @param <X>
@@ -44,7 +46,8 @@ import javafx.scene.chart.Axis;
  */
 public class LogLineChart<X, Y> extends EnhancedLineChart<X, Y> {
 
-    private MajorLogGridLines<X,Y> gridlines;
+    private MajorLogGridlinesX<X, Y> gridlines;
+
 
     /**
      * Constructs a logarithmic line chart.
@@ -56,6 +59,7 @@ public class LogLineChart<X, Y> extends EnhancedLineChart<X, Y> {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
 
+
     /**
      * Constructs a logarithmic line chart.
      *
@@ -63,15 +67,23 @@ public class LogLineChart<X, Y> extends EnhancedLineChart<X, Y> {
      * @param yAxis
      * @param data
      */
-    public LogLineChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
+    public LogLineChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis,
+        @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis, data);
-        this.gridlines = new MajorLogGridLines<>(this, this.getChartChildren());
+        this.gridlines = new MajorLogGridlinesX<>(this, this.getChartChildren());
+        this.requestChartLayout();
     }
 
+
+    /**
+     * Performs a layout that includes the major grid lines.
+     */
     @Override
     protected void layoutChildren() {
         // Invoked during the layout pass to layout this chart and all its content.
         super.layoutChildren();
         gridlines.layoutGridlines();
     }
+    
+
 }

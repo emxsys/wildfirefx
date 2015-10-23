@@ -29,14 +29,16 @@
  */
 package com.emxsys.chart;
 
-import com.emxsys.chart.extension.MajorLogGridLines;
+import com.emxsys.chart.extension.MajorLogGridlinesX;
 import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.Axis;
 
+
 /**
- * A logarithmic scatter chart.
+ * A JavaFX Chart Extensions' logarithmic scatter chart with subtitle, markers, annotations and
+ * major logarithmic grid lines.
  *
  * @author Bruce Schubert
  * @param <X>
@@ -44,7 +46,8 @@ import javafx.scene.chart.Axis;
  */
 public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
 
-    private MajorLogGridLines<X, Y> gridlines;
+    private MajorLogGridlinesX<X, Y> gridlines;
+
 
     /**
      * Constructs a logarithmic scatter chart.
@@ -56,6 +59,7 @@ public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
 
+
     /**
      * Constructs a logarithmic scatter chart.
      *
@@ -64,15 +68,22 @@ public class LogScatterChart<X, Y> extends EnhancedScatterChart<X, Y> {
      * @param data
      */
     @SuppressWarnings("OverridableMethodCallInConstructor")
-    public LogScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
+    public LogScatterChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis,
+        @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis, data);
-        this.gridlines = new MajorLogGridLines<>(this, this.getChartChildren());
+        this.gridlines = new MajorLogGridlinesX<>(this, this.getChartChildren());
+        this.requestChartLayout();
     }
 
+
+    /**
+     * Performs a layout that includes the major grid lines.
+     */
     @Override
     protected void layoutChildren() {
         // Invoked during the layout pass to layout this chart and all its content.
         super.layoutChildren();
         gridlines.layoutGridlines();
     }
+
 }

@@ -321,11 +321,11 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         Image imgFireBehaviorVeryActive = new Image(getClass().getResourceAsStream("/images/fire-behavior-very-active.gif"));
         Image imgFireBehaviorExtreme = new Image(getClass().getResourceAsStream("/images/fire-behavior-extreme.gif"));
 
-        chart.getAnnotations().add(new XYImageAnnotation(30, 3, imgFireBehaviorLow, Pos.CENTER), Layer.BACKGROUND);
-        chart.getAnnotations().add(new XYImageAnnotation(110, 11, imgFireBehaviorModerate, Pos.CENTER), Layer.BACKGROUND);
-        chart.getAnnotations().add(new XYImageAnnotation(300, 30, imgFireBehaviorActive, Pos.CENTER), Layer.BACKGROUND);
-        chart.getAnnotations().add(new XYImageAnnotation(600, 60, imgFireBehaviorVeryActive, Pos.CENTER), Layer.BACKGROUND);
-        chart.getAnnotations().add(new XYImageAnnotation(1200, 120, imgFireBehaviorExtreme, Pos.CENTER), Layer.BACKGROUND);
+        chart.getAnnotations().add(new XYImageAnnotation(imgFireBehaviorLow, 30, 3, Pos.CENTER), Layer.BACKGROUND);
+        chart.getAnnotations().add(new XYImageAnnotation(imgFireBehaviorModerate, 110, 11, Pos.CENTER), Layer.BACKGROUND);
+        chart.getAnnotations().add(new XYImageAnnotation(imgFireBehaviorActive, 300, 30, Pos.CENTER), Layer.BACKGROUND);
+        chart.getAnnotations().add(new XYImageAnnotation(imgFireBehaviorVeryActive, 600, 60, Pos.CENTER), Layer.BACKGROUND);
+        chart.getAnnotations().add(new XYImageAnnotation(imgFireBehaviorExtreme, 1200, 120, Pos.CENTER), Layer.BACKGROUND);
     }
 
 }

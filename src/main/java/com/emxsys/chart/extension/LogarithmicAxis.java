@@ -44,7 +44,6 @@ import javafx.scene.shape.Path;
  * A axis class that plots a logarithmic range of numbers with major tick marks
  * every "tickUnit".
  *
- *
  * @author Bruce Schubert
  */
 public class LogarithmicAxis extends NumericAxis {
@@ -77,9 +76,11 @@ public class LogarithmicAxis extends NumericAxis {
 
     /**
      * Constructs an non-auto-ranging numeric axis.
+     * @param lowerBound
+     * @param upperBound
      */
     public LogarithmicAxis(double lowerBound, double upperBound) {
-        this(lowerBound, upperBound, 9);
+        this(lowerBound, upperBound, 1);
     }
 
     /**
@@ -91,9 +92,21 @@ public class LogarithmicAxis extends NumericAxis {
      * @param tickUnit The tick unit, ie space between tickmarks
      */
     public LogarithmicAxis(double lowerBound, double upperBound, double tickUnit) {
-        this(null, lowerBound, upperBound, 9);
+        this(null, lowerBound, upperBound, 1);
     }
 
+    /**
+     * Constructs a non-auto-ranging NumberAxis with the given lablel, upper
+     * bound, lower bound.
+     *
+     * @param axisLabel The name to display for this axis
+     * @param lowerBound The lower bound for this axis, ie min plottable value
+     * @param upperBound The upper bound for this axis, ie max plottable value
+     */
+    public LogarithmicAxis(String axisLabel, double lowerBound, double upperBound) {
+        this(axisLabel, lowerBound, upperBound, 1);
+
+    }
     /**
      * Constructs a non-auto-ranging NumberAxis with the given lablel, upper
      * bound, lower bound and tick unit.
@@ -114,7 +127,7 @@ public class LogarithmicAxis extends NumericAxis {
      * Binds our logarithmic bounds with the super class bounds. 
      */
     private void bindLogBoundsToDefaultBounds() {
-        // TODO: consider the base 10 logarithmic scale.
+        // TODO: consider other than the base 10 logarithmic scale.
         logLowerBound.bind(new DoubleBinding() {
             {
                 super.bind(lowerBoundProperty());
@@ -160,24 +173,24 @@ public class LogarithmicAxis extends NumericAxis {
         final double tickUnit = (Double) rangeProps[2];
         List<Number> tickValues = new ArrayList<>();
 
-        int minorTickCount = this.tickUnit.getMinorTickCount();
+        int minorTickCount = this.getTickUnitImpl().getMinorTickCount();
 
         double start = Math.floor(calculateLog(getLowerBound()));
         double end = Math.ceil(calculateLog(getUpperBound()));
         double current = start;
-        boolean hasTicks = (this.tickUnit.getSize() > 0.0) && !Double.isInfinite(start);
+        boolean hasTicks = (this.getTickUnitImpl().getSize() > 0.0) && !Double.isInfinite(start);
         while (hasTicks && current <= end) {
             double v = calculateValue(current);
             tickValues.add(v);
 
-            double next = Math.pow(this.base, current + this.tickUnit.getSize());
+            double next = Math.pow(this.base, current + this.getTickUnitImpl().getSize());
             for (int i = 1; i < minorTickCount; i++) {
                 double minorV = v + i * ((next - v) / minorTickCount);
                 if (minorV >= lowerBound && minorV <= upperBound) {
                     tickValues.add(minorV);
                 }
             }
-            current = current + this.tickUnit.getSize();
+            current = current + this.getTickUnitImpl().getSize();
         }
 
         return tickValues;
@@ -236,15 +249,6 @@ public class LogarithmicAxis extends NumericAxis {
         }
     }
 
-    @Override
-    public Number toRealValue(double value) {
-        return super.toRealValue(value); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double toNumericValue(Number value) {
-        return super.toNumericValue(value); //To change body of generated methods, choose Tools | Templates.
-    }
 
     @Override
     protected void layoutChildren() {
@@ -276,7 +280,7 @@ public class LogarithmicAxis extends NumericAxis {
         this.baseLog = Math.log(base);
 
         // TODO: notify chart that axis has changed
-        //fireChangeEvent();
+        // TODO: this should be a property!
     }
 
     public double calculateLog(double value) {
