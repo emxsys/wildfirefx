@@ -50,6 +50,7 @@ public class SolarChart extends JFreeChart {
 
     public SolarChart(String title, String subTitle) {
         super(new SolarPlot());
+        
         setTitle(title);
         if (subTitle != null) {
             addSubtitle(new TextTitle(subTitle));
