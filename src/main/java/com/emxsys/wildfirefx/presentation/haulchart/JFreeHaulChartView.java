@@ -116,9 +116,9 @@ public class JFreeHaulChartView implements View<JFreeHaulChartController> {
 //    private final Unit rosUS = FireUnit.chain_hour;
 //    private final Unit flnUS = GeneralUnit.foot;
 //    private final Unit fliUS = FireUnit.Btu_ft_s;
-    private String heatStr;
-    private String rosStr;
-    private String flnStr;
+    private String heatStr = "Btu/ft^2";
+    private String rosStr = "ft/m";
+    private String flnStr ="ft";
     private String fliStr;
 
     /**

@@ -126,6 +126,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         seriesFlank.getData().clear();
         chart.getMarkers().clearDomainMarkers();
         chart.getMarkers().clearRangeMarkers();
+        chart.getAnnotations().clearTextAnnotations(Layer.FOREGROUND);
         if (fire == null) {
             chart.setSubtitle(null);
             return;
@@ -136,6 +137,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         double heat = fuel.getHeatRelease();
         double rosMax = fire.getRateOfSpreadMax();
         double rosFlank = fire.getRateOfSpreadFlanking();
+        double flameLen = fire.getFlameLength();
 
         // Updating the subtitle with the fuel model name
         chart.setSubtitle(modelName);
@@ -144,11 +146,17 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         // Update the plot with our x,y points for max and flanking fire behavior
         seriesMax.getData().add(new XYChart.Data(heat, rosMax));
         seriesFlank.getData().add(new XYChart.Data(heat, rosFlank));
+        // Show the flame len at the intersection of heat and rate-of-spread
+        XYTextAnnotation flAnno = new XYTextAnnotation(String.format("%1$.1f ft Flame", flameLen), heat, rosMax);
+        flAnno.setTextAnchor(Pos.BOTTOM_RIGHT);
+        flAnno.getNode().getStyleClass().add("flame-length-label");
+        chart.getAnnotations().add(flAnno, Layer.FOREGROUND);
 
         // Add range (ros) and domain (heat) markers
-        chart.getMarkers().addRangeMarker(new ValueMarker(rosMax));
-        chart.getMarkers().addRangeMarker(new ValueMarker(rosFlank));
-        chart.getMarkers().addDomainMarker(new ValueMarker(heat));
+        chart.getMarkers().addRangeMarker(new ValueMarker(rosMax, String.format("%1$.1f ft/m ROS-Max", rosMax), Pos.TOP_LEFT));
+        chart.getMarkers().addRangeMarker(new ValueMarker(rosFlank, String.format("%1$.1f ft/m ROS-Flank", rosFlank), Pos.BOTTOM_LEFT));
+        // HACK: There's a bug in the domain marker pos - its the opposite of what's specified
+        chart.getMarkers().addDomainMarker(new ValueMarker(heat, String.format("%1$.1f Btu/ft^2 HPA", heat), Pos.TOP_LEFT)); 
 
     }
 

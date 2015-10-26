@@ -1,8 +1,14 @@
+.chart-title {
+    -fx-font: bold 16pt "SansSerif";
+}
 .chart-subtitle {
-    -fx-text-fill: #4682b4;
-    -fx-font-size: 1.0em;
+    -fx-font: bold 12pt "SansSerif";
 }
 
+.chart-marker-label {
+    -fx-font: bold 8pt "SansSerif";
+    -fx-text-alignment: center;    
+}
 
 .chart-major-vertical-grid-lines {
     -fx-stroke: white;
@@ -86,4 +92,14 @@
     -fx-stroke: transparent;
     -fx-fill: #e1807c;
     -fx-opacity: 0.8;
+}
+
+.flame-length-label {
+    -fx-font: bold 12pt "sans-serif";
+    -fx-background-color:darkgrey;
+    -fx-opacity: 0.8;
+    -fx-border-color:black;
+    -fx-border-style:solid;
+        
+        
 }

@@ -113,6 +113,24 @@
                 <version>2.5.1</version>
                 <executions>
                     <execution>
+                        <id>install-jfxchartext-library</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/lib/jfxchartext.jar</file>
+                            <!--<sources>${project.basedir}/lib/jfreechart-src.jar</sources>-->
+                            <!--<javadoc>${project.basedir}/lib/jfreechart_doc.jar</javadoc>-->
+                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <groupId>com.emxsys</groupId>
+                            <artifactId>jfxchartext</artifactId>
+                            <version>1.0</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>install-jcommon-library</id>
                         <phase>install</phase>
                         <goals>
@@ -153,6 +171,11 @@
         </plugins>
     </build>
     <dependencies>
+        <dependency>
+            <groupId>com.emxsys</groupId>
+            <artifactId>jfxchartext</artifactId>
+            <version>1.0</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
