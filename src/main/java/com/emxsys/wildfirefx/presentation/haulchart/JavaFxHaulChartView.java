@@ -128,7 +128,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         chart.getMarkers().clearRangeMarkers();
         chart.getAnnotations().clearTextAnnotations(Layer.FOREGROUND);
         if (fire == null) {
-            chart.setSubtitle(null);
+            chart.addSubtitle(null);
             return;
         }
 
@@ -140,7 +140,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         double flameLen = fire.getFlameLength();
 
         // Updating the subtitle with the fuel model name
-        chart.setSubtitle(modelName);
+        chart.addSubtitle(modelName);
         chart.layout();
 
         // Update the plot with our x,y points for max and flanking fire behavior
@@ -155,8 +155,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         // Add range (ros) and domain (heat) markers
         chart.getMarkers().addRangeMarker(new ValueMarker(rosMax, String.format("%1$.1f ft/m ROS-Max", rosMax), Pos.TOP_LEFT));
         chart.getMarkers().addRangeMarker(new ValueMarker(rosFlank, String.format("%1$.1f ft/m ROS-Flank", rosFlank), Pos.BOTTOM_LEFT));
-        // HACK: There's a bug in the domain marker pos - its the opposite of what's specified
-        chart.getMarkers().addDomainMarker(new ValueMarker(heat, String.format("%1$.1f Btu/ft^2 HPA", heat), Pos.TOP_LEFT)); 
+        chart.getMarkers().addDomainMarker(new ValueMarker(heat, String.format("%1$.1f Btu/ft^2 HPA", heat), Pos.BOTTOM_RIGHT)); 
 
     }
 
