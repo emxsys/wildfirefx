@@ -119,10 +119,7 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>${project.basedir}/lib/jfxchartext.jar</file>
-                            <!--<sources>${project.basedir}/lib/jfreechart-src.jar</sources>-->
-                            <!--<javadoc>${project.basedir}/lib/jfreechart_doc.jar</javadoc>-->
-                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <file>${project.basedir}/lib/jfxchartext-1.0.jar</file>
                             <groupId>com.emxsys</groupId>
                             <artifactId>jfxchartext</artifactId>
                             <version>1.0</version>
