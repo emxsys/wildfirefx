@@ -114,7 +114,7 @@
                 <executions>
                     <execution>
                         <id>install-jfxchartext-library</id>
-                        <phase>install</phase>
+                        <phase>validate</phase>
                         <goals>
                             <goal>install-file</goal>
                         </goals>
@@ -129,7 +129,7 @@
                     </execution>
                     <execution>
                         <id>install-jcommon-library</id>
-                        <phase>install</phase>
+                        <phase>validate</phase>
                         <goals>
                             <goal>install-file</goal>
                         </goals>
@@ -147,7 +147,7 @@
                     </execution>
                     <execution>
                         <id>install-jfreechart-library</id>
-                        <phase>install</phase>
+                        <phase>validate</phase>
                         <goals>
                             <goal>install-file</goal>
                         </goals>
