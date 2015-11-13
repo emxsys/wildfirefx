@@ -128,7 +128,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         chart.getMarkers().clearRangeMarkers();
         chart.getAnnotations().clearTextAnnotations(Layer.FOREGROUND);
         if (fire == null) {
-            chart.addSubtitle(null);
+            chart.clearSubtitles();
             return;
         }
 
@@ -140,6 +140,7 @@ public class JavaFxHaulChartView implements View<JavaFxHaulChartController> {
         double flameLen = fire.getFlameLength();
 
         // Updating the subtitle with the fuel model name
+        chart.clearSubtitles();
         chart.addSubtitle(modelName);
         chart.layout();
 
